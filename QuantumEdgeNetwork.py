@@ -50,12 +50,12 @@ def TTN_edge_forward(B,theta_learn):
 	circuit.measure(q[4],c)
 
 	#circuit.draw(filename='circuit.png')
-	result = execute(circuit, backend, shots=100).result()
+	result = execute(circuit, backend, shots=10).result()
 	counts = result.get_counts(circuit)
 	out    = 0
 	for key in counts:
 		if key=='1':
-			out = counts[key]/100
+			out = counts[key]/10
 	return(out)
 
 def TTN_edge_back(input_,theta_learn,lr,error,label):
@@ -100,12 +100,12 @@ def normalize(B):
 	phi_max_i = max(B[:,4])  
 	z_max_o   = max(B[:,2])  
 	z_max_i   = max(B[:,5]) 
-	r_min 	= min(r_min_o,r_min_i)
-	r_max   = max(r_max_o,r_max_i)
-	phi_min = min(phi_min_o,phi_min_i)
-	phi_max = max(phi_max_o,phi_max_i)
-	z_min 	= min(z_min_o,z_min_i)
-	z_max 	= max(z_max_o,z_max_i)
+	r_min 	  = min(r_min_o,r_min_i)
+	r_max     = max(r_max_o,r_max_i)
+	phi_min   = min(phi_min_o,phi_min_i)
+	phi_max   = max(phi_max_o,phi_max_i)
+	z_min 	  = min(z_min_o,z_min_i)
+	z_max 	  = max(z_max_o,z_max_i)
 	#print('r: '   + str(r_min)   + ' - ' + str(r_max))
 	#print('phi: ' + str(phi_min) + ' - ' + str(phi_max))
 	#print('z: '   + str(z_min)   + ' - ' + str(z_max))
@@ -122,11 +122,11 @@ def test_accuracy(B,theta_learn,y):
 	input_dir = '/Users/cenk/Repos/trackML_challenge/heptrkx/data/hitgraphs'
 	data = HitGraphDataset(input_dir, 3)
 	X,Ro,Ri,y = data[2]
-	bo = np.dot(Ro.T, X)
-	bi = np.dot(Ri.T, X)
-	B = np.concatenate((bo,bi),axis=1)
-	B = normalize(B)
-	acc = 0
+	bo   = np.dot(Ro.T, X)
+	bi   = np.dot(Ri.T, X)
+	B    = np.concatenate((bo,bi),axis=1)
+	B    = normalize(B)
+	acc  = 0
 	size = 50
 	for i in range(size):
 		out = TTN_edge_forward(B[i],theta_learn)
@@ -147,23 +147,23 @@ n_files = 2
 for n_file in range(n_files):
 	data = HitGraphDataset(input_dir, n_files)
 	X,Ro,Ri,y = data[n_file]
-	n_edges = len(y)
-	bo = np.dot(Ro.T, X)
-	bi = np.dot(Ri.T, X)
-	B = np.concatenate((bo,bi),axis=1)
-	B = normalize(B)
-	epoch=len(B[:,0])
-	acc_size = round(1+epoch/EVERY_N_epoch)
-	accuracy = np.zeros(n_files*acc_size)
+	n_edges   = len(y)
+	bo 	  = np.dot(Ro.T, X)
+	bi 	  = np.dot(Ri.T, X)
+	B 	  = np.concatenate((bo,bi),axis=1)
+	B 	  = normalize(B)
+	epoch     = len(B[:,0])
+	acc_size  = round(1+epoch/EVERY_N_epoch)
+	accuracy  = np.zeros(n_files*acc_size)
 	accuracy[0+n_file*acc_size] = test_accuracy(B,theta_learn,y)
 	for i in range(epoch):
-		error = TTN_edge_forward(B[i],theta_learn) - y[i]
-		loss  = error**2
+		error 	    = TTN_edge_forward(B[i],theta_learn) - y[i]
+		loss  	    = error**2
 		theta_learn = TTN_edge_back(B[i],theta_learn,lr,error,y[i])
 		#print('Epoch: ' + str(i) + ' Loss: ' + str(abs(loss)))
 		if (i%EVERY_N_epoch==(EVERY_N_epoch-1)):
-			accuracy[round((i+1)/EVERY_N_epoch) + n_file*acc_size]=test_accuracy(B,theta_learn,y)
-
+			#accuracy[round((i+1)/EVERY_N_epoch) + n_file*acc_size]=test_accuracy(B,theta_learn,y)
+			print('File: ' + str(n_file+1) + ' - ' + str(100*i/epoch) + '% DONE!')
 # Plot the results		
 for i in range(len(accuracy)):
 	plt.scatter(i*EVERY_N_epoch,accuracy[i])
