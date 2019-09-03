@@ -143,7 +143,7 @@ def draw_sample(X, Ri, Ro, y, out,cmap='bwr_r', alpha_labels=True, figsize=(15, 
     #plt.show()
     plt.savefig('png/QEN_output_RvsPhi.png')
 ############################################################################################
-input_dir = '/Users/cenk/Repos/trackML_challenge/heptrkx/data/hitgraphs'
+input_dir = 'data/hitgraphs'
 theta_learn = [2.04537459, 0.09326556, 0.24176319, 0.43387259, 4.20878121, 3.3115133, 4.68544247, 3.84876339, 3.09176884, 4.15638835, 1.23]
 data = HitGraphDataset(input_dir, 1)
 X,Ro,Ri,y = data[0]

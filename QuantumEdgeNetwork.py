@@ -142,7 +142,7 @@ theta_learn = np.random.rand(11)*np.pi*2
 lr = 0.01
 EVERY_N_epoch = 500
 
-input_dir = '/Users/cenk/Repos/trackML_challenge/heptrkx/data/hitgraphs'
+input_dir = '/data/hitgraphs'
 n_files = 2
 for n_file in range(n_files):
 	data = HitGraphDataset(input_dir, n_files)
