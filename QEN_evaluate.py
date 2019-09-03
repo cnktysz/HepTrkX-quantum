@@ -105,7 +105,7 @@ def draw_sample(X, Ri, Ro, y, out,cmap='bwr_r', alpha_labels=True, figsize=(15, 
         seg_args = dict(c='r', alpha=float(y[j]))
         ax0.plot([feats_o[j,2], feats_i[j,2]],
                  [feats_o[j,0], feats_i[j,0]], '-', **seg_args)
-        seg_args = dict(c='r', alpha=float(round(out[j])))
+        seg_args = dict(c='r', alpha=float(out[j]))
         ax1.plot([feats_o[j,2], feats_i[j,2]],
                  [feats_o[j,0], feats_i[j,0]], '-', **seg_args)
     
@@ -130,7 +130,7 @@ def draw_sample(X, Ri, Ro, y, out,cmap='bwr_r', alpha_labels=True, figsize=(15, 
         seg_args = dict(c='r', alpha=float(y[j]))
         ax0.plot([feats_o[j,1], feats_i[j,1]],
                  [feats_o[j,0], feats_i[j,0]], '-', **seg_args)
-        seg_args = dict(c='r', alpha=float(round(out[j])))
+        seg_args = dict(c='r', alpha=float(out[j]))
         ax1.plot([feats_o[j,1], feats_i[j,1]],
                  [feats_o[j,0], feats_i[j,0]], '-', **seg_args)
     
@@ -143,8 +143,8 @@ def draw_sample(X, Ri, Ro, y, out,cmap='bwr_r', alpha_labels=True, figsize=(15, 
     #plt.show()
     plt.savefig('png/QEN_output_RvsPhi.png')
 ############################################################################################
-input_dir = 'data/hitgraphs'
-theta_learn = [2.04537459, 0.09326556, 0.24176319, 0.43387259, 4.20878121, 3.3115133, 4.68544247, 3.84876339, 3.09176884, 4.15638835, 1.23]
+input_dir = '/home/cenktuysuz/MyRepos/HepTrkX-quantum/data/hitgraphs'
+theta_learn = [5.81938258, 0.65791055, 3.50325001, 5.99779941, 2.18404964, 0.03780523, 0.12155696, 3.44766096, 5.7402678,  4.45497403, 2.91924544]
 data = HitGraphDataset(input_dir, 1)
 X,Ro,Ri,y = data[0]
 n_edges = len(y)
@@ -155,6 +155,6 @@ B = np.concatenate((bo,bi),axis=1)
 B = normalize(B)
 epoch=n_edges
 for i in range(epoch):
-	out[i] = TTN_edge_forward(B[i],theta_learn)
+	out[i] = round(TTN_edge_forward(B[i],theta_learn))
 # Plot the results	
 draw_sample(X, Ri, Ro, y, out)

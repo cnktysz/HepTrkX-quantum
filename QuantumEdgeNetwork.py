@@ -50,12 +50,12 @@ def TTN_edge_forward(B,theta_learn):
 	circuit.measure(q[4],c)
 
 	#circuit.draw(filename='circuit.png')
-	result = execute(circuit, backend, shots=10).result()
+	result = execute(circuit, backend, shots=100).result()
 	counts = result.get_counts(circuit)
 	out    = 0
 	for key in counts:
 		if key=='1':
-			out = counts[key]/10
+			out = counts[key]/100
 	return(out)
 
 def TTN_edge_back(input_,theta_learn,lr,error,label):
@@ -119,7 +119,7 @@ def normalize(B):
 	return B 
 
 def test_accuracy(B,theta_learn,y):
-	input_dir = '/Users/cenk/Repos/trackML_challenge/heptrkx/data/hitgraphs'
+	input_dir = '/home/cenktuysuz/MyRepos/HepTrkX-quantum/data/hitgraphs'
 	data = HitGraphDataset(input_dir, 3)
 	X,Ro,Ri,y = data[2]
 	bo   = np.dot(Ro.T, X)
@@ -131,8 +131,10 @@ def test_accuracy(B,theta_learn,y):
 	for i in range(size):
 		out = TTN_edge_forward(B[i],theta_learn)
 		#print(str(i) + ': Result: ' + str(out) + ' Expected: ' + str(y[i]))
-		if(y[i]==round(out)):
-			acc = acc + 1
+		if(y[i]==0):
+			acc = acc + 1 - out
+		else:
+			acc = acc + out
 	acc = 100.0 * acc/size
 	print('Total Accuracy: ' + str(acc) + ' %')
 	print('Theta_learn: ' + str(theta_learn))
@@ -142,7 +144,7 @@ theta_learn = np.random.rand(11)*np.pi*2
 lr = 0.01
 EVERY_N_epoch = 500
 
-input_dir = '/data/hitgraphs'
+input_dir = '/home/cenktuysuz/MyRepos/HepTrkX-quantum/data/hitgraphs'
 n_files = 2
 for n_file in range(n_files):
 	data = HitGraphDataset(input_dir, n_files)
@@ -162,7 +164,7 @@ for n_file in range(n_files):
 		theta_learn = TTN_edge_back(B[i],theta_learn,lr,error,y[i])
 		#print('Epoch: ' + str(i) + ' Loss: ' + str(abs(loss)))
 		if (i%EVERY_N_epoch==(EVERY_N_epoch-1)):
-			#accuracy[round((i+1)/EVERY_N_epoch) + n_file*acc_size]=test_accuracy(B,theta_learn,y)
+			accuracy[round((i+1)/EVERY_N_epoch) + n_file*acc_size]=test_accuracy(B,theta_learn,y)
 			print('File: ' + str(n_file+1) + ' - ' + str(100*i/epoch) + '% DONE!')
 # Plot the results		
 for i in range(len(accuracy)):
