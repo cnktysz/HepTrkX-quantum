@@ -1,3 +1,8 @@
+# Author: Cenk Tüysüz
+# Date: 29.08.2019
+# First attempt to test QuantumEdgeNetwork
+# Run this code the train and test the network
+
 import numpy as np
 import matplotlib.pyplot as plt
 from qiskit import(
@@ -15,7 +20,8 @@ import sys
 
 
 def TTN_edge_forward(B,theta_learn):
-
+	# Takes the input and learning variables and applies the
+	# network to obtain the output
 	backend = BasicAer.get_backend('qasm_simulator')
 	q       = QuantumRegister(len(B))
 	c       = ClassicalRegister(1)
@@ -59,6 +65,9 @@ def TTN_edge_forward(B,theta_learn):
 	return(out)
 
 def TTN_edge_back(input_,theta_learn,lr,error,label):
+	# This function calculates the gradients for all learning 
+	# variables numerically and updates them accordingly.
+	# TODO: need to choose epislon properly
 	epsilon = 0.05 # to take derivative
 	gradient = np.zeros(len(theta_learn))
 	update = np.zeros(len(theta_learn))
@@ -83,11 +92,10 @@ def TTN_edge_back(input_,theta_learn,lr,error,label):
 	theta_learn = (theta_learn - update)%(2*np.pi)
 	return theta_learn
 #######################################################
-def normalize_row(X):
-	X = X/np.sqrt(sum(np.square(X)))
-	#print(X)
-	return X
 def normalize(B):
+	# This function takes the input matrix and maps it linearly
+	# to 0-2PI.
+	# TODO: Instead of this method use physical max and min to map.
 	r_min_o   = min(B[:,0])  
 	r_min_i   = min(B[:,3])  
 	phi_min_o = min(B[:,1])  
@@ -117,8 +125,10 @@ def normalize(B):
 	B[:,4] = 2*np.pi * (B[:,4]-phi_min)/(phi_max-phi_min) 
 	B[:,5] = 2*np.pi * (B[:,5]-z_min)/(z_max-z_min)
 	return B 
-
 def test_accuracy(B,theta_learn,y):
+	# This function only test the accuracy over a very limited set of data
+	# due to time constraints
+	# TODO: Need to test properly
 	input_dir = '/home/cenktuysuz/MyRepos/HepTrkX-quantum/data/hitgraphs'
 	data = HitGraphDataset(input_dir, 3)
 	X,Ro,Ri,y = data[2]
@@ -140,6 +150,7 @@ def test_accuracy(B,theta_learn,y):
 	print('Theta_learn: ' + str(theta_learn))
 	return acc
 ############################################################################################
+##### MAIN ######
 theta_learn = np.random.rand(11)*np.pi*2
 lr = 0.01
 EVERY_N_epoch = 500
