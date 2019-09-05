@@ -125,11 +125,29 @@ def normalize(B):
 	B[:,4] = 2*np.pi * (B[:,4]-phi_min)/(phi_max-phi_min) 
 	B[:,5] = 2*np.pi * (B[:,5]-z_min)/(z_max-z_min)
 	return B 
+def map2angle(B):
+	# Maps input features to 0-2PI
+	n_section = 4
+	r_min 	  = 0
+	r_max     = 1200
+	phi_min   = -np.pi/n_section
+	phi_max   = np.pi/n_section
+	z_min 	  = -1.200
+	z_max 	  = 1.200
+	B[:,0] = 2*np.pi * (B[:,0]-r_min)/(r_max-r_min) 
+	B[:,1] = 2*np.pi * (B[:,1]-phi_min)/(phi_max-phi_min) 
+	B[:,2] = 2*np.pi * (B[:,2]-z_min)/(z_max-z_min) 
+	B[:,3] = 2*np.pi * (B[:,3]-r_min)/(r_max-r_min) 
+	B[:,4] = 2*np.pi * (B[:,4]-phi_min)/(phi_max-phi_min) 
+	B[:,5] = 2*np.pi * (B[:,5]-z_min)/(z_max-z_min)
+	return B
+
 def test_accuracy(B,theta_learn,y):
 	# This function only test the accuracy over a very limited set of data
 	# due to time constraints
 	# TODO: Need to test properly
-	input_dir = '/home/cenktuysuz/MyRepos/HepTrkX-quantum/data/hitgraphs'
+	#input_dir = '/home/cenktuysuz/MyRepos/HepTrkX-quantum/data/hitgraphs'
+	input_dir = '/Users/cenk/Repos/HEPTrkX-quantum/data/hitgraphs'
 	data = HitGraphDataset(input_dir, 3)
 	X,Ro,Ri,y = data[2]
 	bo   = np.dot(Ro.T, X)
@@ -155,7 +173,8 @@ theta_learn = np.random.rand(11)*np.pi*2
 lr = 0.01
 EVERY_N_epoch = 500
 
-input_dir = '/home/cenktuysuz/MyRepos/HepTrkX-quantum/data/hitgraphs'
+#input_dir = '/home/cenktuysuz/MyRepos/HepTrkX-quantum/data/hitgraphs'
+input_dir = '/Users/cenk/Repos/HEPTrkX-quantum/data/hitgraphs'
 n_files = 2
 for n_file in range(n_files):
 	data = HitGraphDataset(input_dir, n_files)
@@ -164,7 +183,7 @@ for n_file in range(n_files):
 	bo 	  = np.dot(Ro.T, X)
 	bi 	  = np.dot(Ri.T, X)
 	B 	  = np.concatenate((bo,bi),axis=1)
-	B 	  = normalize(B)
+	B 	  = map2angle(B)
 	epoch     = len(B[:,0])
 	acc_size  = round(1+epoch/EVERY_N_epoch)
 	accuracy  = np.zeros(n_files*acc_size)
