@@ -64,7 +64,7 @@ def TTN_edge_forward(B,theta_learn):
 			out = counts[key]/100
 	return(out)
 
-def TTN_edge_back(input_,theta_learn,lr,error,label):
+def TTN_edge_back(input_,theta_learn):
 	# This function calculates the gradients for all learning 
 	# variables numerically and updates them accordingly.
 	# TODO: need to choose epislon properly
@@ -87,10 +87,10 @@ def TTN_edge_back(input_,theta_learn,lr,error,label):
 	
 	## UPDATE theta_learn
 	#print('gradient:' + str(gradient))
-	update = lr*2*error*gradient
+	#update = lr*2*error*gradient
 	#print('update:' + str(update))
-	theta_learn = (theta_learn - update)%(2*np.pi)
-	return theta_learn
+	#theta_learn = (theta_learn - update)%(2*np.pi)
+	return gradient
 #######################################################
 def normalize(B):
 	# This function takes the input matrix and maps it linearly
@@ -127,9 +127,9 @@ def normalize(B):
 	return B 
 def map2angle(B):
 	# Maps input features to 0-2PI
-	n_section = 4
+	n_section = 8
 	r_min 	  = 0
-	r_max     = 1200
+	r_max     = 1.200
 	phi_min   = -np.pi/n_section
 	phi_max   = np.pi/n_section
 	z_min 	  = -1.200
@@ -142,20 +142,20 @@ def map2angle(B):
 	B[:,5] = 2*np.pi * (B[:,5]-z_min)/(z_max-z_min)
 	return B
 
-def test_accuracy(B,theta_learn,y):
+def test_accuracy(B,theta_learn):
 	# This function only test the accuracy over a very limited set of data
 	# due to time constraints
 	# TODO: Need to test properly
 	#input_dir = '/home/cenktuysuz/MyRepos/HepTrkX-quantum/data/hitgraphs'
-	input_dir = '/Users/cenk/Repos/HEPTrkX-quantum/data/hitgraphs'
-	data = HitGraphDataset(input_dir, 3)
-	X,Ro,Ri,y = data[2]
+	input_dir = '/Users/cenk/Repos/HEPTrkX-quantum/data/hitgraphs_big'
+	data = HitGraphDataset(input_dir, 1)
+	X,Ro,Ri,y = data[0]
 	bo   = np.dot(Ro.T, X)
 	bi   = np.dot(Ri.T, X)
 	B    = np.concatenate((bo,bi),axis=1)
-	B    = normalize(B)
+	B    = map2angle(B)
 	acc  = 0
-	size = 50
+	size = len(B[:,0])
 	for i in range(size):
 		out = TTN_edge_forward(B[i],theta_learn)
 		#print(str(i) + ': Result: ' + str(out) + ' Expected: ' + str(y[i]))
@@ -174,9 +174,10 @@ lr = 0.01
 EVERY_N_epoch = 500
 
 #input_dir = '/home/cenktuysuz/MyRepos/HepTrkX-quantum/data/hitgraphs'
-input_dir = '/Users/cenk/Repos/HEPTrkX-quantum/data/hitgraphs'
-n_files = 2
+input_dir = '/Users/cenk/Repos/HEPTrkX-quantum/data/hitgraphs_big'
+n_files = 16
 for n_file in range(n_files):
+
 	data = HitGraphDataset(input_dir, n_files)
 	X,Ro,Ri,y = data[n_file]
 	n_edges   = len(y)
@@ -187,15 +188,31 @@ for n_file in range(n_files):
 	epoch     = len(B[:,0])
 	acc_size  = round(1+epoch/EVERY_N_epoch)
 	accuracy  = np.zeros(n_files*acc_size)
-	accuracy[0+n_file*acc_size] = test_accuracy(B,theta_learn,y)
+	#accuracy[0+n_file*acc_size] = test_accuracy(B,theta_learn,y)
+	average_loss = 0
+	average_gradient = np.zeros(len(theta_learn))
+
+	test_accuracy(B,theta_learn)
+
 	for i in range(epoch):
 		error 	    = TTN_edge_forward(B[i],theta_learn) - y[i]
 		loss  	    = error**2
-		theta_learn = TTN_edge_back(B[i],theta_learn,lr,error,y[i])
+		average_loss = average_loss + loss/len(theta_learn)
+		average_gradient = average_gradient + (2*error*TTN_edge_back(B[i],theta_learn))/len(theta_learn)
+		##theta_learn = TTN_edge_back(B[i],theta_learn,lr,error,y[i])
 		#print('Epoch: ' + str(i) + ' Loss: ' + str(abs(loss)))
+		'''
 		if (i%EVERY_N_epoch==(EVERY_N_epoch-1)):
 			accuracy[round((i+1)/EVERY_N_epoch) + n_file*acc_size]=test_accuracy(B,theta_learn,y)
 			print('File: ' + str(n_file+1) + ' - ' + str(100*i/epoch) + '% DONE!')
+		'''
+
+	## UPDATE WEIGHTS
+	theta_learn = (theta_learn - lr*average_gradient)%(2*np.pi)
+	print('Update Angles :' + str(theta_learn))
+	test_accuracy(B,theta_learn)
+
+		
 # Plot the results		
 for i in range(len(accuracy)):
 	plt.scatter(i*EVERY_N_epoch,accuracy[i])
