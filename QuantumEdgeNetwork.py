@@ -17,6 +17,9 @@ from qiskit.visualization import plot_histogram
 
 from datasets.hitgraphs import HitGraphDataset
 import sys
+from dask.distributed import Client, progress
+import dask.array as da 
+from multiprocessing import cpu_count
 
 
 def TTN_edge_forward(B,theta_learn):
@@ -27,6 +30,7 @@ def TTN_edge_forward(B,theta_learn):
 	c       = ClassicalRegister(1)
 	circuit = QuantumCircuit(q,c)
 	# STATE PREPARATION
+	B.compute()
 	for i in range(len(B)):
 		circuit.ry(B[i],q[i])
 	# APPLY forward sequence
@@ -167,8 +171,24 @@ def test_accuracy(B,theta_learn):
 	print('Total Accuracy: ' + str(acc) + ' %')
 	print('Theta_learn: ' + str(theta_learn))
 	return acc
+
+def train(B,theta_learn):
+	average_loss = 0
+	average_gradient = np.zeros(len(theta_learn))
+	for i in range(len(B)):
+		error 	    = TTN_edge_forward(B[i],theta_learn) - y[i]
+		loss  	    = error**2
+		average_loss = average_loss + loss/len(theta_learn)
+		average_gradient = average_gradient + (2*error*TTN_edge_back(B[i],theta_learn))/len(theta_learn)
+
+
 ############################################################################################
 ##### MAIN ######
+client = Client(processes=False, threads_per_worker=1,
+                n_workers=8, memory_limit='2GB')
+
+client
+
 theta_learn = np.random.rand(11)*np.pi*2
 lr = 0.01
 EVERY_N_epoch = 500
@@ -189,23 +209,18 @@ for n_file in range(n_files):
 	acc_size  = round(1+epoch/EVERY_N_epoch)
 	accuracy  = np.zeros(n_files*acc_size)
 	#accuracy[0+n_file*acc_size] = test_accuracy(B,theta_learn,y)
-	average_loss = 0
-	average_gradient = np.zeros(len(theta_learn))
+	
+	darr = da.from_array(B,chunks=(100,6))
+	#test_accuracy(B,theta_learn)
+	train(darr,theta_learn)
 
-	test_accuracy(B,theta_learn)
-
-	for i in range(epoch):
-		error 	    = TTN_edge_forward(B[i],theta_learn) - y[i]
-		loss  	    = error**2
-		average_loss = average_loss + loss/len(theta_learn)
-		average_gradient = average_gradient + (2*error*TTN_edge_back(B[i],theta_learn))/len(theta_learn)
-		##theta_learn = TTN_edge_back(B[i],theta_learn,lr,error,y[i])
-		#print('Epoch: ' + str(i) + ' Loss: ' + str(abs(loss)))
-		'''
-		if (i%EVERY_N_epoch==(EVERY_N_epoch-1)):
-			accuracy[round((i+1)/EVERY_N_epoch) + n_file*acc_size]=test_accuracy(B,theta_learn,y)
-			print('File: ' + str(n_file+1) + ' - ' + str(100*i/epoch) + '% DONE!')
-		'''
+	##theta_learn = TTN_edge_back(B[i],theta_learn,lr,error,y[i])
+	#print('Epoch: ' + str(i) + ' Loss: ' + str(abs(loss)))
+	'''
+	if (i%EVERY_N_epoch==(EVERY_N_epoch-1)):
+	accuracy[round((i+1)/EVERY_N_epoch) + n_file*acc_size]=test_accuracy(B,theta_learn,y)
+	print('File: ' + str(n_file+1) + ' - ' + str(100*i/epoch) + '% DONE!')
+	'''
 
 	## UPDATE WEIGHTS
 	theta_learn = (theta_learn - lr*average_gradient)%(2*np.pi)

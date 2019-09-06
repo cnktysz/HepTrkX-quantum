@@ -6,15 +6,17 @@ import time
 from dask.distributed import Client, progress
 from multiprocessing import cpu_count
 
-client = Client(processes=False, threads_per_worker=4,
-                n_workers=10, memory_limit='2GB')
+client = Client(processes=False, threads_per_worker=1,
+                n_workers=8, memory_limit='2GB')
+
+client
 
 def map2angle(B):
 	# Maps input features to 0-2PI
 	C = np.zeros((len(B),len(B[0])))
 	n_section = 8
 	r_min 	  = 0
-	r_max     = 1200
+	r_max     = 1.200
 	phi_min   = -np.pi/n_section
 	phi_max   = np.pi/n_section
 	z_min 	  = -1.200
@@ -34,16 +36,20 @@ bo   = np.dot(Ro.T, X)
 bi   = np.dot(Ri.T, X)
 B    = np.concatenate((bo,bi),axis=1)
 
-darr = da.from_array(B,chunks=(2500,6))
+arr = np.random.rand(10000,10000)
+
+darr = da.from_array(arr,chunks=(250,250))
 print(darr.npartitions)
 
 time0 = time.time()
-B = map2angle(B)
+for i in range(20):
+	arr.sum()
 time1 = time.time()
 print('Numpy array: ' + str(time1-time0))
 
 time2 = time.time()
-darr = map2angle(darr
+for i in range(2000):
+	darr.sum()
 time3 = time.time()
 print('Dask array: ' + str(time3-time2))
 
