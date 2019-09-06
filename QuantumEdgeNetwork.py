@@ -30,7 +30,6 @@ def TTN_edge_forward(B,theta_learn):
 	c       = ClassicalRegister(1)
 	circuit = QuantumCircuit(q,c)
 	# STATE PREPARATION
-	B.compute()
 	for i in range(len(B)):
 		circuit.ry(B[i],q[i])
 	# APPLY forward sequence
@@ -184,10 +183,9 @@ def train(B,theta_learn):
 
 ############################################################################################
 ##### MAIN ######
-client = Client(processes=False, threads_per_worker=1,
-                n_workers=8, memory_limit='2GB')
+#client = Client(processes=False, threads_per_worker=1, n_workers=8, memory_limit='2GB')
 
-client
+#client
 
 theta_learn = np.random.rand(11)*np.pi*2
 lr = 0.01
@@ -210,9 +208,9 @@ for n_file in range(n_files):
 	accuracy  = np.zeros(n_files*acc_size)
 	#accuracy[0+n_file*acc_size] = test_accuracy(B,theta_learn,y)
 	
-	darr = da.from_array(B,chunks=(100,6))
+	#darr = da.from_array(B,chunks=(100,6))
 	#test_accuracy(B,theta_learn)
-	train(darr,theta_learn)
+	train(B,theta_learn)
 
 	##theta_learn = TTN_edge_back(B[i],theta_learn,lr,error,y[i])
 	#print('Epoch: ' + str(i) + ' Loss: ' + str(abs(loss)))
