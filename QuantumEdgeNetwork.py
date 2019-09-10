@@ -20,18 +20,23 @@ import sys
 from dask.distributed import Client, progress
 import dask.array as da 
 from multiprocessing import cpu_count
+from multiprocessing import Pool
+from multiprocessing.dummy import Pool as ThreadPool
+import threading
+import multiprocessing
 
+## GLOBAL VARIABLES
 
-def TTN_edge_forward(B,theta_learn):
+def TTN_edge_forward(edge,theta_learn):
 	# Takes the input and learning variables and applies the
 	# network to obtain the output
 	backend = BasicAer.get_backend('qasm_simulator')
-	q       = QuantumRegister(len(B))
+	q       = QuantumRegister(len(edge))
 	c       = ClassicalRegister(1)
 	circuit = QuantumCircuit(q,c)
 	# STATE PREPARATION
-	for i in range(len(B)):
-		circuit.ry(B[i],q[i])
+	for i in range(len(edge)):
+		circuit.ry(edge[i],q[i])
 	# APPLY forward sequence
 
 	circuit.ry(theta_learn[0],q[0])
@@ -171,64 +176,81 @@ def test_accuracy(B,theta_learn):
 	print('Theta_learn: ' + str(theta_learn))
 	return acc
 
-def train(B,theta_learn):
-	average_loss = 0
-	average_gradient = np.zeros(len(theta_learn))
-	for i in range(len(B)):
-		error 	    = TTN_edge_forward(B[i],theta_learn) - y[i]
+def train(jobid,edge_array,loss_array,gradient_array):
+	local_loss = 0
+	local_gradients = np.zeros(len(theta_learn))
+	for i in range(len(edge_array)):
+		error 	    = TTN_edge_forward(edge_array[i],theta_learn) - y[i]
 		loss  	    = error**2
-		average_loss = average_loss + loss/len(theta_learn)
-		average_gradient = average_gradient + (2*error*TTN_edge_back(B[i],theta_learn))/len(theta_learn)
-
-
+		local_loss = local_loss + loss
+		local_gradients = local_gradients + 2*error*TTN_edge_back(edge_array[i],theta_learn)
+	loss_array.append(local_loss)
+	gradient_array.append(local_gradients)
+	#print(loss_array)
+	#print(gradient_array)
 ############################################################################################
 ##### MAIN ######
 #client = Client(processes=False, threads_per_worker=1, n_workers=8, memory_limit='2GB')
 
 #client
-
-theta_learn = np.random.rand(11)*np.pi*2
-lr = 0.01
-EVERY_N_epoch = 500
-
-#input_dir = '/home/cenktuysuz/MyRepos/HepTrkX-quantum/data/hitgraphs'
-input_dir = '/Users/cenk/Repos/HEPTrkX-quantum/data/hitgraphs_big'
-n_files = 16
-for n_file in range(n_files):
-
-	data = HitGraphDataset(input_dir, n_files)
-	X,Ro,Ri,y = data[n_file]
-	n_edges   = len(y)
-	bo 	  = np.dot(Ro.T, X)
-	bi 	  = np.dot(Ri.T, X)
-	B 	  = np.concatenate((bo,bi),axis=1)
-	B 	  = map2angle(B)
-	epoch     = len(B[:,0])
-	acc_size  = round(1+epoch/EVERY_N_epoch)
-	accuracy  = np.zeros(n_files*acc_size)
-	#accuracy[0+n_file*acc_size] = test_accuracy(B,theta_learn,y)
+if __name__ == '__main__':
 	
-	#darr = da.from_array(B,chunks=(100,6))
-	#test_accuracy(B,theta_learn)
-	train(B,theta_learn)
+	theta_learn = np.random.rand(11)*np.pi*2
+	lr = 0.01
+	EVERY_N_epoch = 500
+	#input_dir = '/home/cenktuysuz/MyRepos/HepTrkX-quantum/data/hitgraphs'
+	input_dir = '/Users/cenk/Repos/HEPTrkX-quantum/data/hitgraphs_big'
+	n_files = 16
+	
+	for n_file in range(n_files):
 
-	##theta_learn = TTN_edge_back(B[i],theta_learn,lr,error,y[i])
-	#print('Epoch: ' + str(i) + ' Loss: ' + str(abs(loss)))
-	'''
-	if (i%EVERY_N_epoch==(EVERY_N_epoch-1)):
-	accuracy[round((i+1)/EVERY_N_epoch) + n_file*acc_size]=test_accuracy(B,theta_learn,y)
-	print('File: ' + str(n_file+1) + ' - ' + str(100*i/epoch) + '% DONE!')
-	'''
+		data = HitGraphDataset(input_dir, n_files)
+		X,Ro,Ri,y = data[n_file]
+		n_edges   = len(y)
+		bo 	  = np.dot(Ro.T, X)
+		bi 	  = np.dot(Ri.T, X)
+		B 	  = np.concatenate((bo,bi),axis=1)
+		B 	  = map2angle(B)
+		epoch     = len(B[:,0])
+		acc_size  = round(1+epoch/EVERY_N_epoch)
+		accuracy  = np.zeros(n_files*acc_size)
 
-	## UPDATE WEIGHTS
-	theta_learn = (theta_learn - lr*average_gradient)%(2*np.pi)
-	print('Update Angles :' + str(theta_learn))
-	test_accuracy(B,theta_learn)
+		jobs = []
+		# Use 16 threads
+		n_threads = 4
+		n_feed = 10 #n_edges//n_threads
+		# RESET variables
+		manager = multiprocessing.Manager()
+		loss_array = manager.list()
+		gradient_array = manager.list()
 
-		
-# Plot the results		
-for i in range(len(accuracy)):
-	plt.scatter(i*EVERY_N_epoch,accuracy[i])
-#plt.show()
-plt.savefig('png/Accuracy.png')
-print(theta_learn)
+		for i in range(n_threads):
+			if i==(n_threads-1): # matrix shape correction
+				p = multiprocessing.Process(target=train,args=(i,B[i*n_feed:(i+1)*n_feed,:],loss_array,gradient_array,))
+			else:
+				p = multiprocessing.Process(target=train,args=(i,B[i*n_feed:(i+1)*n_feed,:],loss_array,gradient_array,))
+			jobs.append(p)
+			p.start()
+
+		# WAIT for jobs to finish
+		for proc in jobs: p.join(timeout=100.0)
+			
+		total_loss = sum(loss_array)
+		total_gradient = sum(gradient_array)
+		## UPDATE WEIGHTS
+		average_loss = total_loss/n_edges
+		average_gradient = total_gradient/n_edges
+		print(average_loss)
+		print(average_gradient)
+		theta_learn = (theta_learn - lr*average_gradient)%(2*np.pi)
+		print('Update Angles :' + str(theta_learn))
+			
+		sys.exit()
+		#test_accuracy(B,theta_learn)
+
+	# Plot the results		
+	for i in range(len(accuracy)):
+		plt.scatter(i*EVERY_N_epoch,accuracy[i])
+	#plt.show()
+	plt.savefig('png/Accuracy.png')
+	print(theta_learn)
