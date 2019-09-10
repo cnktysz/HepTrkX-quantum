@@ -217,8 +217,8 @@ if __name__ == '__main__':
 
 		jobs = []
 		# Use 16 threads
-		n_threads = 4
-		n_feed = 10 #n_edges//n_threads
+		n_threads =16
+		n_feed = 50 #n_edges//n_threads
 		# RESET variables
 		manager = multiprocessing.Manager()
 		loss_array = manager.list()
@@ -233,7 +233,7 @@ if __name__ == '__main__':
 			p.start()
 
 		# WAIT for jobs to finish
-		for proc in jobs: p.join(timeout=100.0)
+		for proc in jobs: proc.join()
 			
 		total_loss = sum(loss_array)
 		total_gradient = sum(gradient_array)
