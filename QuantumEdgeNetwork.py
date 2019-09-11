@@ -150,7 +150,7 @@ def map2angle(B):
 	B[:,5] = 2*np.pi * (B[:,5]-z_min)/(z_max-z_min)
 	return B
 
-def test_accuracy(B,theta_learn):
+def test_accuracy(theta_learn):
 	# This function only test the accuracy over a very limited set of data
 	# due to time constraints
 	# TODO: Need to test properly
@@ -176,7 +176,8 @@ def test_accuracy(B,theta_learn):
 	print('Theta_learn: ' + str(theta_learn))
 	return acc
 
-def train(jobid,edge_array,loss_array,gradient_array):
+def get_loss_and_gradient(edge_array,y,loss_array,gradient_array):
+	# TODO: Need to add weighted loss
 	local_loss = 0
 	local_gradients = np.zeros(len(theta_learn))
 	for i in range(len(edge_array)):
@@ -188,6 +189,43 @@ def train(jobid,edge_array,loss_array,gradient_array):
 	gradient_array.append(local_gradients)
 	#print(loss_array)
 	#print(gradient_array)
+
+def train(B,theta_learn,y):
+	## TODO: matrix shape correction
+	jobs 	  = []
+	n_threads = 4
+	n_edges   = len(y)
+	n_feed    = 1 #n_edges//n_threads
+	# RESET variables
+	manager = multiprocessing.Manager()
+	loss_array = manager.list()
+	gradient_array = manager.list()
+	# Learning variables
+	lr = 0.01
+	# RUN Multithread training
+	for i in range(n_threads):
+		start = i*n_feed
+		end   = (i+1)*n_feed
+		if i==(n_feed-1): 	
+			p = multiprocessing.Process(target=get_loss_and_gradient,args=(B[start:,:],y[start:],loss_array,gradient_array,))
+		else:
+			p = multiprocessing.Process(target=get_loss_and_gradient,args=(B[start:end,:],y[start:end],loss_array,gradient_array,))	
+		jobs.append(p)
+		p.start()
+
+	# WAIT for jobs to finish
+	for proc in jobs: proc.join()
+			
+	total_loss = sum(loss_array)
+	total_gradient = sum(gradient_array)
+	## UPDATE WEIGHTS
+	average_loss = total_loss/n_edges
+	average_gradient = total_gradient/n_edges
+	print('Average Loss: ' + str(average_loss))
+	print('Gradient averages' + str(average_gradient))
+	theta_learn = (theta_learn - lr*average_gradient)%(2*np.pi)
+	print('Update Angles :' + str(theta_learn))
+	return theta_learn
 ############################################################################################
 ##### MAIN ######
 #client = Client(processes=False, threads_per_worker=1, n_workers=8, memory_limit='2GB')
@@ -196,12 +234,12 @@ def train(jobid,edge_array,loss_array,gradient_array):
 if __name__ == '__main__':
 	
 	theta_learn = np.random.rand(11)*np.pi*2
-	lr = 0.01
-	EVERY_N_epoch = 500
 	#input_dir = '/home/cenktuysuz/MyRepos/HepTrkX-quantum/data/hitgraphs'
 	input_dir = '/Users/cenk/Repos/HEPTrkX-quantum/data/hitgraphs_big'
 	n_files = 16
-	
+	testEVERY = 1
+	accuracy = np.zeros(round(n_files/testEVERY) + 1)
+	accuracy[i] = test_accuracy(theta_learn)
 	for n_file in range(n_files):
 
 		data = HitGraphDataset(input_dir, n_files)
@@ -211,46 +249,16 @@ if __name__ == '__main__':
 		bi 	  = np.dot(Ri.T, X)
 		B 	  = np.concatenate((bo,bi),axis=1)
 		B 	  = map2angle(B)
-		epoch     = len(B[:,0])
-		acc_size  = round(1+epoch/EVERY_N_epoch)
-		accuracy  = np.zeros(n_files*acc_size)
-
-		jobs = []
-		# Use 16 threads
-		n_threads =16
-		n_feed = 50 #n_edges//n_threads
-		# RESET variables
-		manager = multiprocessing.Manager()
-		loss_array = manager.list()
-		gradient_array = manager.list()
-
-		for i in range(n_threads):
-			if i==(n_threads-1): # matrix shape correction
-				p = multiprocessing.Process(target=train,args=(i,B[i*n_feed:(i+1)*n_feed,:],loss_array,gradient_array,))
-			else:
-				p = multiprocessing.Process(target=train,args=(i,B[i*n_feed:(i+1)*n_feed,:],loss_array,gradient_array,))
-			jobs.append(p)
-			p.start()
-
-		# WAIT for jobs to finish
-		for proc in jobs: proc.join()
-			
-		total_loss = sum(loss_array)
-		total_gradient = sum(gradient_array)
-		## UPDATE WEIGHTS
-		average_loss = total_loss/n_edges
-		average_gradient = total_gradient/n_edges
-		print(average_loss)
-		print(average_gradient)
-		theta_learn = (theta_learn - lr*average_gradient)%(2*np.pi)
-		print('Update Angles :' + str(theta_learn))
-			
-		sys.exit()
-		#test_accuracy(B,theta_learn)
+		
+		theta_learn = train(B,theta_learn,y)	
+		# TEST
+			if (n_file+1)%testEVERY==0:
+			accuracy[i+1] = test_accuracy(theta_learn)
+			print('Accuracy: ' + str(accuracy[i+1]))
 
 	# Plot the results		
 	for i in range(len(accuracy)):
-		plt.scatter(i*EVERY_N_epoch,accuracy[i])
+		plt.scatter(i*testEVERY,accuracy[i])
 	#plt.show()
 	plt.savefig('png/Accuracy.png')
 	print(theta_learn)
