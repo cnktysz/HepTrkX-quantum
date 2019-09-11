@@ -176,13 +176,13 @@ def test_accuracy(theta_learn):
 	print('Theta_learn: ' + str(theta_learn))
 	return acc
 
-def get_loss_and_gradient(edge_array,y,loss_array,gradient_array):
+def get_loss_and_gradient(edge_array,y,class_weight,loss_array,gradient_array):
 	# TODO: Need to add weighted loss
 	local_loss = 0
 	local_gradients = np.zeros(len(theta_learn))
 	for i in range(len(edge_array)):
 		error 	    = TTN_edge_forward(edge_array[i],theta_learn) - y[i]
-		loss  	    = error**2
+		loss  	    = (error**2)*class_weight[y[i]]
 		local_loss = local_loss + loss
 		local_gradients = local_gradients + 2*error*TTN_edge_back(edge_array[i],theta_learn)
 	loss_array.append(local_loss)
@@ -191,11 +191,15 @@ def get_loss_and_gradient(edge_array,y,loss_array,gradient_array):
 	#print(gradient_array)
 
 def train(B,theta_learn,y):
-	## TODO: matrix shape correction
-	jobs 	  = []
-	n_threads = 4
-	n_edges   = len(y)
-	n_feed    = 1 #n_edges//n_threads
+	jobs 	     = []
+	n_threads    = 4
+	n_edges      = len(y)
+	n_feed       = 1 #n_edges//n_threads
+	n_class1     = sum(y)
+	n_class0     = n_edges - n_class1
+	w_class1     = 1 - n_class1/n_edges ## Need a better way to weight classes
+	w_class0     = 1 - n_class0/n_edges
+	class_weight = [w_class0,w_class1]
 	# RESET variables
 	manager = multiprocessing.Manager()
 	loss_array = manager.list()
@@ -207,9 +211,9 @@ def train(B,theta_learn,y):
 		start = i*n_feed
 		end   = (i+1)*n_feed
 		if i==(n_feed-1): 	
-			p = multiprocessing.Process(target=get_loss_and_gradient,args=(B[start:,:],y[start:],loss_array,gradient_array,))
+			p = multiprocessing.Process(target=get_loss_and_gradient,args=(B[start:,:],y[start:],class_weight,loss_array,gradient_array,))
 		else:
-			p = multiprocessing.Process(target=get_loss_and_gradient,args=(B[start:end,:],y[start:end],loss_array,gradient_array,))	
+			p = multiprocessing.Process(target=get_loss_and_gradient,args=(B[start:end,:],y[start:end],class_weight,loss_array,gradient_array,))	
 		jobs.append(p)
 		p.start()
 
@@ -252,9 +256,9 @@ if __name__ == '__main__':
 		
 		theta_learn = train(B,theta_learn,y)	
 		# TEST
-			if (n_file+1)%testEVERY==0:
-			accuracy[i+1] = test_accuracy(theta_learn)
-			print('Accuracy: ' + str(accuracy[i+1]))
+		if (n_file+1)%testEVERY==0:
+			accuracy[n_file+1] = test_accuracy(theta_learn)
+			print('Accuracy: ' + str(accuracy[n_file+1]))
 
 	# Plot the results		
 	for i in range(len(accuracy)):
