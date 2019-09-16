@@ -25,7 +25,6 @@ from multiprocessing.dummy import Pool as ThreadPool
 import threading
 import multiprocessing
 
-## GLOBAL VARIABLES
 
 def TTN_edge_forward(edge,theta_learn):
 	# Takes the input and learning variables and applies the
@@ -75,7 +74,7 @@ def TTN_edge_forward(edge,theta_learn):
 def TTN_edge_back(input_,theta_learn):
 	# This function calculates the gradients for all learning 
 	# variables numerically and updates them accordingly.
-	# TODO: need to choose epislon properly
+	# TODO: need to choose epsilon properly
 	epsilon = 0.05 # to take derivative
 	gradient = np.zeros(len(theta_learn))
 	update = np.zeros(len(theta_learn))
@@ -93,11 +92,6 @@ def TTN_edge_back(input_,theta_learn):
 		## Bring theta to its original value
 		theta_learn[i] = (theta_learn[i] + epsilon)%(2*np.pi)
 	
-	## UPDATE theta_learn
-	#print('gradient:' + str(gradient))
-	#update = lr*2*error*gradient
-	#print('update:' + str(update))
-	#theta_learn = (theta_learn - update)%(2*np.pi)
 	return gradient
 #######################################################
 def normalize(B):
@@ -180,9 +174,10 @@ def get_loss_and_gradient(edge_array,y,class_weight,loss_array,gradient_array):
 	# TODO: Need to add weighted loss
 	local_loss = 0
 	local_gradients = np.zeros(len(theta_learn))
+	#print('Edge Array Size: ' + str(len(edge_array)))
 	for i in range(len(edge_array)):
 		error 	    = TTN_edge_forward(edge_array[i],theta_learn) - y[i]
-		loss  	    = (error**2)*class_weight[y[i]]
+		loss  	    = (error**2)*class_weight[int(y[i])]
 		local_loss = local_loss + loss
 		local_gradients = local_gradients + 2*error*TTN_edge_back(edge_array[i],theta_learn)
 	loss_array.append(local_loss)
@@ -194,7 +189,7 @@ def train(B,theta_learn,y):
 	jobs 	     = []
 	n_threads    = 4
 	n_edges      = len(y)
-	n_feed       = 1 #n_edges//n_threads
+	n_feed       = n_edges//n_threads
 	n_class1     = sum(y)
 	n_class0     = n_edges - n_class1
 	w_class1     = 1 - n_class1/n_edges ## Need a better way to weight classes
@@ -207,18 +202,22 @@ def train(B,theta_learn,y):
 	# Learning variables
 	lr = 0.01
 	# RUN Multithread training
-	for i in range(n_threads):
-		start = i*n_feed
-		end   = (i+1)*n_feed
-		if i==(n_feed-1): 	
+	#print('Starting threads')
+	for thread in range(n_threads):
+		start = thread*n_feed
+		end   = (thread+1)*n_feed
+		if thread==(n_feed-thread): 	
 			p = multiprocessing.Process(target=get_loss_and_gradient,args=(B[start:,:],y[start:],class_weight,loss_array,gradient_array,))
 		else:
 			p = multiprocessing.Process(target=get_loss_and_gradient,args=(B[start:end,:],y[start:end],class_weight,loss_array,gradient_array,))	
 		jobs.append(p)
 		p.start()
+		#print('Thread: ' + str(thread) + ' started')
 
 	# WAIT for jobs to finish
-	for proc in jobs: proc.join()
+	for proc in jobs: 
+		proc.join()
+		#print('Thread ended')
 			
 	total_loss = sum(loss_array)
 	total_gradient = sum(gradient_array)
@@ -243,7 +242,8 @@ if __name__ == '__main__':
 	n_files = 16
 	testEVERY = 1
 	accuracy = np.zeros(round(n_files/testEVERY) + 1)
-	accuracy[i] = test_accuracy(theta_learn)
+	#accuracy[0] = test_accuracy(theta_learn)
+	print('Training is starting!')
 	for n_file in range(n_files):
 
 		data = HitGraphDataset(input_dir, n_files)
@@ -255,14 +255,17 @@ if __name__ == '__main__':
 		B 	  = map2angle(B)
 		
 		theta_learn = train(B,theta_learn,y)	
-		# TEST
+		# 
+		'''
 		if (n_file+1)%testEVERY==0:
 			accuracy[n_file+1] = test_accuracy(theta_learn)
 			print('Accuracy: ' + str(accuracy[n_file+1]))
-
+		'''
+	'''	
 	# Plot the results		
 	for i in range(len(accuracy)):
 		plt.scatter(i*testEVERY,accuracy[i])
 	#plt.show()
 	plt.savefig('png/Accuracy.png')
+	'''
 	print(theta_learn)
