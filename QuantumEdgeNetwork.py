@@ -149,7 +149,8 @@ def test_accuracy(theta_learn):
 	# due to time constraints
 	# TODO: Need to test properly
 	#input_dir = '/home/cenktuysuz/MyRepos/HepTrkX-quantum/data/hitgraphs'
-	input_dir = '/Users/cenk/Repos/HEPTrkX-quantum/data/hitgraphs_big'
+	#input_dir = '/Users/cenk/Repos/HEPTrkX-quantum/data/hitgraphs_big'
+	input_dir = 'D:\Documents\Repos\HepTrkX-quantum-master\data\hitgraphs_big'
 	data = HitGraphDataset(input_dir, 1)
 	X,Ro,Ri,y = data[0]
 	bo   = np.dot(Ro.T, X)
@@ -238,7 +239,8 @@ if __name__ == '__main__':
 	
 	theta_learn = np.random.rand(11)*np.pi*2
 	#input_dir = '/home/cenktuysuz/MyRepos/HepTrkX-quantum/data/hitgraphs'
-	input_dir = '/Users/cenk/Repos/HEPTrkX-quantum/data/hitgraphs_big'
+	#input_dir = '/Users/cenk/Repos/HEPTrkX-quantum/data/hitgraphs_big'
+	input_dir = 'D:\Documents\Repos\HepTrkX-quantum-master\data\hitgraphs_big'
 	n_files = 16
 	testEVERY = 1
 	accuracy = np.zeros(round(n_files/testEVERY) + 1)
