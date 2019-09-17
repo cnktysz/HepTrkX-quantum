@@ -5,24 +5,9 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-from qiskit import(
-	QuantumCircuit,
-	QuantumRegister,
-	ClassicalRegister,
-	execute,
-	BasicAer)
-from qiskit.aqua.operator import Operator
-from qiskit.aqua.components.initial_states import Zero
-from qiskit.visualization import plot_histogram
-
+from qiskit import *
 from datasets.hitgraphs import HitGraphDataset
 import sys
-from dask.distributed import Client, progress
-import dask.array as da 
-from multiprocessing import cpu_count
-from multiprocessing import Pool
-from multiprocessing.dummy import Pool as ThreadPool
-import threading
 import multiprocessing
 
 
@@ -150,7 +135,7 @@ def test_accuracy(theta_learn):
 	# TODO: Need to test properly
 	#input_dir = '/home/cenktuysuz/MyRepos/HepTrkX-quantum/data/hitgraphs'
 	#input_dir = '/Users/cenk/Repos/HEPTrkX-quantum/data/hitgraphs_big'
-	input_dir = 'D:\Documents\Repos\HepTrkX-quantum-master\data\hitgraphs_big'
+	input_dir = '\data\hitgraphs_big'
 	data = HitGraphDataset(input_dir, 1)
 	X,Ro,Ri,y = data[0]
 	bo   = np.dot(Ro.T, X)
@@ -171,7 +156,7 @@ def test_accuracy(theta_learn):
 	print('Theta_learn: ' + str(theta_learn))
 	return acc
 
-def get_loss_and_gradient(edge_array,y,class_weight,loss_array,gradient_array):
+def get_loss_and_gradient(edge_array,y,theta_learn,class_weight,loss_array,gradient_array):
 	# TODO: Need to add weighted loss
 	local_loss = 0
 	local_gradients = np.zeros(len(theta_learn))
@@ -188,7 +173,7 @@ def get_loss_and_gradient(edge_array,y,class_weight,loss_array,gradient_array):
 
 def train(B,theta_learn,y):
 	jobs 	     = []
-	n_threads    = 4
+	n_threads    = 8
 	n_edges      = len(y)
 	n_feed       = n_edges//n_threads
 	n_class1     = sum(y)
@@ -201,16 +186,16 @@ def train(B,theta_learn,y):
 	loss_array = manager.list()
 	gradient_array = manager.list()
 	# Learning variables
-	lr = 0.01
+	lr = 1
 	# RUN Multithread training
-	#print('Starting threads')
+	#print('Total edge: ' + str(n_edges))
 	for thread in range(n_threads):
 		start = thread*n_feed
 		end   = (thread+1)*n_feed
-		if thread==(n_feed-thread): 	
-			p = multiprocessing.Process(target=get_loss_and_gradient,args=(B[start:,:],y[start:],class_weight,loss_array,gradient_array,))
+		if thread==(n_threads-1): 	
+			p = multiprocessing.Process(target=get_loss_and_gradient,args=(B[start:,:],y[start:],theta_learn,class_weight,loss_array,gradient_array,))
 		else:
-			p = multiprocessing.Process(target=get_loss_and_gradient,args=(B[start:end,:],y[start:end],class_weight,loss_array,gradient_array,))	
+			p = multiprocessing.Process(target=get_loss_and_gradient,args=(B[start:end,:],y[start:end],theta_learn,class_weight,loss_array,gradient_array,))	
 		jobs.append(p)
 		p.start()
 		#print('Thread: ' + str(thread) + ' started')
@@ -240,7 +225,7 @@ if __name__ == '__main__':
 	theta_learn = np.random.rand(11)*np.pi*2
 	#input_dir = '/home/cenktuysuz/MyRepos/HepTrkX-quantum/data/hitgraphs'
 	#input_dir = '/Users/cenk/Repos/HEPTrkX-quantum/data/hitgraphs_big'
-	input_dir = 'D:\Documents\Repos\HepTrkX-quantum-master\data\hitgraphs_big'
+	input_dir = 'data\hitgraphs_big'
 	n_files = 16
 	testEVERY = 1
 	accuracy = np.zeros(round(n_files/testEVERY) + 1)
@@ -250,7 +235,6 @@ if __name__ == '__main__':
 
 		data = HitGraphDataset(input_dir, n_files)
 		X,Ro,Ri,y = data[n_file]
-		n_edges   = len(y)
 		bo 	  = np.dot(Ro.T, X)
 		bi 	  = np.dot(Ri.T, X)
 		B 	  = np.concatenate((bo,bi),axis=1)
