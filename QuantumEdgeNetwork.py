@@ -214,7 +214,7 @@ def train(B,theta_learn,y):
 	print('Gradient averages' + str(average_gradient))
 	theta_learn = (theta_learn - lr*average_gradient)%(2*np.pi)
 	print('Update Angles :' + str(theta_learn))
-	return theta_learn
+	return theta_learn,average_loss
 ############################################################################################
 ##### MAIN ######
 #client = Client(processes=False, threads_per_worker=1, n_workers=8, memory_limit='2GB')
@@ -226,9 +226,11 @@ if __name__ == '__main__':
 	#input_dir = '/home/cenktuysuz/MyRepos/HepTrkX-quantum/data/hitgraphs'
 	#input_dir = '/Users/cenk/Repos/HEPTrkX-quantum/data/hitgraphs_big'
 	input_dir = 'data\hitgraphs_big'
-	n_files = 16
+	n_files = 16*10
 	testEVERY = 1
 	accuracy = np.zeros(round(n_files/testEVERY) + 1)
+	loss_log = np.zeros(n_files)
+	theta_log = np.zeros((n_files,11))
 	#accuracy[0] = test_accuracy(theta_learn)
 	print('Training is starting!')
 	for n_file in range(n_files):
@@ -240,18 +242,28 @@ if __name__ == '__main__':
 		B 	  = np.concatenate((bo,bi),axis=1)
 		B 	  = map2angle(B)
 		
-		theta_learn = train(B,theta_learn,y)	
+		theta_learn,loss_log[n_file] = train(B,theta_learn,y)
+		theta_log[n_file,:] = theta_learn	
 		# 
 		'''
 		if (n_file+1)%testEVERY==0:
 			accuracy[n_file+1] = test_accuracy(theta_learn)
 			print('Accuracy: ' + str(accuracy[n_file+1]))
 		'''
-	'''	
-	# Plot the results		
-	for i in range(len(accuracy)):
-		plt.scatter(i*testEVERY,accuracy[i])
-	#plt.show()
-	plt.savefig('png/Accuracy.png')
-	'''
-	print(theta_learn)
+	
+		# Plot the results	
+		plt.clf()	
+		x = [i for i  in range(n_file+1)]
+		plt.plot(x,loss_log[:n_file+1],marker='o')
+		plt.xlabel('Update')
+		plt.ylabel('Loss')
+		plt.savefig('png/statistics_loss.png')
+
+		plt.clf()
+		for i in range(11):
+			plt.plot(x,theta_log[:n_file+1,i],marker='o',label=r'$\theta_{'+str(i)+'}$')
+		plt.xlabel('Update')
+		plt.ylabel(r'Angle (0 - 2$\pi$)')
+		plt.savefig('png/statistics_angle.png')
+	
+
