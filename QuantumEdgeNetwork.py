@@ -10,7 +10,6 @@ from datasets.hitgraphs import HitGraphDataset
 import sys
 import multiprocessing
 
-
 def TTN_edge_forward(edge,theta_learn):
 	# Takes the input and learning variables and applies the
 	# network to obtain the output
@@ -48,19 +47,19 @@ def TTN_edge_forward(edge,theta_learn):
 	circuit.measure(q[4],c)
 
 	#circuit.draw(filename='circuit.png')
-	result = execute(circuit, backend, shots=100).result()
+	result = execute(circuit, backend, shots=1000).result()
 	counts = result.get_counts(circuit)
 	out    = 0
 	for key in counts:
 		if key=='1':
-			out = counts[key]/100
+			out = counts[key]/1000
 	return(out)
 
 def TTN_edge_back(input_,theta_learn):
 	# This function calculates the gradients for all learning 
 	# variables numerically and updates them accordingly.
 	# TODO: need to choose epsilon properly
-	epsilon = 0.05 # to take derivative
+	epsilon = np.pi/2 # to take derivative
 	gradient = np.zeros(len(theta_learn))
 	update = np.zeros(len(theta_learn))
 	for i in range(len(theta_learn)):
@@ -157,7 +156,6 @@ def test_accuracy(theta_learn):
 	return acc
 
 def get_loss_and_gradient(edge_array,y,theta_learn,class_weight,loss_array,gradient_array):
-	# TODO: Need to add weighted loss
 	local_loss = 0
 	local_gradients = np.zeros(len(theta_learn))
 	#print('Edge Array Size: ' + str(len(edge_array)))
@@ -225,7 +223,7 @@ if __name__ == '__main__':
 	theta_learn = np.random.rand(11)*np.pi*2
 	#input_dir = '/home/cenktuysuz/MyRepos/HepTrkX-quantum/data/hitgraphs'
 	#input_dir = '/Users/cenk/Repos/HEPTrkX-quantum/data/hitgraphs_big'
-	input_dir = 'data\hitgraphs_big'
+	input_dir = 'data/hitgraphs_big'
 	n_files = 16*10
 	testEVERY = 1
 	accuracy = np.zeros(round(n_files/testEVERY) + 1)
