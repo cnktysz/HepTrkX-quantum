@@ -79,12 +79,12 @@ def TTN_edge_back(input_,theta_learn):
 def map2angle(B):
 	# Maps input features to 0-2PI
 	n_section = 8
-	r_min 	  = 0
+	r_min     = 0
 	r_max     = 1.200
 	phi_min   = -np.pi/n_section
 	phi_max   = np.pi/n_section
-	z_min 	  = -1.200
-	z_max 	  = 1.200
+	z_min     = -1.200
+	z_max     = 1.200
 	B[:,0] = 2*np.pi * (B[:,0]-r_min)/(r_max-r_min) 
 	B[:,1] = 2*np.pi * (B[:,1]-phi_min)/(phi_max-phi_min) 
 	B[:,2] = 2*np.pi * (B[:,2]-z_min)/(z_max-z_min) 
@@ -92,42 +92,45 @@ def map2angle(B):
 	B[:,4] = 2*np.pi * (B[:,4]-phi_min)/(phi_max-phi_min) 
 	B[:,5] = 2*np.pi * (B[:,5]-z_min)/(z_max-z_min)
 	return B
-def get_loss_and_gradient(edge_array,y,theta_learn,class_weight,loss_array,update_array):
-	local_loss 	   = 0.
+def get_loss_and_gradient(edge_array,y,theta_learn,class_weight,loss_array,gradient_array,update_array):
+	local_loss     = 0.
 	local_gradient = np.zeros(len(theta_learn))
 	local_update   = np.zeros(len(theta_learn))
 	#print('Edge Array Size: ' + str(len(edge_array)))
 	for i in range(len(edge_array)):
-		error 	       = TTN_edge_forward(edge_array[i],theta_learn) - y[i]
-		loss  	       = (error**2)*class_weight[int(y[i])]
+		error          = TTN_edge_forward(edge_array[i],theta_learn) - y[i]
+		loss           = (error**2)*class_weight[int(y[i])]
 		local_loss     += loss
-		local_gradient = TTN_edge_back(edge_array[i],theta_learn)
-		local_update   += 2*error*local_gradient
+		gradient       = TTN_edge_back(edge_array[i],theta_learn)
+		local_gradient += gradient
+		local_update   += 2*error*gradient
 		#print('Item: ' + str(i) + ' Loss: ' + str(loss))
 	loss_array.append(local_loss)
+	gradient_array.append(local_gradient)
 	update_array.append(local_update)
 def train(B,theta_learn,y):
-	jobs 	     = []
+	jobs         = []
 	n_threads    = 8
 	n_edges      = len(y)
 	n_feed       = n_edges//n_threads
-	n_class 	 = [n_edges - sum(y), sum(y)]
+	n_class      = [n_edges - sum(y), sum(y)]
 	class_weight = [n_edges/(n_class[0]*2), n_edges/(n_class[1]*2)]
 	# RESET variables
-	manager = multiprocessing.Manager()
-	loss_array = manager.list()
-	update_array = manager.list()
+	manager        = multiprocessing.Manager()
+	loss_array     = manager.list()
+	gradient_array = manager.list()
+	update_array   = manager.list()
 	# Learning variables
-	lr = 1
+	lr = 100
 	# RUN Multithread training
 	#print('Total edge: ' + str(n_edges))
 	for thread in range(n_threads):
 		start = thread*n_feed
 		end   = (thread+1)*n_feed
-		if thread==(n_threads-1): 	
-			p = multiprocessing.Process(target=get_loss_and_gradient,args=(B[start:,:],y[start:],theta_learn,class_weight,loss_array,update_array,))
+		if thread==(n_threads-1):   
+			p = multiprocessing.Process(target=get_loss_and_gradient,args=(B[start:,:],y[start:],theta_learn,class_weight,loss_array,gradient_array,update_array,))
 		else:
-			p = multiprocessing.Process(target=get_loss_and_gradient,args=(B[start:end,:],y[start:end],theta_learn,class_weight,loss_array,update_array,))	
+			p = multiprocessing.Process(target=get_loss_and_gradient,args=(B[start:end,:],y[start:end],theta_learn,class_weight,loss_array,gradient_array,update_array,))   
 		jobs.append(p)
 		p.start()
 		#print('Thread: ' + str(thread) + ' started')
@@ -137,15 +140,18 @@ def train(B,theta_learn,y):
 		proc.join()
 		#print('Thread ended')
 			
-	total_loss = sum(loss_array)
-	total_update = sum(update_array)
+	total_loss     = sum(loss_array)
+	total_gradient = sum(gradient_array)
+	total_update   = sum(update_array)
 	## UPDATE WEIGHTS
-	average_loss = total_loss/n_edges
-	average_update = total_update/n_edges
-	theta_learn = (theta_learn - lr*average_update)%(2*np.pi)
-	print('Average Loss: ' + str(round(average_loss,3)))
-	print('Gradient averages' + str(round(average_update,3)))
-	print('Update Angles :' + str(round(theta_learn,3)))
+	average_loss     = total_loss/n_edges
+	average_gradient = total_gradient/n_edges
+	average_update   = total_update/n_edges
+	theta_learn       = (theta_learn - lr*average_update)%(2*np.pi)
+	print('Average Loss: '      + str(average_loss)     )
+	print('Average Gradients: ' + str(average_gradient) )
+	print('Average Updates: '   + str(average_update)   )
+	print('Updated Angles : '   + str(theta_learn)      )
 	'''
 	with open('log_gradients.csv', 'a') as f:
 			f.write('%.4f\n' % (average_update))
@@ -173,19 +179,19 @@ if __name__ == '__main__':
 		t0 = time.time()
 		data = HitGraphDataset(input_dir, n_files)
 		X,Ro,Ri,y = data[n_file]
-		bo 	  = np.dot(Ro.T, X)
-		bi 	  = np.dot(Ri.T, X)
-		B 	  = np.concatenate((bo,bi),axis=1)
-		B 	  = map2angle(B)
+		bo    = np.dot(Ro.T, X)
+		bi    = np.dot(Ri.T, X)
+		B     = np.concatenate((bo,bi),axis=1)
+		B     = map2angle(B)
 		
 		theta_learn,loss_log[n_file] = train(B,theta_learn,y)
-		theta_log[n_file,:] = theta_learn	
+		theta_log[n_file,:] = theta_learn   
 		t = time.time() - t0
 		with open('log_loss.csv', 'a') as f:
 			f.write('%d, %.4f, %.2d, %.2d\n' % (n_file+1, loss_log[n_file], t / 60, t % 60))
 
-		# Plot the results	
-		plt.clf()	
+		# Plot the results  
+		plt.clf()   
 		x = [(i+1) for i  in range(n_file+1)]
 		plt.plot(x,loss_log[:n_file+1],marker='o')
 		plt.xlabel('Update')
