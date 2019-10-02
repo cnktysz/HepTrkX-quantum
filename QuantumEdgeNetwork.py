@@ -72,7 +72,7 @@ def TTN_edge_back(input_,theta_learn):
 		## Evaluate
 		out_minus = TTN_edge_forward(input_,theta_learn)
 		# Compute the gradient numerically
-		gradient[i] = (out_plus-out_minus)/(2*epsilon)
+		gradient[i] = (out_plus-out_minus)/2
 		## Bring theta to its original value
 		theta_learn[i] = (theta_learn[i] + epsilon)%(2*np.pi)
 	return gradient
