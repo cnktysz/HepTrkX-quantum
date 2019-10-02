@@ -142,12 +142,14 @@ def train(B,theta_learn,y):
 	## UPDATE WEIGHTS
 	average_loss = total_loss/n_edges
 	average_update = total_update/n_edges
-	print('Average Loss: ' + str(average_loss))
-	print('Gradient averages' + str(average_update))
 	theta_learn = (theta_learn - lr*average_update)%(2*np.pi)
-	print('Update Angles :' + str(theta_learn))
+	print('Average Loss: ' + str(round(average_loss,3)))
+	print('Gradient averages' + str(round(average_update,3)))
+	print('Update Angles :' + str(round(theta_learn,3)))
+	'''
 	with open('log_gradients.csv', 'a') as f:
 			f.write('%.4f\n' % (average_update))
+	'''
 	return theta_learn,average_loss
 ############################################################################################
 ##### MAIN ######
@@ -182,15 +184,6 @@ if __name__ == '__main__':
 		with open('log_loss.csv', 'a') as f:
 			f.write('%d, %.4f, %.2d, %.2d\n' % (n_file+1, loss_log[n_file], t / 60, t % 60))
 
-		
-
-		# 
-		'''
-		if (n_file+1)%testEVERY==0:
-			accuracy[n_file+1] = test_accuracy(theta_learn)
-			print('Accuracy: ' + str(accuracy[n_file+1]))
-		'''
-	
 		# Plot the results	
 		plt.clf()	
 		x = [(i+1) for i  in range(n_file+1)]
