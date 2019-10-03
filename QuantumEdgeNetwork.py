@@ -78,19 +78,18 @@ def TTN_edge_back(input_,theta_learn):
 	return gradient
 def map2angle(B):
 	# Maps input features to 0-2PI
-	n_section = 8
-	r_min     = 0
-	r_max     = 1.200
-	phi_min   = -np.pi/n_section
-	phi_max   = np.pi/n_section
-	z_min     = -1.200
-	z_max     = 1.200
-	B[:,0] = 2*np.pi * (B[:,0]-r_min)/(r_max-r_min) 
-	B[:,1] = 2*np.pi * (B[:,1]-phi_min)/(phi_max-phi_min) 
-	B[:,2] = 2*np.pi * (B[:,2]-z_min)/(z_max-z_min) 
-	B[:,3] = 2*np.pi * (B[:,3]-r_min)/(r_max-r_min) 
-	B[:,4] = 2*np.pi * (B[:,4]-phi_min)/(phi_max-phi_min) 
-	B[:,5] = 2*np.pi * (B[:,5]-z_min)/(z_max-z_min)
+	r_min     = 0.
+	r_max     = 1.
+	phi_min   = -1.
+	phi_max   = 1.
+	z_min     = 0.
+	z_max     = 1.2
+	B[:,0] =  (B[:,0]-r_min)/(r_max-r_min) 
+	B[:,1] =  (B[:,1]-phi_min)/(phi_max-phi_min) 
+	B[:,2] =  (B[:,2]-z_min)/(z_max-z_min) 
+	B[:,3] =  (B[:,3]-r_min)/(r_max-r_min) 
+	B[:,4] =  (B[:,4]-phi_min)/(phi_max-phi_min) 
+	B[:,5] =  (B[:,5]-z_min)/(z_max-z_min)
 	return B
 def get_loss_and_gradient(edge_array,y,theta_learn,class_weight,loss_array,gradient_array,update_array):
 	local_loss     = 0.
@@ -169,16 +168,17 @@ if __name__ == '__main__':
 	#input_dir = '/Users/cenk/Repos/HEPTrkX-quantum/data/hitgraphs_big'
 	input_dir = 'data\hitgraphs_big'
 	n_files = 16*100
-	testEVERY = 1
-	accuracy = np.zeros(round(n_files/testEVERY) + 1)
+	data = HitGraphDataset(input_dir, n_files)
 	loss_log = np.zeros(n_files)
 	theta_log = np.zeros((n_files,11))
+	epoch = 1
 	#accuracy[0] = test_accuracy(theta_learn)
 	print('Training is starting!')
 	for n_file in range(n_files):
 		t0 = time.time()
-		data = HitGraphDataset(input_dir, n_files)
 		X,Ro,Ri,y = data[n_file]
+		if n_file%2==0: # Section Correction: even files have negative z 
+			X[:,2] = -X[:,2]
 		bo    = np.dot(Ro.T, X)
 		bi    = np.dot(Ri.T, X)
 		B     = np.concatenate((bo,bi),axis=1)
