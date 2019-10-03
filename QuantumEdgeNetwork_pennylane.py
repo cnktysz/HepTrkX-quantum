@@ -55,21 +55,79 @@ def map2angle(B):
 	B[:,4] =  (B[:,4]-phi_min)/(phi_max-phi_min) 
 	B[:,5] =  (B[:,5]-z_min)/(z_max-z_min)
 	return B
+
+def loss_fn(edge_array,y,theta_learn,class_weight,loss_array):
+	loss = 0.
+	for i in range(len(y)):
+		loss +=(((TTN_edge_forward(edge_array[i],theta_learn)+1)/2 - label)**2/n_edges)*class_weight[int(y[i])]
+	loss_array.append(loss)
+
 def cost_fn(edge_array,y,theta_learn):
+	jobs         = []
+	n_threads    = 8
 	n_edges      = len(y)
+	n_feed       = n_edges//n_threads
 	n_class      = [n_edges - sum(y), sum(y)]
 	class_weight = [n_edges/(n_class[0]*2), n_edges/(n_class[1]*2)]
-	loss = 0.
-	for i in range(n_edges):
-		loss +=(((TTN_edge_forward(edge_array[i],theta_learn)+1)/2 - y[i])**2/n_edges)*class_weight[int(y[i])]
-	return loss
+	manager        = multiprocessing.Manager()
+	loss_array     = manager.list()
+	for thread in range(n_threads):
+		start = thread*n_feed
+		end   = (thread+1)*n_feed
+		if thread==(n_threads-1):   
+			p = multiprocessing.Process(target=loss_fn,args=(edge_array[start:,:],y[start:],theta_learn,class_weight,loss_array,))
+		else:
+			p = multiprocessing.Process(target=loss_fn,args=(edge_array[start:end,:],y[start:end],theta_learn,class_weight,loss_array,))   
+		jobs.append(p)
+		p.start()
+	# WAIT for jobs to finish
+	for proc in jobs: 
+		proc.join()
 
-def grad_fn(edge_array,theta_learn):
+	avg_loss = loss_array.mean()	
+	with open('log_loss.csv', 'a') as f:
+		f.write('%.4f\n' % avg_loss)	
+
+	return avg_loss
+
+
+def gradient(edge_array,y,theta_learn,class_weight,gradient_array):
 	grad = np.zeros(len(theta_learn))
 	for i in range(len(edge_array)):
 		dcircuit = qml.grad(TTN_edge_forward, argnum=1)
-		grad += dcircuit(edge_array[i],theta_learn)/len(edge_array)
-	return grad	
+		grad += (dcircuit(edge_array[i],theta_learn)/len(edge_array))*class_weight[int(y[i])]
+	gradient_array.append(grad)	
+
+def grad_fn(edge_array,y,theta_learn):
+	jobs         = []
+	n_threads    = 8
+	n_edges      = len(y)
+	n_feed       = n_edges//n_threads
+	n_class      = [n_edges - sum(y), sum(y)]
+	class_weight = [n_edges/(n_class[0]*2), n_edges/(n_class[1]*2)]
+	manager        = multiprocessing.Manager()
+	gradient_array  = manager.list()
+	for thread in range(n_threads):
+		start = thread*n_feed
+		end   = (thread+1)*n_feed
+		if thread==(n_threads-1):   
+			p = multiprocessing.Process(target=gradient,args=(edge_array[start:,:],y[start:],theta_learn,class_weight,gradient_array,))
+		else:
+			p = multiprocessing.Process(target=gradient,args=(edge_array[start:end,:],y[start:end],theta_learn,class_weight,gradient_array,))   
+		jobs.append(p)
+		p.start()
+	# WAIT for jobs to finish
+	for proc in jobs: 
+		proc.join()
+
+	avg_grad = sum(gradient_array)/n_edges
+	with open('log_gradient.csv', 'a') as f:
+		for item in avg_grad:
+			f.write('%.4f,' % item)
+		f.write('\n')
+
+	return avg_grad	
+
 ############################################################################################
 ##### MAIN ######
 #client = Client(processes=False, threads_per_worker=1, n_workers=8, memory_limit='2GB')
@@ -89,7 +147,7 @@ if __name__ == '__main__':
 	
 	#accuracy[0] = test_accuracy(theta_learn)
 	print('Training is starting!')
-	opt = qml.GradientDescentOptimizer(stepsize=10)
+	opt = qml.GradientDescentOptimizer(stepsize=0.5)
 
 	for epoch in range(n_epoch): 
 		for n_file in range(n_files):
@@ -103,24 +161,13 @@ if __name__ == '__main__':
 			B     = map2angle(B)
 			
 			# Update learning variables
-			theta_learn = opt.step(lambda v: cost_fn(B,y,v),theta_learn,lambda z: grad_fn(B,theta_learn))
-			theta_log[n_file*epoch] = theta_learn
-			loss_log[n_file*epoch] = cost_fn(B,y,theta_learn)
+			theta_learn = opt.step(lambda v: cost_fn(B,y,v),theta_learn,lambda z: grad_fn(B,y,theta_learn))
+			theta_learn = theta_learn % (2*np.pi)
+			theta_log[n_file*epoch,:] = theta_learn
 			
-			t = time.time() - t0
-			with open('log_loss.csv', 'a') as f:
-				f.write('%d, %.4f, %.2d, %.2d\n' % (n_file+1, loss_log[n_file], t / 60, t % 60))
-
-
-
 			# Plot the result every update  
-			plt.clf()   
+		 
 			x = [(i+1) for i  in range(n_file*epoch+1)]
-			plt.plot(x,loss_log[:n_file*epoch+1],marker='o')
-			plt.xlabel('Update')
-			plt.ylabel('Loss')
-			plt.savefig('png\statistics_loss.png')
-
 			plt.clf()
 			for i in range(11):
 				plt.plot(x,theta_log[:n_file*epoch+1,i],marker='o',label=r'$\theta_{'+str(i)+'}$')
