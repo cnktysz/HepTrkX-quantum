@@ -147,9 +147,9 @@ def train(B,theta_learn,y):
 	average_gradient = total_gradient/n_edges
 	average_update   = total_update/n_edges
 	theta_learn       = (theta_learn - lr*average_update)%(2*np.pi)
-	print('Average Loss: '      + str(average_loss)     )
-	print('Average Gradients: ' + str(average_gradient) )
-	print('Average Updates: '   + str(average_update)   )
+	print('Loss: '      + str(average_loss)     )
+	print('Gradients: ' + str(average_gradient) )
+	print('Updates: '   + str(average_update)   )
 	print('Updated Angles : '   + str(theta_learn)      )
 	
 	with open('log_gradients.csv', 'a') as f:
@@ -170,13 +170,14 @@ if __name__ == '__main__':
 	input_dir = 'data\hitgraphs_big'
 	n_files = 16*100
 	data = HitGraphDataset(input_dir, n_files)
-	loss_log = np.zeros(n_files)
+	
 	theta_log = np.zeros((n_files,11))
 	#accuracy[0] = test_accuracy(theta_learn)
 	print('Training is starting!')
 	for epoch in range(1): 
 		for n_file in range(n_files):
 			t0 = time.time()
+			loss_log = np.zeros(n_files)
 			X,Ro,Ri,y = data[n_file]
 			if n_file%2==0: # Section Correction: even files have negative z 
 				X[:,2] = -X[:,2]
@@ -214,5 +215,6 @@ if __name__ == '__main__':
 			plt.xlabel('Update')
 			plt.ylabel(r'Angle (0 - 2$\pi$)')
 			plt.savefig('png\statistics_angle.png')
-	
+
+		average_epoch_loss = loss_log.mean()
 
