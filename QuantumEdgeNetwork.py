@@ -120,7 +120,7 @@ def train(B,theta_learn,y):
 	gradient_array = manager.list()
 	update_array   = manager.list()
 	# Learning variables
-	lr = 100
+	lr = 1
 	# RUN Multithread training
 	#print('Total edge: ' + str(n_edges))
 	for thread in range(n_threads):
@@ -151,10 +151,11 @@ def train(B,theta_learn,y):
 	print('Average Gradients: ' + str(average_gradient) )
 	print('Average Updates: '   + str(average_update)   )
 	print('Updated Angles : '   + str(theta_learn)      )
-	'''
+	
 	with open('log_gradients.csv', 'a') as f:
-			f.write('%.4f\n' % (average_update))
-	'''
+			for item in average_update:
+				f.write('%.4f, ' % item)
+			f.write('\n')	
 	return theta_learn,average_loss
 ############################################################################################
 ##### MAIN ######
@@ -171,38 +172,47 @@ if __name__ == '__main__':
 	data = HitGraphDataset(input_dir, n_files)
 	loss_log = np.zeros(n_files)
 	theta_log = np.zeros((n_files,11))
-	epoch = 1
 	#accuracy[0] = test_accuracy(theta_learn)
 	print('Training is starting!')
-	for n_file in range(n_files):
-		t0 = time.time()
-		X,Ro,Ri,y = data[n_file]
-		if n_file%2==0: # Section Correction: even files have negative z 
-			X[:,2] = -X[:,2]
-		bo    = np.dot(Ro.T, X)
-		bi    = np.dot(Ri.T, X)
-		B     = np.concatenate((bo,bi),axis=1)
-		B     = map2angle(B)
-		
-		theta_learn,loss_log[n_file] = train(B,theta_learn,y)
-		theta_log[n_file,:] = theta_learn   
-		t = time.time() - t0
-		with open('log_loss.csv', 'a') as f:
-			f.write('%d, %.4f, %.2d, %.2d\n' % (n_file+1, loss_log[n_file], t / 60, t % 60))
+	for epoch in range(1): 
+		for n_file in range(n_files):
+			t0 = time.time()
+			X,Ro,Ri,y = data[n_file]
+			if n_file%2==0: # Section Correction: even files have negative z 
+				X[:,2] = -X[:,2]
+			bo    = np.dot(Ro.T, X)
+			bi    = np.dot(Ri.T, X)
+			B     = np.concatenate((bo,bi),axis=1)
+			B     = map2angle(B)
+			
+			# Log learning variables
+			with open('log_learning.csv', 'a') as f:
+				for item in theta_learn:
+					f.write('%.4f,' % item)
+				f.write('\n')
 
-		# Plot the results  
-		plt.clf()   
-		x = [(i+1) for i  in range(n_file+1)]
-		plt.plot(x,loss_log[:n_file+1],marker='o')
-		plt.xlabel('Update')
-		plt.ylabel('Loss')
-		plt.savefig('png\statistics_loss.png')
+			# Update learning variables
+			theta_learn,loss_log[n_file] = train(B,theta_learn,y)
+			theta_log[n_file,:] = theta_learn   
 
-		plt.clf()
-		for i in range(11):
-			plt.plot(x,theta_log[:n_file+1,i],marker='o',label=r'$\theta_{'+str(i)+'}$')
-		plt.xlabel('Update')
-		plt.ylabel(r'Angle (0 - 2$\pi$)')
-		plt.savefig('png\statistics_angle.png')
+			# Log loss and duration
+			t = time.time() - t0
+			with open('log_loss.csv', 'a') as f:
+				f.write('%d, %.4f, %.2d, %.2d\n' % (n_file+1, loss_log[n_file], t / 60, t % 60))
+
+			# Plot the result every update  
+			plt.clf()   
+			x = [(i+1) for i  in range(n_file+1)]
+			plt.plot(x,loss_log[:n_file+1],marker='o')
+			plt.xlabel('Update')
+			plt.ylabel('Loss')
+			plt.savefig('png\statistics_loss.png')
+
+			plt.clf()
+			for i in range(11):
+				plt.plot(x,theta_log[:n_file+1,i],marker='o',label=r'$\theta_{'+str(i)+'}$')
+			plt.xlabel('Update')
+			plt.ylabel(r'Angle (0 - 2$\pi$)')
+			plt.savefig('png\statistics_angle.png')
 	
 
