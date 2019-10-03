@@ -13,7 +13,7 @@ import multiprocessing
 def TTN_edge_forward(edge,theta_learn):
 	# Takes the input and learning variables and applies the
 	# network to obtain the output
-	backend = BasicAer.get_backend('qasm_simulator')
+	
 	q       = QuantumRegister(len(edge))
 	c       = ClassicalRegister(1)
 	circuit = QuantumCircuit(q,c)
@@ -44,15 +44,16 @@ def TTN_edge_forward(edge,theta_learn):
 
 	circuit.ry(theta_learn[10],q[4])
 	
+	# Qasm Backend
 	circuit.measure(q[4],c)
-
-	#circuit.draw(filename='circuit.png')
+	backend = BasicAer.get_backend('qasm_simulator')
 	result = execute(circuit, backend, shots=1000).result()
 	counts = result.get_counts(circuit)
 	out    = 0
 	for key in counts:
 		if key=='1':
 			out = counts[key]/1000
+	
 	return(out)
 
 def TTN_edge_back(input_,theta_learn):
