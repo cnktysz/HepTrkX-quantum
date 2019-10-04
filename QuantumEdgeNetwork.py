@@ -101,7 +101,7 @@ def get_loss_and_gradient(edge_array,y,theta_learn,class_weight,loss_array,gradi
 		error          = TTN_edge_forward(edge_array[i],theta_learn) - y[i]
 		loss           = (error**2)*class_weight[int(y[i])]
 		local_loss     += loss
-		gradient       = TTN_edge_back(edge_array[i],theta_learn)
+		gradient       = TTN_edge_back(edge_array[i],theta_learn)*class_weight[int(y[i])]
 		local_gradient += gradient
 		local_update   += 2*error*gradient
 		#print('Item: ' + str(i) + ' Loss: ' + str(loss))

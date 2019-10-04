@@ -38,7 +38,7 @@ def TTN_edge_forward(edge,theta_learn):
 	qml.CNOT(wires=[3,4])
 	qml.RY(theta_learn[10],wires=4)
 		
-	return(qml.expval(qml.PauliZ(4)))
+	return(qml.expval(qml.PauliZ(wires=4)))
 
 def map2angle(B):
 	# Maps input features to 0-2PI
@@ -59,7 +59,7 @@ def map2angle(B):
 def loss_fn(edge_array,y,theta_learn,class_weight,loss_array):
 	loss = 0.
 	for i in range(len(y)):
-		loss +=(((TTN_edge_forward(edge_array[i],theta_learn)+1)/2 - label)**2/n_edges)*class_weight[int(y[i])]
+		loss +=(((TTN_edge_forward(edge_array[i],theta_learn)+1)/2 - y[i])**2)*class_weight[int(y[i])]
 	loss_array.append(loss)
 
 def cost_fn(edge_array,y,theta_learn):
@@ -84,18 +84,14 @@ def cost_fn(edge_array,y,theta_learn):
 	for proc in jobs: 
 		proc.join()
 
-	avg_loss = loss_array.mean()	
-	with open('log_loss.csv', 'a') as f:
-		f.write('%.4f\n' % avg_loss)	
-
-	return avg_loss
+	return sum(loss_array)/n_edges
 
 
 def gradient(edge_array,y,theta_learn,class_weight,gradient_array):
 	grad = np.zeros(len(theta_learn))
 	for i in range(len(edge_array)):
 		dcircuit = qml.grad(TTN_edge_forward, argnum=1)
-		grad += (dcircuit(edge_array[i],theta_learn)/len(edge_array))*class_weight[int(y[i])]
+		grad += dcircuit(edge_array[i],theta_learn)*class_weight[int(y[i])]
 	gradient_array.append(grad)	
 
 def grad_fn(edge_array,y,theta_learn):
@@ -135,7 +131,7 @@ def grad_fn(edge_array,y,theta_learn):
 #client
 if __name__ == '__main__':
 	
-	theta_learn = np.random.rand(11)*np.pi*2
+	theta_learn = np.random.rand(11)*np.pi*2 / np.sqrt(11)
 	#input_dir = '/home/cenktuysuz/MyRepos/HepTrkX-quantum/data/hitgraphs'
 	#input_dir = '/Users/cenk/Repos/HEPTrkX-quantum/data/hitgraphs_big'
 	input_dir = 'data\hitgraphs_big'
@@ -147,7 +143,8 @@ if __name__ == '__main__':
 	
 	#accuracy[0] = test_accuracy(theta_learn)
 	print('Training is starting!')
-	opt = qml.GradientDescentOptimizer(stepsize=0.5)
+	#opt = qml.GradientDescentOptimizer(stepsize=0.01)
+	opt = qml.AdamOptimizer(stepsize=0.01, beta1=0.9, beta2=0.99,eps=1e-08)
 
 	for epoch in range(n_epoch): 
 		for n_file in range(n_files):
@@ -163,15 +160,34 @@ if __name__ == '__main__':
 			# Update learning variables
 			theta_learn = opt.step(lambda v: cost_fn(B,y,v),theta_learn,lambda z: grad_fn(B,y,theta_learn))
 			theta_learn = theta_learn % (2*np.pi)
-			theta_log[n_file*epoch,:] = theta_learn
+			theta_log[n_file*(epoch+1),:] = theta_learn
 			
-			# Plot the result every update  
-		 
-			x = [(i+1) for i  in range(n_file*epoch+1)]
+			loss_log[n_file*(epoch+1)] = cost_fn(B,y,theta_learn)
+			t = time.time() - t0
+			print('Epoch: %d, Batch: %d, Loss: %.4f, Elapsed: %dm%ds' % (epoch+1, n_file+1, loss_log[n_file*(epoch+1)], t / 60, t % 60)  )
+			
+			# Log the result every update  
+
+			with open('log_theta.csv', 'a') as f:
+				for item in theta_learn:
+					f.write('%.4f,' % item)
+				f.write('\n')
+
+			with open('log_loss.csv', 'a') as f:
+				f.write('%.4f\n' % loss_log[n_file*(epoch+1)])	
+
+		 	# Plot the result every update  
+
+			x = [(i+1) for i  in range(n_file*(epoch+1)+1)]
 			plt.clf()
 			for i in range(11):
-				plt.plot(x,theta_log[:n_file*epoch+1,i],marker='o',label=r'$\theta_{'+str(i)+'}$')
+				plt.plot(x,theta_log[:n_file*(epoch+1)+1,i],marker='o',label=r'$\theta_{'+str(i)+'}$')
 			plt.xlabel('Update')
 			plt.ylabel(r'Angle (0 - 2$\pi$)')
 			plt.savefig('png\statistics_angle.png')
 	
+			plt.clf()
+			plt.plot(x,loss_log[:n_file*(epoch+1)+1],marker='o')
+			plt.xlabel('Update')
+			plt.ylabel('Loss')
+			plt.savefig('png\statistics_loss.png')
