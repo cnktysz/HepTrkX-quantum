@@ -164,21 +164,20 @@ def train(B,theta_learn,y):
 
 #client
 if __name__ == '__main__':
-	
-	theta_learn = np.random.rand(11)*np.pi*2
+	n_param = 11
+	theta_learn = np.random.rand(n_param)*np.pi*2 / np.sqrt(n_param)
 	#input_dir = '/home/cenktuysuz/MyRepos/HepTrkX-quantum/data/hitgraphs'
 	#input_dir = '/Users/cenk/Repos/HEPTrkX-quantum/data/hitgraphs_big'
 	input_dir = 'data\hitgraphs_big'
 	n_files = 16*100
 	data = HitGraphDataset(input_dir, n_files)
-	
+	loss_log = np.zeros(n_files)
 	theta_log = np.zeros((n_files,11))
 	#accuracy[0] = test_accuracy(theta_learn)
 	print('Training is starting!')
 	for epoch in range(1): 
 		for n_file in range(n_files):
 			t0 = time.time()
-			loss_log = np.zeros(n_files)
 			X,Ro,Ri,y = data[n_file]
 			if n_file%2==0: # Section Correction: even files have negative z 
 				X[:,2] = -X[:,2]
