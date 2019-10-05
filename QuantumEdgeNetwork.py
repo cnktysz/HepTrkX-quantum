@@ -148,12 +148,12 @@ def train(B,theta_learn,y):
 	average_gradient = total_gradient/n_edges
 	average_update   = total_update/n_edges
 	theta_learn       = (theta_learn - lr*average_update)%(2*np.pi)
-	print('Loss: '      + str(average_loss)     )
-	print('Gradients: ' + str(average_gradient) )
-	print('Updates: '   + str(average_update)   )
-	print('Updated Angles : '   + str(theta_learn)      )
+	#print('Loss: '      + str(average_loss)     )
+	#print('Gradients: ' + str(average_gradient) )
+	#print('Updates: '   + str(average_update)   )
+	#print('Updated Angles : '   + str(theta_learn)      )
 	
-	with open('log_gradients.csv', 'a') as f:
+	with open('logs/log_gradients.csv', 'a') as f:
 			for item in average_update:
 				f.write('%.4f, ' % item)
 			f.write('\n')	
@@ -168,14 +168,16 @@ if __name__ == '__main__':
 	theta_learn = np.random.rand(n_param)*np.pi*2 / np.sqrt(n_param)
 	#input_dir = '/home/cenktuysuz/MyRepos/HepTrkX-quantum/data/hitgraphs'
 	#input_dir = '/Users/cenk/Repos/HEPTrkX-quantum/data/hitgraphs_big'
-	input_dir = 'data\hitgraphs_big'
+	#input_dir = 'data\hitgraphs_big'
+	input_dir = 'data/hitgraphs_big'  
 	n_files = 16*100
+	n_epoch = 10
 	data = HitGraphDataset(input_dir, n_files)
-	loss_log = np.zeros(n_files)
-	theta_log = np.zeros((n_files,11))
+	loss_log = np.zeros(n_files*n_epoch)
+	theta_log = np.zeros((n_files*n_epoch,11))
 	#accuracy[0] = test_accuracy(theta_learn)
 	print('Training is starting!')
-	for epoch in range(1): 
+	for epoch in range(n_epoch): 
 		for n_file in range(n_files):
 			t0 = time.time()
 			X,Ro,Ri,y = data[n_file]
@@ -187,20 +189,28 @@ if __name__ == '__main__':
 			B     = map2angle(B)
 			
 			# Log learning variables
-			with open('log_learning.csv', 'a') as f:
+			with open('logs/log_theta.csv', 'a') as f:
 				for item in theta_learn:
 					f.write('%.4f,' % item)
 				f.write('\n')
 
 			# Update learning variables
-			theta_learn,loss_log[n_file] = train(B,theta_learn,y)
-			theta_log[n_file,:] = theta_learn   
+			theta_learn,loss_log[n_file*(epoch+1)] = train(B,theta_learn,y)
+			theta_log[n_file*(epoch+1),:] = theta_learn   
 
 			# Log loss and duration
 			t = time.time() - t0
-			with open('log_loss.csv', 'a') as f:
-				f.write('%d, %.4f, %.2d, %.2d\n' % (n_file+1, loss_log[n_file], t / 60, t % 60))
 
+			with open('logs/log_loss.csv', 'a') as f:
+				f.write('%.4f\n' % loss_log[n_file])
+			
+			with open('logs/summary.csv', 'a') as f:
+				f.write('Epoch: %d, Batch: %d, Loss: %.4f, Elapsed: %dm%ds', % (epoch+1, n_file+1, loss_log[n_file*(epoch+1)],t / 60, t % 60) )
+
+			print('Epoch: %d, Batch: %d, Loss: %.4f, Elapsed: %dm%ds', % (epoch+1, n_file+1, loss_log[n_file*(epoch+1)],t / 60, t % 60) )
+
+
+			"""	
 			# Plot the result every update  
 			plt.clf()   
 			x = [(i+1) for i  in range(n_file+1)]
@@ -215,6 +225,5 @@ if __name__ == '__main__':
 			plt.xlabel('Update')
 			plt.ylabel(r'Angle (0 - 2$\pi$)')
 			plt.savefig('png\statistics_angle.png')
-
-		average_epoch_loss = loss_log.mean()
+			"""
 
