@@ -6,7 +6,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from qiskit import *
-from datasets.hitgraphs import HitGraphDataset
+from datasets.hitgraphs import get_datasets
 import sys, time
 import multiprocessing
 
@@ -96,18 +96,21 @@ def get_loss_and_gradient(edge_array,y,theta_learn,class_weight,loss_array,gradi
 	local_loss     = 0.
 	local_gradient = np.zeros(len(theta_learn))
 	local_update   = np.zeros(len(theta_learn))
-	#print('Edge Array Size: ' + str(len(edge_array)))
 	for i in range(len(edge_array)):
-		error          = TTN_edge_forward(edge_array[i],theta_learn) - y[i]
+		error          = (TTN_edge_forward(edge_array[i],theta_learn) - y[i])
 		loss           = (error**2)*class_weight[int(y[i])]
 		local_loss     += loss
 		gradient       = TTN_edge_back(edge_array[i],theta_learn)*class_weight[int(y[i])]
 		local_gradient += gradient
 		local_update   += 2*error*gradient
-		#print('Item: ' + str(i) + ' Loss: ' + str(loss))
 	loss_array.append(local_loss)
 	gradient_array.append(local_gradient)
 	update_array.append(local_update)
+def get_accuracy(edge_array,y,theta_learn,error_array):
+	total_acc     = 0.
+	for i in range(len(edge_array)):
+		total_acc += abs(TTN_edge_forward(edge_array[i],theta_learn)*class_weight[int(y[i])] - y[i])
+	error_array.append(total_acc)
 def train(B,theta_learn,y):
 	jobs         = []
 	n_threads    = 28*2
@@ -158,6 +161,44 @@ def train(B,theta_learn,y):
 				f.write('%.4f, ' % item)
 			f.write('\n')	
 	return theta_learn,average_loss
+def test_validation(valid_data,theta_learn,n_valid):
+	jobs         = []
+	n_threads    = 28*2
+	accuracy = 0.
+	for n_test in range(n_valid):
+		n_edges      = len(y)
+		n_feed       = n_edges//n_threads
+		n_class      = [n_edges - sum(y), sum(y)]
+		class_weight = [n_edges/(n_class[0]*2), n_edges/(n_class[1]*2)]
+		# RESET variables
+		manager        = multiprocessing.Manager()
+		error_array     = manager.list()
+		# RUN Multithread training
+		for thread in range(n_threads):
+			start = thread*n_feed
+			end   = (thread+1)*n_feed
+			if thread==(n_threads-1):   
+				p = multiprocessing.Process(target=get_accuracy,args=(B[start:,:],y[start:],theta_learn,class_weight,error_array,))
+			else:
+				p = multiprocessing.Process(target=get_accuracy,args=(B[start:end,:],y[start:end],theta_learn,class_weight,error_array,))   
+			jobs.append(p)
+			p.start()
+		# WAIT for jobs to finish
+		for proc in jobs: 
+			proc.join()
+		accuracy += (sum(error_array)/n_edges) / n_valid
+
+	with open('logs/log_validation.csv', 'a') as f:
+				f.write('%.4f\n' % accuracy)
+	return accuracy
+def preprocess(data):
+	X,Ro,Ri,y = train_data[n_file]
+	if min(X[:,2])<0: 
+		X[:,2] = -X[:,2]
+	bo    = np.dot(Ro.T, X)
+	bi    = np.dot(Ri.T, X)
+	B     = np.concatenate((bo,bi),axis=1)
+	return map2angle(B)
 ############################################################################################
 ##### MAIN ######
 #client = Client(processes=False, threads_per_worker=1, n_workers=8, memory_limit='2GB')
@@ -166,49 +207,42 @@ def train(B,theta_learn,y):
 if __name__ == '__main__':
 	n_param = 11
 	theta_learn = np.random.rand(n_param)*np.pi*2 / np.sqrt(n_param)
-	#input_dir = '/home/cenktuysuz/MyRepos/HepTrkX-quantum/data/hitgraphs'
-	#input_dir = '/Users/cenk/Repos/HEPTrkX-quantum/data/hitgraphs_big'
-	#input_dir = 'data\hitgraphs_big'
 	input_dir = 'data/hitgraphs_big'  
 	n_files = 16*100
-	n_epoch = 10
-	data = HitGraphDataset(input_dir, n_files)
+	n_epoch = 1
+	TEST_every = 50
+	train_data, valid_data = get_datasets(input_dir, n_files*0.9, n_files*0.1)
 	loss_log = np.zeros(n_files*n_epoch)
 	theta_log = np.zeros((n_files*n_epoch,11))
-	#accuracy[0] = test_accuracy(theta_learn)
+	valid_accuracy = np.zeros((n_files*0.9 / TEST_every )*n_epoch + 2)
+	valid_accuracy[0] = test_validation(valid_data,theta_learn)
 	print('Training is starting!')
 	for epoch in range(n_epoch): 
 		for n_file in range(n_files):
 			t0 = time.time()
-			X,Ro,Ri,y = data[n_file]
-			if n_file%2==0: # Section Correction: even files have negative z 
-				X[:,2] = -X[:,2]
-			bo    = np.dot(Ro.T, X)
-			bi    = np.dot(Ri.T, X)
-			B     = np.concatenate((bo,bi),axis=1)
-			B     = map2angle(B)
-			
+
+			B = preprocess(train_data[n_file])
+			theta_learn,loss_log[n_file*(epoch+1)] = train(B,theta_learn,y)
+			theta_log[n_file*(epoch+1),:] = theta_learn   
+
+			# Logs
+			t = time.time() - t0
+
 			# Log learning variables
 			with open('logs/log_theta.csv', 'a') as f:
 				for item in theta_learn:
 					f.write('%.4f,' % item)
 				f.write('\n')
-
-			# Update learning variables
-			theta_learn,loss_log[n_file*(epoch+1)] = train(B,theta_learn,y)
-			theta_log[n_file*(epoch+1),:] = theta_learn   
-
-			# Log loss and duration
-			t = time.time() - t0
-
 			with open('logs/log_loss.csv', 'a') as f:
 				f.write('%.4f\n' % loss_log[n_file])
-			
 			with open('logs/summary.csv', 'a') as f:
 				f.write('Epoch: %d, Batch: %d, Loss: %.4f, Elapsed: %dm%ds\n' % (epoch+1, n_file+1, loss_log[n_file*(epoch+1)],t / 60, t % 60) )
-
 			print("Epoch: %d, Batch: %d, Loss: %.4f, Elapsed: %dm%ds" % (epoch+1, n_file+1, loss_log[n_file*(epoch+1)],t / 60, t % 60) )
 
+
+			if (n_file+1)%TEST_every==0:
+				valid_accuracy[(n_file+1)/TEST_every] = test_validation(valid_data,theta_learn,n_files*0.1)
+				t = time.time() - t0
 
 			"""	
 			# Plot the result every update  
@@ -226,4 +260,7 @@ if __name__ == '__main__':
 			plt.ylabel(r'Angle (0 - 2$\pi$)')
 			plt.savefig('png\statistics_angle.png')
 			"""
+	valid_accuracy[-1] = test_validation(valid_data,theta_learn)
+	print('Training Complete')
 
+	
