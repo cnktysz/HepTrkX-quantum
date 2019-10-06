@@ -151,11 +151,6 @@ def train(B,theta_learn,y):
 	average_gradient = total_gradient/n_edges
 	average_update   = total_update/n_edges
 	theta_learn       = (theta_learn - lr*average_update)%(2*np.pi)
-	#print('Loss: '      + str(average_loss)     )
-	#print('Gradients: ' + str(average_gradient) )
-	#print('Updates: '   + str(average_update)   )
-	#print('Updated Angles : '   + str(theta_learn)      )
-	
 	with open('logs/log_gradients.csv', 'a') as f:
 			for item in average_update:
 				f.write('%.4f, ' % item)
@@ -187,7 +182,7 @@ def test_validation(valid_data,theta_learn,n_valid):
 		for proc in jobs: 
 			proc.join()
 		accuracy += (sum(error_array)/n_edges) / n_valid
-
+	print('Validation Accuracy: %.4f' %(accuracy*100))
 	with open('logs/log_validation.csv', 'a') as f:
 				f.write('%.4f\n' % accuracy)
 	return accuracy
@@ -201,9 +196,6 @@ def preprocess(data):
 	return map2angle(B)
 ############################################################################################
 ##### MAIN ######
-#client = Client(processes=False, threads_per_worker=1, n_workers=8, memory_limit='2GB')
-
-#client
 if __name__ == '__main__':
 	n_param = 11
 	theta_learn = np.random.rand(n_param)*np.pi*2 / np.sqrt(n_param)
