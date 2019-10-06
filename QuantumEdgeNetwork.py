@@ -95,10 +95,10 @@ def get_loss_and_gradient(edge_array,y,theta_learn,class_weight,loss_array,gradi
 	loss_array.append(local_loss)
 	gradient_array.append(local_gradient)
 	update_array.append(local_update)
-def get_accuracy(edge_array,y,theta_learn,error_array):
+def get_accuracy(edge_array,y,theta_learn,class_weight,error_array):
 	total_acc     = 0.
 	for i in range(len(edge_array)):
-		total_acc += abs(TTN_edge_forward(edge_array[i],theta_learn)*class_weight[int(y[i])] - y[i])
+		total_acc += 1 - abs(TTN_edge_forward(edge_array[i],theta_learn)*class_weight[int(y[i])] - y[i])
 	error_array.append(total_acc)
 def train(B,theta_learn,y):
 	jobs         = []
@@ -143,10 +143,13 @@ def train(B,theta_learn,y):
 			f.write('\n')	
 	return theta_learn,average_loss
 def test_validation(valid_data,theta_learn,n_valid):
+	t_start = time.time()
+	print('Starting testing the validation set')
 	jobs         = []
 	n_threads    = 28*2
 	accuracy = 0.
 	for n_test in range(n_valid):
+		B,y          = preprocess(valid_data[n_test]) 
 		n_edges      = len(y)
 		n_feed       = n_edges//n_threads
 		n_class      = [n_edges - sum(y), sum(y)]
@@ -168,38 +171,40 @@ def test_validation(valid_data,theta_learn,n_valid):
 		for proc in jobs: 
 			proc.join()
 		accuracy += (sum(error_array)/n_edges) / n_valid
-	print('Validation Accuracy: %.4f' %(accuracy*100))
 	with open('logs/log_validation.csv', 'a') as f:
 				f.write('%.4f\n' % accuracy)
+	duration = time.time() - t_start
+	print('Validation Accuracy: %.4f, Elapsed: %dm%ds' %(accuracy*100, duration/60, duration%60))
 	return accuracy
 def preprocess(data):
-	X,Ro,Ri,y = train_data[n_file]
-	if min(X[:,2])<0: 
-		X[:,2] = -X[:,2]
+	X,Ro,Ri,y = data
+	X[:,2] = np.abs(X[:,2]) # correction for negative z
 	bo    = np.dot(Ro.T, X)
 	bi    = np.dot(Ri.T, X)
 	B     = np.concatenate((bo,bi),axis=1)
-	return map2angle(B)
+	return map2angle(B), y
 ############################################################################################
 ##### MAIN ######
 if __name__ == '__main__':
 	n_param = 11
 	theta_learn = np.random.rand(n_param)*np.pi*2 / np.sqrt(n_param)
-	input_dir = 'data/hitgraphs_big'  
-	n_files = 16*100
-	n_epoch = 1
-	TEST_every = 50
-	train_data, valid_data = get_datasets(input_dir, n_files*0.9, n_files*0.1)
+	input_dir   = 'data/hitgraphs_big'  
+	n_files     = 16*100
+	n_valid     = int(n_files * 0.1)
+	n_train     = n_files - n_valid	
+	n_epoch     = 1
+	TEST_every  = 50
+	train_data, valid_data = get_datasets(input_dir, n_train, n_valid)
 	loss_log = np.zeros(n_files*n_epoch)
 	theta_log = np.zeros((n_files*n_epoch,11))
-	valid_accuracy = np.zeros((n_files*0.9 / TEST_every )*n_epoch + 2)
-	valid_accuracy[0] = test_validation(valid_data,theta_learn)
+	valid_accuracy = np.zeros(int((n_files*0.9 // TEST_every )*n_epoch) + 2)
+	valid_accuracy[0] = test_validation(valid_data,theta_learn,n_valid)
 	print('Training is starting!')
 	for epoch in range(n_epoch): 
 		for n_file in range(n_files):
 			t0 = time.time()
 
-			B = preprocess(train_data[n_file])
+			B, y = preprocess(train_data[n_file])
 			theta_learn,loss_log[n_file*(epoch+1)] = train(B,theta_learn,y)
 			theta_log[n_file*(epoch+1),:] = theta_learn   
 			t = time.time() - t0
@@ -215,7 +220,7 @@ if __name__ == '__main__':
 			print("Epoch: %d, Batch: %d, Loss: %.4f, Elapsed: %dm%ds" % (epoch+1, n_file+1, loss_log[n_file*(epoch+1)],t / 60, t % 60) )
 			# Test validation data
 			if (n_file+1)%TEST_every==0:
-				valid_accuracy[(n_file+1)/TEST_every] = test_validation(valid_data,theta_learn,n_files*0.1)
+				valid_accuracy[(n_file+1)//TEST_every] = test_validation(valid_data,theta_learn,n_valid)
 				t = time.time() - t0
 
 	valid_accuracy[-1] = test_validation(valid_data,theta_learn)
