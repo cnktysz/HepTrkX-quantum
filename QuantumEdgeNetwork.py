@@ -13,7 +13,6 @@ import multiprocessing
 def TTN_edge_forward(edge,theta_learn):
 	# Takes the input and learning variables and applies the
 	# network to obtain the output
-	
 	q       = QuantumRegister(len(edge))
 	c       = ClassicalRegister(1)
 	circuit = QuantumCircuit(q,c)
@@ -21,29 +20,22 @@ def TTN_edge_forward(edge,theta_learn):
 	for i in range(len(edge)):
 		circuit.ry(edge[i],q[i])
 	# APPLY forward sequence
-
 	circuit.ry(theta_learn[0],q[0])
 	circuit.ry(theta_learn[1],q[1])
 	circuit.cx(q[0],q[1])
-
 	circuit.ry(theta_learn[2],q[2])
 	circuit.ry(theta_learn[3],q[3])
 	circuit.cx(q[2],q[3])
-
 	circuit.ry(theta_learn[4],q[4])
 	circuit.ry(theta_learn[5],q[5])
 	circuit.cx(q[5],q[4]) # reverse the order
-
 	circuit.ry(theta_learn[6],q[1])
 	circuit.ry(theta_learn[7],q[3])
 	circuit.cx(q[1],q[3])
-
 	circuit.ry(theta_learn[8],q[3])
 	circuit.ry(theta_learn[9],q[4])
 	circuit.cx(q[3],q[4])
-
 	circuit.ry(theta_learn[10],q[4])
-	
 	# Qasm Backend
 	circuit.measure(q[4],c)
 	backend = Aer.get_backend('qasm_simulator')
@@ -53,13 +45,10 @@ def TTN_edge_forward(edge,theta_learn):
 	for key in counts:
 		if key=='1':
 			out = counts[key]/1000
-	
 	return(out)
-
 def TTN_edge_back(input_,theta_learn):
 	# This function calculates the gradients for all learning 
 	# variables numerically and updates them accordingly.
-	# TODO: need to choose epsilon properly
 	epsilon = np.pi/2 # to take derivative
 	gradient = np.zeros(len(theta_learn))
 	update = np.zeros(len(theta_learn))
@@ -126,7 +115,6 @@ def train(B,theta_learn,y):
 	# Learning variables
 	lr = 1
 	# RUN Multithread training
-	#print('Total edge: ' + str(n_edges))
 	for thread in range(n_threads):
 		start = thread*n_feed
 		end   = (thread+1)*n_feed
@@ -136,8 +124,6 @@ def train(B,theta_learn,y):
 			p = multiprocessing.Process(target=get_loss_and_gradient,args=(B[start:end,:],y[start:end],theta_learn,class_weight,loss_array,gradient_array,update_array,))   
 		jobs.append(p)
 		p.start()
-		#print('Thread: ' + str(thread) + ' started')
-
 	# WAIT for jobs to finish
 	for proc in jobs: 
 		proc.join()
@@ -216,11 +202,8 @@ if __name__ == '__main__':
 			B = preprocess(train_data[n_file])
 			theta_learn,loss_log[n_file*(epoch+1)] = train(B,theta_learn,y)
 			theta_log[n_file*(epoch+1),:] = theta_learn   
-
-			# Logs
 			t = time.time() - t0
-
-			# Log learning variables
+			# Log 
 			with open('logs/log_theta.csv', 'a') as f:
 				for item in theta_learn:
 					f.write('%.4f,' % item)
@@ -230,28 +213,11 @@ if __name__ == '__main__':
 			with open('logs/summary.csv', 'a') as f:
 				f.write('Epoch: %d, Batch: %d, Loss: %.4f, Elapsed: %dm%ds\n' % (epoch+1, n_file+1, loss_log[n_file*(epoch+1)],t / 60, t % 60) )
 			print("Epoch: %d, Batch: %d, Loss: %.4f, Elapsed: %dm%ds" % (epoch+1, n_file+1, loss_log[n_file*(epoch+1)],t / 60, t % 60) )
-
-
+			# Test validation data
 			if (n_file+1)%TEST_every==0:
 				valid_accuracy[(n_file+1)/TEST_every] = test_validation(valid_data,theta_learn,n_files*0.1)
 				t = time.time() - t0
 
-			"""	
-			# Plot the result every update  
-			plt.clf()   
-			x = [(i+1) for i  in range(n_file+1)]
-			plt.plot(x,loss_log[:n_file+1],marker='o')
-			plt.xlabel('Update')
-			plt.ylabel('Loss')
-			plt.savefig('png\statistics_loss.png')
-
-			plt.clf()
-			for i in range(11):
-				plt.plot(x,theta_log[:n_file+1,i],marker='o',label=r'$\theta_{'+str(i)+'}$')
-			plt.xlabel('Update')
-			plt.ylabel(r'Angle (0 - 2$\pi$)')
-			plt.savefig('png\statistics_angle.png')
-			"""
 	valid_accuracy[-1] = test_validation(valid_data,theta_learn)
 	print('Training Complete')
 
