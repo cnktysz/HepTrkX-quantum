@@ -113,7 +113,7 @@ def train(B,theta_learn,y):
 	gradient_array = manager.list()
 	update_array   = manager.list()
 	# Learning variables
-	lr = 1
+	lr = 5
 	# RUN Multithread training
 	for thread in range(n_threads):
 		start = thread*n_feed
