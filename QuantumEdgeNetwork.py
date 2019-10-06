@@ -46,7 +46,7 @@ def TTN_edge_forward(edge,theta_learn):
 	
 	# Qasm Backend
 	circuit.measure(q[4],c)
-	backend = BasicAer.get_backend('qasm_simulator')
+	backend = Aer.get_backend('qasm_simulator')
 	result = execute(circuit, backend, shots=1000).result()
 	counts = result.get_counts(circuit)
 	out    = 0
@@ -110,7 +110,7 @@ def get_loss_and_gradient(edge_array,y,theta_learn,class_weight,loss_array,gradi
 	update_array.append(local_update)
 def train(B,theta_learn,y):
 	jobs         = []
-	n_threads    = 8
+	n_threads    = 28*2
 	n_edges      = len(y)
 	n_feed       = n_edges//n_threads
 	n_class      = [n_edges - sum(y), sum(y)]
@@ -205,9 +205,9 @@ if __name__ == '__main__':
 				f.write('%.4f\n' % loss_log[n_file])
 			
 			with open('logs/summary.csv', 'a') as f:
-				f.write('Epoch: %d, Batch: %d, Loss: %.4f, Elapsed: %dm%ds', % (epoch+1, n_file+1, loss_log[n_file*(epoch+1)],t / 60, t % 60) )
+				f.write('Epoch: %d, Batch: %d, Loss: %.4f, Elapsed: %dm%ds\n' % (epoch+1, n_file+1, loss_log[n_file*(epoch+1)],t / 60, t % 60) )
 
-			print('Epoch: %d, Batch: %d, Loss: %.4f, Elapsed: %dm%ds', % (epoch+1, n_file+1, loss_log[n_file*(epoch+1)],t / 60, t % 60) )
+			print("Epoch: %d, Batch: %d, Loss: %.4f, Elapsed: %dm%ds" % (epoch+1, n_file+1, loss_log[n_file*(epoch+1)],t / 60, t % 60) )
 
 
 			"""	
