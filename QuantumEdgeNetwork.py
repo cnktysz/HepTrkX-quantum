@@ -195,9 +195,9 @@ if __name__ == '__main__':
 	n_epoch     = 1
 	TEST_every  = 50
 	train_data, valid_data = get_datasets(input_dir, n_train, n_valid)
-	loss_log = np.zeros(n_files*n_epoch)
-	theta_log = np.zeros((n_files*n_epoch,11))
-	valid_accuracy = np.zeros(int((n_files*0.9 // TEST_every )*n_epoch) + 2)
+	loss_log 	  = np.zeros(n_files*n_epoch)
+	theta_log         = np.zeros((n_files*n_epoch,11))
+	valid_accuracy    = np.zeros(int((n_valid // TEST_every )*n_epoch) + 2)
 	valid_accuracy[0] = test_validation(valid_data,theta_learn,n_valid)
 	print('Training is starting!')
 	for epoch in range(n_epoch): 
@@ -223,7 +223,7 @@ if __name__ == '__main__':
 				valid_accuracy[(n_file+1)//TEST_every] = test_validation(valid_data,theta_learn,n_valid)
 				t = time.time() - t0
 
-	valid_accuracy[-1] = test_validation(valid_data,theta_learn)
+	valid_accuracy[-1] = test_validation(valid_data,theta_learn,n_valid)
 	print('Training Complete')
 
 	
