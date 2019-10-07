@@ -16,7 +16,7 @@ with open(log_location+'log_theta.csv','r') as f:
 # Plot
 plt.clf()   
 x = [(i+1) for i  in range(len(loss))]
-plt.plot(x,loss,marker='o')
+plt.plot(x[1:],loss[1:],marker='o')
 plt.xlabel('Update')
 plt.ylabel('Loss')
 plt.savefig(png_location+'statistics_loss.png')

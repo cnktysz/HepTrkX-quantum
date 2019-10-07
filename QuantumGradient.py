@@ -2,11 +2,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from qiskit import *
 from datasets.hitgraphs import HitGraphDataset
-import sys
+import sys,time
 import multiprocessing
 
 
-def TTN_edge_forward(edge,theta_learn):
+def TTN_edge_forward(edge,theta_learn,shots):
 	# Takes the input and learning variables and applies the
 	# network to obtain the output
 	backend = BasicAer.get_backend('qasm_simulator')
@@ -43,15 +43,15 @@ def TTN_edge_forward(edge,theta_learn):
 	circuit.measure(q[4],c)
 
 	#circuit.draw(filename='circuit.png')
-	result = execute(circuit, backend, shots=100).result()
+	result = execute(circuit, backend, shots=shots).result()
 	counts = result.get_counts(circuit)
 	out    = 0
 	for key in counts:
 		if key=='1':
-			out = counts[key]/100
+			out = counts[key]/shots
 	return(out)
 
-def TTN_edge_back(input_,theta_learn):
+def TTN_edge_back(input_,theta_learn,shot):
 	epsilon = np.pi/2 
 	gradient = np.zeros(len(theta_learn))
 	update = np.zeros(len(theta_learn))
@@ -59,11 +59,11 @@ def TTN_edge_back(input_,theta_learn):
 		## Compute f(x+epsilon)
 		theta_learn[i] = (theta_learn[i] + epsilon)%(2*np.pi)
 		## Evaluate
-		out_plus = TTN_edge_forward(input_,theta_learn)
+		out_plus = TTN_edge_forward(input_,theta_learn,shot)
 		## Compute f(x-epsilon)
 		theta_learn[i] = (theta_learn[i] - 2*epsilon)%(2*np.pi)
 		## Evaluate
-		out_minus = TTN_edge_forward(input_,theta_learn)
+		out_minus = TTN_edge_forward(input_,theta_learn,shot)
 		# Compute the gradient numerically
 		gradient[i] = (out_plus-out_minus)/2
 		## Bring theta to its original value
@@ -100,10 +100,10 @@ def get_loss_and_gradient(edge_array,y,theta_learn,class_weight,loss_array,gradi
 	gradient_array.append(local_gradients)
 	#print(loss_array)
 	#print(gradient_array)
-def gradient(edge_array,theta_learn,y):
-	error 	    = TTN_edge_forward(edge_array,theta_learn) - y
+def gradient(edge_array,theta_learn,y,shot):
+	error 	    = TTN_edge_forward(edge_array,theta_learn,shot) - y
 	loss  	    = error**2
-	gradient 	= 2*error*TTN_edge_back(edge_array,theta_learn)
+	gradient 	= 2*error*TTN_edge_back(edge_array,theta_learn,shot)
 	return [error, loss, gradient]
 	#print(loss_array)
 	#print(gradient_array)
@@ -115,44 +115,62 @@ if __name__ == '__main__':
 	theta_learn = x = np.zeros(11) # start from zero
 	input_dir = '/Users/cenk/Repos/HEPTrkX-quantum/data/hitgraphs_big'
 	n_files = 1
-	testEVERY = 1
-	accuracy = np.zeros(round(n_files/testEVERY) + 1)
-	loss_log = np.zeros(n_files)
-	theta_log = np.zeros((n_files,11))
-	for n_file in range(n_files):
 
-		data = HitGraphDataset(input_dir, n_files)
-		X,Ro,Ri,y = data[n_file]
-		bo 	  = np.dot(Ro.T, X)
-		bi 	  = np.dot(Ri.T, X)
-		B 	  = np.concatenate((bo,bi),axis=1)
-		B 	  = map2angle(B)
+	data = HitGraphDataset(input_dir, n_files)
+	X,Ro,Ri,y = data[0]
+	bo 	  = np.dot(Ro.T, X)
+	bi 	  = np.dot(Ri.T, X)
+	B 	  = np.concatenate((bo,bi),axis=1)
+	B 	  = map2angle(B)
 		
-		error_test    = np.zeros(100)
-		loss_test     = np.zeros(100)
-		gradient_test = np.zeros((100,11)) 
-		x = [i for i  in range(100)]
-
-		for i in range(100):
-			error_test[i],loss_test[i],gradient_test[i,:] = gradient(B[0],theta_learn,y[0])
-
+	n_run  = 100
+	shots  = [10, 100, 1000]
+	range_ = np.zeros((11,2))
+	
+	for shot in shots:
+		t0 = time.time()
+		print('Testing shots = ' + str(shot))
+		error_test    = np.zeros(n_run)
+		loss_test     = np.zeros(n_run)
+		gradient_test = np.zeros((n_run,11)) 
+		for i in range(n_run):
+			error_test[i],loss_test[i],gradient_test[i,:] = gradient(B[0],theta_learn,y[0],shot)
+		with open('logs/gradient/log_gradient_'+str(shot)+'_shots.csv', 'w') as f:
+			for row in gradient_test:
+				for item in row:
+					f.write('%.4f,' % item)
+				f.write('\n')
+		with open('logs/gradient/log_error_'+str(shot)+'_shots.csv', 'w') as f:
+			for item in error_test:
+				f.write('%.4f' % item)
+			f.write('\n')
+		with open('logs/gradient/log_loss_'+str(shot)+'_shots.csv', 'w') as f:
+			for item in loss_test:
+				f.write('%.4f' % item)
+			f.write('\n')		
+			
 		# Plot the results	
 		plt.clf()	
 		_ = plt.hist(error_test,bins='auto')
 		plt.xlabel('Error')
 		plt.title('$\mu= $'+ str(round(error_test.mean(),3)) + ', std= ' + str(round(error_test.std(),3)))
-		plt.savefig('png/test/test_error.png')
+		plt.savefig('png/gradient/test_error_'+str(shot)+'shots_.png')
 
 		plt.clf()	
 		_ = plt.hist(loss_test,bins='auto')
 		plt.title('$\mu= $'+ str(round(loss_test.mean(),3)) + ', std= ' + str(round(loss_test.std(),3)))
 		plt.xlabel('Loss')
-		plt.savefig('png/test/test_loss.png')
+		plt.savefig('png/gradient/test_loss_'+str(shot)+'shots_.png')
 
 		for i in range(11):
+			if shot == min(shots):
+				range_[i,:] = [min(gradient_test[:,i]),max(gradient_test[:,i])]
 			plt.clf()	
-			_ = plt.hist(gradient_test[:,i],bins=10)
-			plt.title('Gradient of '+str(i)+'th angle: ' + '$\mu= $'+ str(round(gradient_test[:,i].mean(),3)) + ', std= ' + str(round(gradient_test[:,i].std(),3)))
-			plt.savefig('png/test/test_gradient_'+str(i)+'.png')
-	
+			_ = plt.hist(gradient_test[:,i],bins=20,range=range_[i,:])
+			plt.title('Gradient of '+str(i)+'th angle: ' + r'$\mu= $'+ str(round(gradient_test[:,i].mean(),3)) + r'$, \sigma= $' + str(round(gradient_test[:,i].std(),3)))
+			plt.savefig('png/gradient/test_gradient_'+str(i)+'_'+str(shot)+'shots_.png')
+		
+		# Print Summary	
+		duration = time.time() - t0
+		print('Mean error: %.3f, Mean Loss: %.3f, Elapsed: %dm%ds ' % (error_test.mean(),loss_test.mean(),duration/60,duration%60))
 
