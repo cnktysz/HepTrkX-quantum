@@ -201,7 +201,7 @@ if __name__ == '__main__':
 	valid_accuracy[0] = test_validation(valid_data,theta_learn,n_valid)
 	print('Training is starting!')
 	for epoch in range(n_epoch): 
-		for n_file in range(n_files):
+		for n_file in range(n_train):
 			t0 = time.time()
 
 			B, y = preprocess(train_data[n_file])
