@@ -144,7 +144,7 @@ def train(B,theta_learn,y):
 	return theta_learn,average_loss
 def test_validation(valid_data,theta_learn,n_valid):
 	t_start = time.time()
-	print('Starting testing the validation set')
+	print('Starting testing the validation set!')
 	jobs         = []
 	n_threads    = 28*2
 	accuracy = 0.
@@ -203,7 +203,6 @@ if __name__ == '__main__':
 	for epoch in range(n_epoch): 
 		for n_file in range(n_train):
 			t0 = time.time()
-
 			B, y = preprocess(train_data[n_file])
 			theta_learn,loss_log[n_file*(epoch+1)] = train(B,theta_learn,y)
 			theta_log[n_file*(epoch+1),:] = theta_learn   
@@ -220,10 +219,10 @@ if __name__ == '__main__':
 			print("Epoch: %d, Batch: %d, Loss: %.4f, Elapsed: %dm%ds" % (epoch+1, n_file+1, loss_log[n_file*(epoch+1)],t / 60, t % 60) )
 			# Test validation data
 			if (n_file+1)%TEST_every==0:
-				valid_accuracy[(n_file+1)//TEST_every] = test_validation(valid_data,theta_learn,n_valid)
+				valid_accuracy[((n_file+1)//TEST_every)*(epoch+1)] = test_validation(valid_data,theta_learn,n_valid)
 				t = time.time() - t0
-
+		print('Epoch Complete!')
 	valid_accuracy[-1] = test_validation(valid_data,theta_learn,n_valid)
-	print('Training Complete')
+	print('Training Complete!')
 
 	
