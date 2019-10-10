@@ -1,4 +1,5 @@
-# Author: Cenk Tüysüz
+#!/usr/bin/python
+# Author: Cenk Tuysuz
 # Date: 29.08.2019
 # First attempt to test QuantumEdgeNetwork
 # Run this code the train and test the network
@@ -59,7 +60,7 @@ def TTN_edge_back(input_,theta_learn):
 		out_plus = TTN_edge_forward(input_,theta_learn)
 		## Compute f(x-epsilon)
 		theta_learn[i] = (theta_learn[i] - 2*epsilon)%(2*np.pi)
-		## Evaluate
+		## Evaluate
 		out_minus = TTN_edge_forward(input_,theta_learn)
 		# Compute the gradient numerically
 		gradient[i] = (out_plus-out_minus)/2
@@ -82,19 +83,17 @@ def map2angle(B):
 	B[:,5] =  (B[:,5]-z_min)/(z_max-z_min)
 	return B
 def MSE(output,label):
-	error = output - label
-	loss = error**2
-	return loss
+	return (output-label)**2
 def binary_cross_entropy(output,label):
-	# https://towardsdatascience.com/understanding-binary-cross-entropy-log-loss-a-visual-explanation-a3ac6025181a
-	loss = label*log(output+1e-6) + (1-label)*log(1-output+1e-6)
-	return loss
+	return -(label*np.log(output+1e-6) + (1-label)*np.log(1-output+1e-6))
 def get_loss_and_gradient(edge_array,y,theta_learn,class_weight,loss_array,gradient_array,update_array):
 	local_loss     = 0.
 	local_gradient = np.zeros(len(theta_learn))
 	local_update   = np.zeros(len(theta_learn))
 	for i in range(len(edge_array)):
-		local_loss     += binary_cross_entropy(TTN_edge_forward(edge_array[i],theta_learn), y[i])*class_weight[int(y[i])]
+		output         = TTN_edge_forward(edge_array[i],theta_learn)
+		error          = output - y[i]
+		local_loss     += binary_cross_entropy(output, y[i])*class_weight[int(y[i])]
 		gradient       = TTN_edge_back(edge_array[i],theta_learn)*class_weight[int(y[i])]
 		local_gradient += gradient
 		local_update   += 2*error*gradient
@@ -104,7 +103,7 @@ def get_loss_and_gradient(edge_array,y,theta_learn,class_weight,loss_array,gradi
 def get_accuracy(edge_array,y,theta_learn,class_weight,error_array):
 	total_acc     = 0.
 	for i in range(len(edge_array)):
-		total_acc += 1 - abs(TTN_edge_forward(edge_array[i],theta_learn)*class_weight[int(y[i])] - y[i])
+		total_acc += (1 - abs(TTN_edge_forward(edge_array[i],theta_learn) - y[i]))*class_weight[int(y[i])] 
 	error_array.append(total_acc)
 def train(B,theta_learn,y):
 	jobs         = []
