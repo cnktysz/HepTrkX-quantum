@@ -81,14 +81,20 @@ def map2angle(B):
 	B[:,4] =  (B[:,4]-phi_min)/(phi_max-phi_min) 
 	B[:,5] =  (B[:,5]-z_min)/(z_max-z_min)
 	return B
+def MSE(output,label):
+	error = output - label
+	loss = error**2
+	return loss
+def binary_cross_entropy(output,label):
+	# https://towardsdatascience.com/understanding-binary-cross-entropy-log-loss-a-visual-explanation-a3ac6025181a
+	loss = label*log(output+1e-6) + (1-label)*log(1-output+1e-6)
+	return loss
 def get_loss_and_gradient(edge_array,y,theta_learn,class_weight,loss_array,gradient_array,update_array):
 	local_loss     = 0.
 	local_gradient = np.zeros(len(theta_learn))
 	local_update   = np.zeros(len(theta_learn))
 	for i in range(len(edge_array)):
-		error          = (TTN_edge_forward(edge_array[i],theta_learn) - y[i])
-		loss           = (error**2)*class_weight[int(y[i])]
-		local_loss     += loss
+		local_loss     += binary_cross_entropy(TTN_edge_forward(edge_array[i],theta_learn), y[i])*class_weight[int(y[i])]
 		gradient       = TTN_edge_back(edge_array[i],theta_learn)*class_weight[int(y[i])]
 		local_gradient += gradient
 		local_update   += 2*error*gradient
