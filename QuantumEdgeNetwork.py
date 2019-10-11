@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from qiskit import *
 from datasets.hitgraphs import get_datasets
-import sys, time
+import sys, time, datetime
 import multiprocessing
 
 def TTN_edge_forward(edge,theta_learn):
@@ -194,22 +194,20 @@ if __name__ == '__main__':
 	n_files     = 16*100
 	n_valid     = int(n_files * 0.1)
 	n_train     = n_files - n_valid	
-	lr 			= 1.
+	lr 	    = 1.
 	n_epoch     = 5
 	n_threads   = 28*2
 	TEST_every  = 50
+	loss        = 0.
 	train_data, valid_data = get_datasets(input_dir, n_train, n_valid)
-	loss_log 	  = np.zeros(n_files*n_epoch)
-	theta_log         = np.zeros((n_files*n_epoch,11))
-	valid_accuracy    = np.zeros(int((n_train // TEST_every )*n_epoch) + 2)
-	valid_accuracy[0] = test_validation(valid_data,theta_learn,n_valid)
-	print('Training is starting!')
+	valid_accuracy         = np.zeros(int((n_train // TEST_every )*n_epoch) + 2)
+	valid_accuracy[0]      = test_validation(valid_data,theta_learn,n_valid)
+	print(str(datetime.datetime.now()) + ' Training is starting!')
 	for epoch in range(n_epoch): 
 		for n_file in range(n_train):
 			t0 = time.time()
 			B, y = preprocess(train_data[n_file])
-			theta_learn,loss_log[n_file*(epoch+1)] = train(B,theta_learn,y)
-			theta_log[n_file*(epoch+1),:] = theta_learn   
+			theta_learn,loss = train(B,theta_learn,y)
 			t = time.time() - t0
 			# Log 
 			with open(log_dir+'log_theta.csv', 'a') as f:
@@ -217,14 +215,13 @@ if __name__ == '__main__':
 					f.write('%.4f,' % item)
 				f.write('\n')
 			with open(log_dir+'log_loss.csv', 'a') as f:
-				f.write('%.4f\n' % loss_log[n_file])
+				f.write('%.4f\n' % loss)
 			with open(log_dir+'summary.csv', 'a') as f:
-				f.write('Epoch: %d, Batch: %d, Loss: %.4f, Elapsed: %dm%ds\n' % (epoch+1, n_file+1, loss_log[n_file*(epoch+1)],t / 60, t % 60) )
-			print("Epoch: %d, Batch: %d, Loss: %.4f, Elapsed: %dm%ds" % (epoch+1, n_file+1, loss_log[n_file*(epoch+1)],t / 60, t % 60) )
+				f.write('Epoch: %d, Batch: %d, Loss: %.4f, Elapsed: %dm%ds\n' % (epoch+1, n_file+1, loss, t / 60, t % 60) )
+			print(str(datetime.datetime.now()) + " Epoch: %d, Batch: %d, Loss: %.4f, Elapsed: %dm%ds" % (epoch+1, n_file+1, loss ,t / 60, t % 60) )
 			# Test validation data
 			if (n_file+1)%TEST_every==0:
 				valid_accuracy[((n_file+1)//TEST_every)*(epoch+1)] = test_validation(valid_data,theta_learn,n_valid)
-				t = time.time() - t0
 		print('Epoch Complete!')
 	valid_accuracy[-1] = test_validation(valid_data,theta_learn,n_valid)
 	print('Training Complete!')
