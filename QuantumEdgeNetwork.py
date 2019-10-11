@@ -107,7 +107,6 @@ def get_accuracy(edge_array,y,theta_learn,class_weight,acc_array):
 	acc_array.append(total_acc)
 def train(B,theta_learn,y):
 	jobs         = []
-	n_threads    = 28*2
 	n_edges      = len(y)
 	n_feed       = n_edges//n_threads
 	n_class      = [n_edges - sum(y), sum(y)]
@@ -117,8 +116,6 @@ def train(B,theta_learn,y):
 	loss_array     = manager.list()
 	gradient_array = manager.list()
 	update_array   = manager.list()
-	# Learning variables
-	lr = 0.1
 	# RUN Multithread training
 	for thread in range(n_threads):
 		start = thread*n_feed
@@ -142,7 +139,7 @@ def train(B,theta_learn,y):
 	average_gradient = total_gradient/n_edges
 	average_update   = total_update/n_edges
 	theta_learn       = (theta_learn - lr*average_update)%(2*np.pi)
-	with open('logs/log_gradients.csv', 'a') as f:
+	with open(log_dir+'log_gradients.csv', 'a') as f:
 			for item in average_update:
 				f.write('%.4f, ' % item)
 			f.write('\n')	
@@ -151,7 +148,6 @@ def test_validation(valid_data,theta_learn,n_valid):
 	t_start = time.time()
 	print('Starting testing the validation set!')
 	jobs         = []
-	n_threads    = 28*2
 	accuracy = 0.
 	for n_test in range(n_valid):
 		B,y          = preprocess(valid_data[n_test]) 
@@ -176,7 +172,7 @@ def test_validation(valid_data,theta_learn,n_valid):
 		for proc in jobs: 
 			proc.join()
 		accuracy += sum(acc_array)/(n_edges * n_valid)
-	with open('logs/log_validation.csv', 'a') as f:
+	with open(log_dir+'log_validation.csv', 'a') as f:
 				f.write('%.4f\n' % accuracy)
 	duration = time.time() - t_start
 	print('Validation Accuracy: %.4f, Elapsed: %dm%ds' %(accuracy*100, duration/60, duration%60))
@@ -193,11 +189,14 @@ def preprocess(data):
 if __name__ == '__main__':
 	n_param = 11
 	theta_learn = np.random.rand(n_param)*np.pi*2 / np.sqrt(n_param)
-	input_dir   = 'data/hitgraphs_big'  
+	input_dir   = 'data/hitgraphs_big'
+	log_dir     = 'logs/bce/lr_1/'  
 	n_files     = 16*100
 	n_valid     = int(n_files * 0.1)
 	n_train     = n_files - n_valid	
-	n_epoch     = 1
+	lr 			= 1.
+	n_epoch     = 5
+	n_threads   = 28*2
 	TEST_every  = 50
 	train_data, valid_data = get_datasets(input_dir, n_train, n_valid)
 	loss_log 	  = np.zeros(n_files*n_epoch)
@@ -213,13 +212,13 @@ if __name__ == '__main__':
 			theta_log[n_file*(epoch+1),:] = theta_learn   
 			t = time.time() - t0
 			# Log 
-			with open('logs/log_theta.csv', 'a') as f:
+			with open(log_dir+'log_theta.csv', 'a') as f:
 				for item in theta_learn:
 					f.write('%.4f,' % item)
 				f.write('\n')
-			with open('logs/log_loss.csv', 'a') as f:
+			with open(log_dir+'log_loss.csv', 'a') as f:
 				f.write('%.4f\n' % loss_log[n_file])
-			with open('logs/summary.csv', 'a') as f:
+			with open(log_dir+'summary.csv', 'a') as f:
 				f.write('Epoch: %d, Batch: %d, Loss: %.4f, Elapsed: %dm%ds\n' % (epoch+1, n_file+1, loss_log[n_file*(epoch+1)],t / 60, t % 60) )
 			print("Epoch: %d, Batch: %d, Loss: %.4f, Elapsed: %dm%ds" % (epoch+1, n_file+1, loss_log[n_file*(epoch+1)],t / 60, t % 60) )
 			# Test validation data
