@@ -100,11 +100,11 @@ def get_loss_and_gradient(edge_array,y,theta_learn,class_weight,loss_array,gradi
 	loss_array.append(local_loss)
 	gradient_array.append(local_gradient)
 	update_array.append(local_update)
-def get_accuracy(edge_array,y,theta_learn,class_weight,error_array):
-	total_acc     = 0.
+def get_accuracy(edge_array,y,theta_learn,class_weight,acc_array):
+	total_acc = 0.
 	for i in range(len(edge_array)):
 		total_acc += (1 - abs(TTN_edge_forward(edge_array[i],theta_learn) - y[i]))*class_weight[int(y[i])] 
-	error_array.append(total_acc)
+	acc_array.append(total_acc)
 def train(B,theta_learn,y):
 	jobs         = []
 	n_threads    = 28*2
@@ -161,21 +161,21 @@ def test_validation(valid_data,theta_learn,n_valid):
 		class_weight = [n_edges/(n_class[0]*2), n_edges/(n_class[1]*2)]
 		# RESET variables
 		manager        = multiprocessing.Manager()
-		error_array     = manager.list()
+		acc_array     = manager.list()
 		# RUN Multithread training
 		for thread in range(n_threads):
 			start = thread*n_feed
 			end   = (thread+1)*n_feed
 			if thread==(n_threads-1):   
-				p = multiprocessing.Process(target=get_accuracy,args=(B[start:,:],y[start:],theta_learn,class_weight,error_array,))
+				p = multiprocessing.Process(target=get_accuracy,args=(B[start:,:],y[start:],theta_learn,class_weight,acc_array,))
 			else:
-				p = multiprocessing.Process(target=get_accuracy,args=(B[start:end,:],y[start:end],theta_learn,class_weight,error_array,))   
+				p = multiprocessing.Process(target=get_accuracy,args=(B[start:end,:],y[start:end],theta_learn,class_weight,acc_array,))   
 			jobs.append(p)
 			p.start()
 		# WAIT for jobs to finish
 		for proc in jobs: 
 			proc.join()
-		accuracy += (sum(error_array)/n_edges) / n_valid
+		accuracy += sum(acc_array)/(n_edges * n_valid)
 	with open('logs/log_validation.csv', 'a') as f:
 				f.write('%.4f\n' % accuracy)
 	duration = time.time() - t_start
