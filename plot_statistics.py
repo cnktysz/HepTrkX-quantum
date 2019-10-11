@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import csv
 
-log_location = 'logs/log_lr_0_1/'
-png_location = 'png/lr0_1/'
+log_location = 'logs/log_bce_lr_0_1/'
+png_location = 'png/bce_lr_0_1/'
 with open(log_location + 'log_loss.csv', 'r') as f:
 	reader = csv.reader(f, delimiter=',')
 	loss = np.array(list(reader)).astype(float)
