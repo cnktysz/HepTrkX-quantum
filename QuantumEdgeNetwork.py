@@ -75,12 +75,12 @@ def map2angle(B):
 	phi_max   = 1.
 	z_min     = 0.
 	z_max     = 1.2
-	B[:,0] =  (B[:,0]-r_min)/(r_max-r_min) 
-	B[:,1] =  (B[:,1]-phi_min)/(phi_max-phi_min) 
-	B[:,2] =  (B[:,2]-z_min)/(z_max-z_min) 
-	B[:,3] =  (B[:,3]-r_min)/(r_max-r_min) 
-	B[:,4] =  (B[:,4]-phi_min)/(phi_max-phi_min) 
-	B[:,5] =  (B[:,5]-z_min)/(z_max-z_min)
+	B[:,0] =  (B[:,0]-r_min)/(r_max-r_min) * 2 * np.pi 
+	B[:,1] =  (B[:,1]-phi_min)/(phi_max-phi_min) * 2 * np.pi 
+	B[:,2] =  (B[:,2]-z_min)/(z_max-z_min) * 2 * np.pi 
+	B[:,3] =  (B[:,3]-r_min)/(r_max-r_min) * 2 * np.pi 
+	B[:,4] =  (B[:,4]-phi_min)/(phi_max-phi_min) * 2 * np.pi 
+	B[:,5] =  (B[:,5]-z_min)/(z_max-z_min)* 2 * np.pi 
 	return B
 def MSE(output,label):
 	return (output-label)**2

@@ -22,6 +22,15 @@ plt.ylabel('Loss')
 plt.savefig(png_location+'statistics_loss.png')
 
 plt.clf()   
+interval = 50
+x = [i*interval for i  in range(len(loss)//interval)]
+average_loss = [sum(loss[i*interval:(i+1)*interval])/interval for i in range(len(x))]
+plt.plot(x,average_loss,marker='o')
+plt.xlabel('Update')
+plt.ylabel('Loss')
+plt.savefig(png_location+'statistics_average_loss.png')
+
+plt.clf()   
 x = [i*50 for i  in range(len(valid))]
 plt.plot(x,valid,marker='o')
 plt.xlabel('Update')
