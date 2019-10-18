@@ -190,12 +190,12 @@ if __name__ == '__main__':
 	n_param = 11
 	theta_learn = np.random.rand(n_param)*np.pi*2 #/ np.sqrt(n_param)
 	input_dir   = 'data/hitgraphs_big'
-	log_dir     = 'logs/bce/lr_1_fs/'  
+	log_dir     = 'logs/bce/lr_1/'  
 	n_files     = 16*100
 	n_valid     = int(n_files * 0.1)
 	n_train     = n_files - n_valid	
 	lr 	    = 1.
-	n_epoch     = 5
+	n_epoch     = 2
 	n_threads   = 28*2
 	TEST_every  = 50
 	loss        = 0.
