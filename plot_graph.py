@@ -45,7 +45,7 @@ def plot_cylindrical(filenames,n_section,n_files):
         ax.set_xlabel('$\Phi $')
         plt.savefig(png_dir+'Cylindrical_phi_truth.png')
 
-        print('Plotting: Cylindrical_phi.png')
+        print('Plotting: Cylindrical_phi.pdf')
         fig, ax = plt.subplots()
         cmap = plt.get_cmap('bwr_r')
         ax.scatter((np.pi/8)*X[:,1], 1000*X[:,0], c='k')
@@ -55,7 +55,7 @@ def plot_cylindrical(filenames,n_section,n_files):
             ax.plot([feats_o[j,1],feats_i[j,1]],[feats_o[j,0],feats_i[j,0]], '-', **seg_args)
         ax.set_ylabel('$R [mm]$')
         ax.set_xlabel('$\Phi $')
-        plt.savefig(png_dir+'Cylindrical_phi.png')
+        plt.savefig(png_dir+'Cylindrical_phi.pdf')
 
         print('Plotting: Cylindrical_z_AP.png')
         fig, ax = plt.subplots()
@@ -79,7 +79,7 @@ def plot_cylindrical(filenames,n_section,n_files):
         ax.set_xlabel('$Z [mm]$')
         plt.savefig(png_dir+'Cylindrical_z_truth.png')
 
-        print('Plotting: Cylindrical_z.png')
+        print('Plotting: Cylindrical_z.pdf')
         fig, ax = plt.subplots()
         cmap = plt.get_cmap('bwr_r')
         ax.scatter(1000*X[:,2], 1000*X[:,0], c='k')
@@ -89,7 +89,7 @@ def plot_cylindrical(filenames,n_section,n_files):
             ax.plot([feats_o[j,2],feats_i[j,2]],[feats_o[j,0],feats_i[j,0]], '-', **seg_args)
         ax.set_ylabel('$R [mm]$')
         ax.set_xlabel('$Z [mm]$')
-        plt.savefig(png_dir+'Cylindrical_z.png')
+        plt.savefig(png_dir+'Cylindrical_z.pdf')
     
 
 def plot_cartesian(filenames,n_section,n_files):
@@ -127,7 +127,7 @@ def plot_cartesian(filenames,n_section,n_files):
         #ax1.set_xlabel('$x [mm]$')
         #ax1.set_ylabel('$z [mm]$')
         #plt.tight_layout()
-        plt.savefig(png_dir+'Cartesian.png')
+        plt.savefig(png_dir+'Cartesian.pdf')
         #plt.show()
 def plot_3d(filenames,n_section,n_files):
 
@@ -171,7 +171,7 @@ def plot_3d(filenames,n_section,n_files):
     ax.grid(b=None)
     change_view(45)
     ax.dist = 8 
-    plt.savefig(png_dir+'Cartesian3D.png')
+    plt.savefig(png_dir+'Cartesian3D.pdf')
     #Make Gif
     """
     for angle in tqdm(range(360)):
@@ -182,8 +182,6 @@ def plot_3d(filenames,n_section,n_files):
     #anim = FuncAnimation(fig, change_view, frames=np.arange(0, 360), interval=100)
     #anim.save('Cartesian.gif', dpi=80)
 
-    
-    
 def main():
     input_dir = 'data/hitgraphs_big'
     n_section = 8
@@ -194,7 +192,8 @@ def main():
                 if f.startswith('event') and f.endswith('.npz')])
     filenames[:n_files] if n_files is not None else filenames
     
-    plot_cylindrical(filenames,n_section,n_files)
+    plot_3d(filenames,n_section,n_files)
+    plot_cartesian(filenames,n_section,n_files)
 
 
 

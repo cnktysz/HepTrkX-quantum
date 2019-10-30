@@ -139,7 +139,7 @@ opt = torch.optim.Adam([theta_learn], lr=0.1)
 for epoch in range(num_epoch):
     opt.zero_grad()
     loss = cost(edge[0:10,:],theta_learn,label[0:10])
-    print(loss)
+    print(loss.item())
     loss.backward()
     opt.step()
     loss_list.append(loss.item())

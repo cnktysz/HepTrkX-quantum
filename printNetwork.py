@@ -33,7 +33,7 @@ def TTN_edge_forward(edge,theta_learn):
 	circuit.ry(theta_learn[10],q[4])
 	# Qasm Backend
 	circuit.measure(q[4],c)
-	circuit.draw(filename='png/TTNcircuit.png')
+	circuit.draw(filename='png/circuit/TTNcircuit.pdf')
 	backend = Aer.get_backend('qasm_simulator')
 	result = execute(circuit, backend, shots=1000).result()
 	counts = result.get_counts(circuit)
