@@ -153,9 +153,10 @@ if __name__ == '__main__':
 	n_files     = 16*100
 	n_valid     = int(n_files * 0.1)
 	n_train     = n_files - n_valid	
-	lr 			= 0.1
+	lr 	    = 0.1
 	n_epoch     = 5
-	n_threads   = 28*2
+	batch_size  = 5
+	n_threads   = 28
 	TEST_every  = 50
 	train_data, valid_data = get_datasets(input_dir, n_train, n_valid)
 	test_validation(valid_data,theta_learn,n_valid)

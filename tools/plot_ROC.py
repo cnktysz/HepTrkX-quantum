@@ -16,16 +16,18 @@ FN = np.zeros(len(threshold))
 for idx,val in enumerate(threshold):
 	for pred in preds:
 		if pred[0] >= val and pred[1]==1.:
-			TP[idx] += 1./len(preds)
+			TP[idx] += 1.
 		elif pred[0] >= val and pred[1]==0.:
-			FP[idx] += 1./len(preds)
+			FP[idx] += 1.
 		elif pred[0] < val and pred[1]==1.:
-			FN[idx] += 1./len(preds)
+			FN[idx] += 1.
 		elif pred[0] < val and pred[1]==0.:
-			TN[idx] += 1./len(preds)
+			TN[idx] += 1.
+TPR = TP / (TP+FN)
+FPR = FP / (FP+TN)
 # Plot
 plt.clf()   
-plt.scatter(FP,TP,c='blue',marker='.')
+plt.scatter(FPR,TPR,c='blue',marker='.')
 plt.scatter(threshold,threshold,c='orange',marker='D')
 plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
