@@ -7,7 +7,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from datasets.hitgraphs import get_datasets
-import sys, time, datetime
+import sys, os, time, datetime
 import multiprocessing
 from qnetworks.TTN import TTN_edge_forward,TTN_edge_back
 ########################################################
@@ -97,6 +97,8 @@ def train(B,theta_learn,y):
 	return theta_learn,average_loss
 ########################################################
 def test_validation(valid_data,theta_learn,n_valid):
+	if os.path.isfile(log_dir+'log_validation_preds.csv'):
+		os.remove(log_dir+'log_validation_preds.csv')
 	t_start = time.time()
 	print('Starting testing the validation set with ' + str(n_valid) + ' subgraphs!')
 	jobs     = []
