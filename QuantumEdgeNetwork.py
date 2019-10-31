@@ -145,7 +145,7 @@ if __name__ == '__main__':
 	n_param = 11
 	theta_learn = np.random.rand(n_param)*np.pi*2 #/ np.sqrt(n_param)
 	input_dir   = 'data/hitgraphs_big'
-	log_dir     = 'logs/TTN/lr_1/'  
+	log_dir     = 'logs/TTN/lr_0_1/'  
 	print('Log dir: ' + log_dir)
 	print('Input dir: ' + input_dir)
 	n_files     = 16*100
