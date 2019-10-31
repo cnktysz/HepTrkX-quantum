@@ -100,11 +100,17 @@ def get_loss_and_gradient(edge_array,y,theta_learn,class_weight,loss_array,gradi
 	loss_array.append(local_loss)
 	gradient_array.append(local_gradient)
 	update_array.append(local_update)
-def get_accuracy(edge_array,y,theta_learn,class_weight,acc_array):
-	total_acc = 0.
+def get_accuracy(edge_array,labels,theta_learn,class_weight,acc_array,loss_array):
+	total_acc  = 0.
+	total_loss = 0.
 	for i in range(len(edge_array)):
-		total_acc += (1 - abs(TTN_edge_forward(edge_array[i],theta_learn) - y[i]))*class_weight[int(y[i])] 
+		pred = TTN_edge_forward(edge_array[i],theta_learn)
+		total_acc  += (1 - abs(pred - labels[i]))*class_weight[int(labels[i])]
+		total_loss += binary_cross_entropy(pred,labels[i])
+		with open(log_dir+'log_validation_preds.csv', 'a') as f:
+				f.write('%.4f, %.4f\n' %(pred,labels[i]))
 	acc_array.append(total_acc)
+	loss_array.append(total_loss)
 def train(B,theta_learn,y):
 	jobs         = []
 	n_edges      = len(y)
@@ -130,7 +136,6 @@ def train(B,theta_learn,y):
 	for proc in jobs: 
 		proc.join()
 		#print('Thread ended')
-			
 	total_loss     = sum(loss_array)
 	total_gradient = sum(gradient_array)
 	total_update   = sum(update_array)
@@ -138,8 +143,7 @@ def train(B,theta_learn,y):
 	average_loss     = total_loss/n_edges
 	average_gradient = total_gradient/n_edges
 	average_update   = total_update/n_edges
-	theta_learn       = (theta_learn - lr*average_update)%(2*np.pi)
-
+	theta_learn      = (theta_learn - lr*average_update)%(2*np.pi)
 	with open(log_dir+'log_gradients.csv', 'a') as f:
 			for item in average_update:
 				f.write('%.4f, ' % item)
@@ -147,9 +151,10 @@ def train(B,theta_learn,y):
 	return theta_learn,average_loss
 def test_validation(valid_data,theta_learn,n_valid):
 	t_start = time.time()
-	print('Starting testing the validation set!')
-	jobs         = []
+	print('Starting testing the validation set with ' + str(n_valid) + ' subgraphs!')
+	jobs     = []
 	accuracy = 0.
+	loss 	 = 0.
 	for n_test in range(n_valid):
 		B,y          = preprocess(valid_data[n_test]) 
 		n_edges      = len(y)
@@ -157,33 +162,34 @@ def test_validation(valid_data,theta_learn,n_valid):
 		n_class      = [n_edges - sum(y), sum(y)]
 		class_weight = [n_edges/(n_class[0]*2), n_edges/(n_class[1]*2)]
 		# RESET variables
-		manager        = multiprocessing.Manager()
-		acc_array     = manager.list()
+		manager    = multiprocessing.Manager()
+		acc_array  = manager.list()
+		loss_array = manager.list()
 		# RUN Multithread training
 		for thread in range(n_threads):
 			start = thread*n_feed
 			end   = (thread+1)*n_feed
 			if thread==(n_threads-1):   
-				p = multiprocessing.Process(target=get_accuracy,args=(B[start:,:],y[start:],theta_learn,class_weight,acc_array,))
+				p = multiprocessing.Process(target=get_accuracy,args=(B[start:,:],y[start:],theta_learn,class_weight,acc_array,loss_array,))
 			else:
-				p = multiprocessing.Process(target=get_accuracy,args=(B[start:end,:],y[start:end],theta_learn,class_weight,acc_array,))   
+				p = multiprocessing.Process(target=get_accuracy,args=(B[start:end,:],y[start:end],theta_learn,class_weight,acc_array,loss_array,))   
 			jobs.append(p)
 			p.start()
 		# WAIT for jobs to finish
 		for proc in jobs: 
 			proc.join()
 		accuracy += sum(acc_array)/(n_edges * n_valid)
+		loss 	 += sum(loss_array)/(n_edges * n_valid)
 	with open(log_dir+'log_validation.csv', 'a') as f:
-				f.write('%.4f\n' % accuracy)
+				f.write('%.4f, %.4f\n' %(accuracy,loss) )
 	duration = time.time() - t_start
-	print('Validation Accuracy: %.4f, Elapsed: %dm%ds' %(accuracy*100, duration/60, duration%60))
-	return accuracy
+	print('Validation Loss: %.4f, Validation Accuracy: %.4f, Elapsed: %dm%ds' %(loss, accuracy*100, duration/60, duration%60))
 def preprocess(data):
 	X,Ro,Ri,y = data
-	X[:,2] = np.abs(X[:,2]) # correction for negative z
-	bo    = np.dot(Ro.T, X)
-	bi    = np.dot(Ri.T, X)
-	B     = np.concatenate((bo,bi),axis=1)
+	X[:,2]    = np.abs(X[:,2]) # correction for negative z
+	bo        = np.dot(Ro.T, X)
+	bi        = np.dot(Ri.T, X)
+	B         = np.concatenate((bo,bi),axis=1)
 	return map2angle(B), y
 ############################################################################################
 ##### MAIN ######
@@ -191,18 +197,17 @@ if __name__ == '__main__':
 	n_param = 11
 	theta_learn = np.random.rand(n_param)*np.pi*2 #/ np.sqrt(n_param)
 	input_dir   = 'data/hitgraphs_big'
-	log_dir     = 'logs/bce/lr_1/'  
+	log_dir     = 'logs/'  
 	n_files     = 16*100
 	n_valid     = int(n_files * 0.1)
 	n_train     = n_files - n_valid	
-	lr 	    = 1.
+	lr 			= 1.
 	n_epoch     = 2
-	n_threads   = 28*2
+	n_threads   = 2 #28*2
 	TEST_every  = 50
 	loss        = 0.
 	train_data, valid_data = get_datasets(input_dir, n_train, n_valid)
-	valid_accuracy         = np.zeros(int((n_train // TEST_every )*n_epoch) + 2)
-	valid_accuracy[0]      = test_validation(valid_data,theta_learn,n_valid)
+	test_validation(valid_data,theta_learn,n_valid)
 	print(str(datetime.datetime.now()) + ' Training is starting!')
 	for epoch in range(n_epoch): 
 		for n_file in range(n_train):
@@ -222,9 +227,9 @@ if __name__ == '__main__':
 			print(str(datetime.datetime.now()) + " Epoch: %d, Batch: %d, Loss: %.4f, Elapsed: %dm%ds" % (epoch+1, n_file+1, loss ,t / 60, t % 60) )
 			# Test validation data
 			if (n_file+1)%TEST_every==0:
-				valid_accuracy[((n_file+1)//TEST_every)*(epoch+1)] = test_validation(valid_data,theta_learn,n_valid)
+				test_validation(valid_data,theta_learn,n_valid)
 		print('Epoch Complete!')
-	valid_accuracy[-1] = test_validation(valid_data,theta_learn,n_valid)
+	test_validation(valid_data,theta_learn,n_valid)
 	print('Training Complete!')
 
 	
