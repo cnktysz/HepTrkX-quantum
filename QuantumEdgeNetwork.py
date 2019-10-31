@@ -6,67 +6,11 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-from qiskit import *
 from datasets.hitgraphs import get_datasets
 import sys, time, datetime
 import multiprocessing
-
-def TTN_edge_forward(edge,theta_learn):
-	# Takes the input and learning variables and applies the
-	# network to obtain the output
-	q       = QuantumRegister(len(edge))
-	c       = ClassicalRegister(1)
-	circuit = QuantumCircuit(q,c)
-	# STATE PREPARATION
-	for i in range(len(edge)):
-		circuit.ry(edge[i],q[i])
-	# APPLY forward sequence
-	circuit.ry(theta_learn[0],q[0])
-	circuit.ry(theta_learn[1],q[1])
-	circuit.cx(q[0],q[1])
-	circuit.ry(theta_learn[2],q[2])
-	circuit.ry(theta_learn[3],q[3])
-	circuit.cx(q[2],q[3])
-	circuit.ry(theta_learn[4],q[4])
-	circuit.ry(theta_learn[5],q[5])
-	circuit.cx(q[5],q[4]) # reverse the order
-	circuit.ry(theta_learn[6],q[1])
-	circuit.ry(theta_learn[7],q[3])
-	circuit.cx(q[1],q[3])
-	circuit.ry(theta_learn[8],q[3])
-	circuit.ry(theta_learn[9],q[4])
-	circuit.cx(q[3],q[4])
-	circuit.ry(theta_learn[10],q[4])
-	# Qasm Backend
-	circuit.measure(q[4],c)
-	backend = Aer.get_backend('qasm_simulator')
-	result = execute(circuit, backend, shots=1000).result()
-	counts = result.get_counts(circuit)
-	out    = 0
-	for key in counts:
-		if key=='1':
-			out = counts[key]/1000
-	return(out)
-def TTN_edge_back(input_,theta_learn):
-	# This function calculates the gradients for all learning 
-	# variables numerically and updates them accordingly.
-	epsilon = np.pi/2 # to take derivative
-	gradient = np.zeros(len(theta_learn))
-	update = np.zeros(len(theta_learn))
-	for i in range(len(theta_learn)):
-		## Compute f(x+epsilon)
-		theta_learn[i] = (theta_learn[i] + epsilon)%(2*np.pi)
-		## Evaluate
-		out_plus = TTN_edge_forward(input_,theta_learn)
-		## Compute f(x-epsilon)
-		theta_learn[i] = (theta_learn[i] - 2*epsilon)%(2*np.pi)
-		## Evaluate
-		out_minus = TTN_edge_forward(input_,theta_learn)
-		# Compute the gradient numerically
-		gradient[i] = (out_plus-out_minus)/2
-		## Bring theta to its original value
-		theta_learn[i] = (theta_learn[i] + epsilon)%(2*np.pi)
-	return gradient
+from qnetworks.TTN import TTN_edge_forward,TTN_edge_back
+########################################################
 def map2angle(B):
 	# Maps input features to 0-2PI
 	r_min     = 0.
@@ -82,10 +26,10 @@ def map2angle(B):
 	B[:,4] =  (B[:,4]-phi_min)/(phi_max-phi_min) * 2 * np.pi 
 	B[:,5] =  (B[:,5]-z_min)/(z_max-z_min)* 2 * np.pi 
 	return B
-def MSE(output,label):
-	return (output-label)**2
+########################################################	
 def binary_cross_entropy(output,label):
 	return -(label*np.log(output+1e-6) + (1-label)*np.log(1-output+1e-6))
+########################################################
 def get_loss_and_gradient(edge_array,y,theta_learn,class_weight,loss_array,gradient_array,update_array):
 	local_loss     = 0.
 	local_gradient = np.zeros(len(theta_learn))
@@ -100,6 +44,7 @@ def get_loss_and_gradient(edge_array,y,theta_learn,class_weight,loss_array,gradi
 	loss_array.append(local_loss)
 	gradient_array.append(local_gradient)
 	update_array.append(local_update)
+########################################################
 def get_accuracy(edge_array,labels,theta_learn,class_weight,acc_array,loss_array):
 	total_acc  = 0.
 	total_loss = 0.
@@ -111,6 +56,7 @@ def get_accuracy(edge_array,labels,theta_learn,class_weight,acc_array,loss_array
 				f.write('%.4f, %.4f\n' %(pred,labels[i]))
 	acc_array.append(total_acc)
 	loss_array.append(total_loss)
+########################################################
 def train(B,theta_learn,y):
 	jobs         = []
 	n_edges      = len(y)
@@ -149,6 +95,7 @@ def train(B,theta_learn,y):
 				f.write('%.4f, ' % item)
 			f.write('\n')	
 	return theta_learn,average_loss
+########################################################
 def test_validation(valid_data,theta_learn,n_valid):
 	t_start = time.time()
 	print('Starting testing the validation set with ' + str(n_valid) + ' subgraphs!')
@@ -184,6 +131,7 @@ def test_validation(valid_data,theta_learn,n_valid):
 				f.write('%.4f, %.4f\n' %(accuracy,loss) )
 	duration = time.time() - t_start
 	print('Validation Loss: %.4f, Validation Accuracy: %.4f, Elapsed: %dm%ds' %(loss, accuracy*100, duration/60, duration%60))
+########################################################
 def preprocess(data):
 	X,Ro,Ri,y = data
 	X[:,2]    = np.abs(X[:,2]) # correction for negative z
@@ -197,15 +145,16 @@ if __name__ == '__main__':
 	n_param = 11
 	theta_learn = np.random.rand(n_param)*np.pi*2 #/ np.sqrt(n_param)
 	input_dir   = 'data/hitgraphs_big'
-	log_dir     = 'logs/'  
+	log_dir     = 'logs/TTN/lr_1/'  
+	print('Log dir: ' + log_dir)
+	print('Input dir: ' + input_dir)
 	n_files     = 16*100
 	n_valid     = int(n_files * 0.1)
 	n_train     = n_files - n_valid	
-	lr 			= 1.
-	n_epoch     = 2
-	n_threads   = 2 #28*2
+	lr 			= 0.1
+	n_epoch     = 5
+	n_threads   = 28*2
 	TEST_every  = 50
-	loss        = 0.
 	train_data, valid_data = get_datasets(input_dir, n_train, n_valid)
 	test_validation(valid_data,theta_learn,n_valid)
 	print(str(datetime.datetime.now()) + ' Training is starting!')
