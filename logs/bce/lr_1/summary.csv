@@ -2878,3 +2878,5 @@ Epoch: 2, Batch: 1437, Loss: 0.6738, Elapsed: 1m18s
 Epoch: 2, Batch: 1438, Loss: 0.6528, Elapsed: 0m30s
 Epoch: 2, Batch: 1439, Loss: 0.6731, Elapsed: 0m42s
 Epoch: 2, Batch: 1440, Loss: 0.6825, Elapsed: 0m44s
+Epoch: 1, Batch: 1, Loss: 0.0000, Elapsed: 0m1s
+Epoch: 1, Batch: 2, Loss: 0.0000, Elapsed: 0m1s

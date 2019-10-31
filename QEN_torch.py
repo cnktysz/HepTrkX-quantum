@@ -94,7 +94,6 @@ def TTN(edge,theta_learn,shots):
             return counts['1']/shots
         else:
             return 0.
-
 def map2angle(B):
     # Maps input features to 0-2PI
     r_min     = 0.
@@ -124,25 +123,29 @@ def cost(edge,theta_learn,y):
     return torch.mean(binary_cross_entropy(out,y))
     
 input_dir   = 'data/hitgraphs_big'  
-n_files     = 16*100
-n_valid     = 1 # int(n_files * 0.1)
-n_train     = 1 # n_files - n_valid 
+n_files     = 16
+n_valid     = int(n_files * 0.1)
+n_train     = n_files - n_valid 
 train_data, valid_data = get_datasets(input_dir, n_train, n_valid)
-B, y = preprocess(train_data[0])
-num_epoch = 10
+
+num_epoch = 1
 theta_learn = torch.tensor(np.random.rand(11)*np.pi*2,requires_grad=True)
 loss_list = []
-edge = torch.tensor(B)
-label = torch.tensor(y)
-qc = TorchCircuit.apply 
+
 opt = torch.optim.Adam([theta_learn], lr=0.1)
 for epoch in range(num_epoch):
-    opt.zero_grad()
-    loss = cost(edge[0:10,:],theta_learn,label[0:10])
-    print(loss.item())
-    loss.backward()
-    opt.step()
-    loss_list.append(loss.item())
+	for n_file in range(n_train):
+		B, y = preprocess(train_data[n_file])
+		edge = torch.tensor(B)
+		label = torch.tensor(y)
+		qc = TorchCircuit.apply 
+
+		opt.zero_grad()
+		loss = cost(edge,theta_learn,label[0:10])
+		print(loss.item())
+		loss.backward()
+		opt.step()
+		loss_list.append(loss.item())
 
 plt.plot(loss_list)
 #plt.show()

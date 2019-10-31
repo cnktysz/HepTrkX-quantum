@@ -10,6 +10,8 @@ from qiskit import *
 from datasets.hitgraphs import get_datasets
 import sys, time, datetime
 import multiprocessing
+import tensorflow as tf
+import csv
 
 def TTN_edge_forward(edge,theta_learn):
 	# Takes the input and learning variables and applies the
@@ -86,17 +88,31 @@ def MSE(output,label):
 	return (output-label)**2
 def binary_cross_entropy(output,label):
 	return -(label*np.log(output+1e-6) + (1-label)*np.log(1-output+1e-6))
-def get_loss_and_gradient(edge_array,y,theta_learn,class_weight,loss_array,gradient_array,update_array):
-	local_loss     = 0.
+def loss_fn(outputs,label,pos_weight):
+	loss_tensor =  tf.nn.weighted_cross_entropy_with_logits(labels=tf.Variable(label,tf.float64),logits=tf.Variable(outputs,tf.float64),pos_weight=pos_weight)
+	print(tf.math.reduce_mean(loss_tensor))
+	return tf.math.reduce_mean(loss_tensor)
+def get_loss_and_gradient(edge_array,label,theta_learn,class_weight,loss_array,gradient_array,update_array):
 	local_gradient = np.zeros(len(theta_learn))
 	local_update   = np.zeros(len(theta_learn))
+	outputs = []
 	for i in range(len(edge_array)):
 		output         = TTN_edge_forward(edge_array[i],theta_learn)
-		error          = output - y[i]
-		local_loss     += binary_cross_entropy(output, y[i])*class_weight[int(y[i])]
-		gradient       = TTN_edge_back(edge_array[i],theta_learn)*class_weight[int(y[i])]
+		outputs.append(output)
+		error          = output - label[i]
+		gradient       = TTN_edge_back(edge_array[i],theta_learn)*class_weight[int(label[i])]
 		local_gradient += gradient
 		local_update   += 2*error*gradient
+	#loss_tensor = tf.nn.weighted_cross_entropy_with_logits(labels=tf.Variable(y,tf.float64),logits=tf.Variable(outputs,tf.float64),pos_weight=class_weight[1])
+	#local_loss    = tf.math.reduce_mean(loss_tensor)
+	#w = tf.Variable([[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0]], trainable=True, dtype=tf.float64)
+	with tf.GradientTape() as tape:
+		tape.watch(w)
+		local_loss = loss_fn(outputs,label,class_weight[1])
+	gradients = tape.gradient(tf.Variable(local_loss,tf.float64),w)
+	print(gradients)
+	adam.apply_gradients(zip(gradients,w))
+	print(w)
 	loss_array.append(local_loss)
 	gradient_array.append(local_gradient)
 	update_array.append(local_update)
@@ -105,11 +121,11 @@ def get_accuracy(edge_array,y,theta_learn,class_weight,acc_array):
 	for i in range(len(edge_array)):
 		total_acc += (1 - abs(TTN_edge_forward(edge_array[i],theta_learn) - y[i]))*class_weight[int(y[i])] 
 	acc_array.append(total_acc)
-def train(B,theta_learn,y):
+def train(edges,theta_learn,labels):
 	jobs         = []
-	n_edges      = len(y)
+	n_edges      = len(labels)
 	n_feed       = n_edges//n_threads
-	n_class      = [n_edges - sum(y), sum(y)]
+	n_class      = [n_edges - sum(labels), sum(labels)]
 	class_weight = [n_edges/(n_class[0]*2), n_edges/(n_class[1]*2)]
 	# RESET variables
 	manager        = multiprocessing.Manager()
@@ -121,9 +137,9 @@ def train(B,theta_learn,y):
 		start = thread*n_feed
 		end   = (thread+1)*n_feed
 		if thread==(n_threads-1):   
-			p = multiprocessing.Process(target=get_loss_and_gradient,args=(B[start:,:],y[start:],theta_learn,class_weight,loss_array,gradient_array,update_array,))
+			p = multiprocessing.Process(target=get_loss_and_gradient,args=(edges[start:,:],labels[start:],theta_learn,class_weight,loss_array,gradient_array,update_array,))
 		else:
-			p = multiprocessing.Process(target=get_loss_and_gradient,args=(B[start:end,:],y[start:end],theta_learn,class_weight,loss_array,gradient_array,update_array,))   
+			p = multiprocessing.Process(target=get_loss_and_gradient,args=(edges[start:end,:],labels[start:end],theta_learn,class_weight,loss_array,gradient_array,update_array,))   
 		jobs.append(p)
 		p.start()
 	# WAIT for jobs to finish
@@ -131,19 +147,19 @@ def train(B,theta_learn,y):
 		proc.join()
 		#print('Thread ended')
 			
-	total_loss     = sum(loss_array)
 	total_gradient = sum(gradient_array)
 	total_update   = sum(update_array)
 	## UPDATE WEIGHTS
-	average_loss     = total_loss/n_edges
+	average_loss     = sum(loss_array)/n_threads
 	average_gradient = total_gradient/n_edges
 	average_update   = total_update/n_edges
 	theta_learn       = (theta_learn - lr*average_update)%(2*np.pi)
-
+	"""
 	with open(log_dir+'log_gradients.csv', 'a') as f:
 			for item in average_update:
 				f.write('%.4f, ' % item)
-			f.write('\n')	
+			f.write('\n')		
+	"""
 	return theta_learn,average_loss
 def test_validation(valid_data,theta_learn,n_valid):
 	t_start = time.time()
@@ -188,27 +204,31 @@ def preprocess(data):
 ############################################################################################
 ##### MAIN ######
 if __name__ == '__main__':
-	n_param = 11
+	n_param     = 11
 	theta_learn = np.random.rand(n_param)*np.pi*2 #/ np.sqrt(n_param)
+	w = tf.Variable([[0],[0],[0],[0],[0],[0],[0],[0],[0],[0],[0]], trainable=True, dtype=tf.float64)
 	input_dir   = 'data/hitgraphs_big'
-	log_dir     = 'logs/bce/lr_1/'  
+	log_dir     = 'logs/'  
 	n_files     = 16*100
 	n_valid     = int(n_files * 0.1)
 	n_train     = n_files - n_valid	
-	lr 	    = 1.
+	lr          = 1.
 	n_epoch     = 2
-	n_threads   = 28*2
+	n_threads   = 1 # 28*2
 	TEST_every  = 50
 	loss        = 0.
 	train_data, valid_data = get_datasets(input_dir, n_train, n_valid)
 	valid_accuracy         = np.zeros(int((n_train // TEST_every )*n_epoch) + 2)
-	valid_accuracy[0]      = test_validation(valid_data,theta_learn,n_valid)
+	#valid_accuracy[0]      = test_validation(valid_data,theta_learn,n_valid)
 	print(str(datetime.datetime.now()) + ' Training is starting!')
+	adam = tf.optimizers.Adam(learning_rate=0.3)
+	print(w)
 	for epoch in range(n_epoch): 
 		for n_file in range(n_train):
 			t0 = time.time()
 			B, y = preprocess(train_data[n_file])
-			theta_learn,loss = train(B,theta_learn,y)
+			theta_learn,loss = train(B[:10,:],theta_learn,y[:10])
+			
 			t = time.time() - t0
 			# Log 
 			with open(log_dir+'log_theta.csv', 'a') as f:
