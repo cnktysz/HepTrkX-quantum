@@ -9,7 +9,8 @@ import matplotlib.pyplot as plt
 from datasets.hitgraphs import get_datasets
 import sys, os, time, datetime
 import multiprocessing
-from qnetworks.TTN import TTN_edge_forward,TTN_edge_back
+from qnetworks.TTN import TTN_edge_forward,
+from sklearn import metrics
 ########################################################
 def map2angle(B):
 	# Maps input features to 0-2PI
@@ -129,10 +130,19 @@ def test_validation(valid_data,theta_learn,n_valid):
 			proc.join()
 		accuracy += sum(acc_array)/(n_edges * n_valid)
 		loss 	 += sum(loss_array)/(n_edges * n_valid)
+
+	#read all preds
+	with open(log_dir + 'log_validation_preds.csv', 'r') as f:
+		reader = csv.reader(f, delimiter=',')
+		preds = np.array(list(reader)).astype(float)
+	#calcualte auc
+	fpr,tpr,thresholds = metrics.roc_curve(preds[:,1].astype(int),preds[:,0],pos_label=1 )
+	auc = metrics.auc(fpr,tpr)			
+	#log
 	with open(log_dir+'log_validation.csv', 'a') as f:
-				f.write('%.4f, %.4f\n' %(accuracy,loss) )
+			f.write('%.4f, %.4f\n' %(accuracy,auc,loss))
 	duration = time.time() - t_start
-	print('Validation Loss: %.4f, Validation Accuracy: %.4f, Elapsed: %dm%ds' %(loss, accuracy*100, duration/60, duration%60))
+	print('Validation Loss: %.4f, Validation Acc: %.4f, Validation AUC: %.4f Elapsed: %dm%ds' %(loss, accuracy*100, auc, duration/60, duration%60))
 ########################################################
 def preprocess(data):
 	X,Ro,Ri,y = data
