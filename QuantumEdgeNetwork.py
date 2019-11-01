@@ -7,9 +7,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from datasets.hitgraphs import get_datasets
-import sys, os, time, datetime
+import sys, os, time, datetime, csv
 import multiprocessing
-from qnetworks.TTN import TTN_edge_forward,
+from qnetworks.TTN import TTN_edge_forward, TTN_edge_back
 from sklearn import metrics
 ########################################################
 def map2angle(B):
@@ -140,7 +140,7 @@ def test_validation(valid_data,theta_learn,n_valid):
 	auc = metrics.auc(fpr,tpr)			
 	#log
 	with open(log_dir+'log_validation.csv', 'a') as f:
-			f.write('%.4f, %.4f\n' %(accuracy,auc,loss))
+			f.write('%.4f, %.4f, %.4f\n' %(accuracy,auc,loss))
 	duration = time.time() - t_start
 	print('Validation Loss: %.4f, Validation Acc: %.4f, Validation AUC: %.4f Elapsed: %dm%ds' %(loss, accuracy*100, auc, duration/60, duration%60))
 ########################################################

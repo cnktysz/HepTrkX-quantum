@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import csv
 from sklearn import metrics
-log_location = 'logs/'
+log_location = 'logs/TTN/lr_0_1/'
 png_location = 'png/'
 with open(log_location + 'log_validation_preds.csv', 'r') as f:
 	reader = csv.reader(f, delimiter=',')
