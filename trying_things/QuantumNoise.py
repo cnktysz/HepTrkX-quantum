@@ -2,7 +2,6 @@ import sys
 import numpy as np
 from qiskit import *
 from qiskit.providers.aer import noise
-from qiskit.providers.aer.noise.errors.standard_errors import thermal_relaxation_error
 
 q       = QuantumRegister(1)
 c       = ClassicalRegister(1)

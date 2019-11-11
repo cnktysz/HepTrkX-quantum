@@ -10,7 +10,9 @@ from datasets.hitgraphs import get_datasets
 import sys, os, time, datetime, csv
 import multiprocessing
 from qnetworks.TTN import TTN_edge_forward, TTN_edge_back
+from qnetworks.MERA import MERA_edge_forward, MERA_edge_back
 from sklearn import metrics
+from qiskit import *
 ########################################################
 def map2angle(B):
 	# Maps input features to 0-2PI
@@ -36,10 +38,10 @@ def get_loss_and_gradient(edge_array,y,theta_learn,class_weight,loss_array,gradi
 	local_gradient = np.zeros(len(theta_learn))
 	local_update   = np.zeros(len(theta_learn))
 	for i in range(len(edge_array)):
-		output         = TTN_edge_forward(edge_array[i],theta_learn)
+		output         = MERA_edge_forward(edge_array[i],theta_learn,properties,shots=shots)
 		error          = output - y[i]
 		local_loss     += binary_cross_entropy(output, y[i])*class_weight[int(y[i])]
-		gradient       = TTN_edge_back(edge_array[i],theta_learn)*class_weight[int(y[i])]
+		gradient       = MERA_edge_back(edge_array[i],theta_learn,properties,shots=shots)*class_weight[int(y[i])]
 		local_gradient += gradient
 		local_update   += 2*error*gradient
 	loss_array.append(local_loss)
@@ -50,7 +52,7 @@ def get_accuracy(edge_array,labels,theta_learn,class_weight,acc_array,loss_array
 	total_acc  = 0.
 	total_loss = 0.
 	for i in range(len(edge_array)):
-		pred = TTN_edge_forward(edge_array[i],theta_learn)
+		pred = MERA_edge_forward(edge_array[i],theta_learn,properties,shots=shots)
 		total_acc  += (1 - abs(pred - labels[i]))*class_weight[int(labels[i])]
 		total_loss += binary_cross_entropy(pred,labels[i])
 		with open(log_dir+'log_validation_preds.csv', 'a') as f:
@@ -154,16 +156,21 @@ def preprocess(data):
 ############################################################################################
 ##### MAIN ######
 if __name__ == '__main__':
-	n_param = 11
+	n_param = 19
 	theta_learn = np.random.rand(n_param)*np.pi*2 #/ np.sqrt(n_param)
 	input_dir   = 'data/hitgraphs_big'
-	log_dir     = 'logs/TTN/lr_0_1/'  
+	log_dir     = 'logs/MERA/lr_0_1/'  
 	print('Log dir: ' + log_dir)
 	print('Input dir: ' + input_dir)
+	provider = IBMQ.load_account()
+	backends = provider.backends()
+	device = provider.get_backend('ibmq_16_melbourne')
+	properties = device.properties()
+	shots=1000
 	n_files     = 16*100
 	n_valid     = int(n_files * 0.1)
 	n_train     = n_files - n_valid	
-	lr 	    = 0.1
+	lr          = 0.1
 	n_epoch     = 5
 	batch_size  = 5
 	n_threads   = 28
