@@ -1,6 +1,7 @@
 import numpy as np
 from qiskit import *
-def TTN_edge_forward(edge,theta_learn):
+from qiskit.providers.aer import noise
+def TTN_edge_forward(edge,theta_learn,properties,shots=1000,noisy=False):
 	# Takes the input and learning variables and applies the
 	# network to obtain the output
 	q       = QuantumRegister(len(edge))
@@ -29,14 +30,18 @@ def TTN_edge_forward(edge,theta_learn):
 	# Qasm Backend
 	circuit.measure(q[4],c)
 	backend = Aer.get_backend('qasm_simulator')
-	result = execute(circuit, backend, shots=1000).result()
+	if noisy:
+		noise_model = noise.device.basic_device_noise_model(properties)
+		result = execute(circuit, backend, shots=shots,noise_model=noise_model).result()
+	else:
+		result = execute(circuit, backend, shots=shots).result()
 	counts = result.get_counts(circuit)
 	out    = 0
 	for key in counts:
 		if key=='1':
-			out = counts[key]/1000
+			out = counts[key]/shots
 	return(out)
-def TTN_edge_back(input_,theta_learn):
+def TTN_edge_back(input_,theta_learn,properties,shots=1000,noisy=False):
 	# This function calculates the gradients for all learning 
 	# variables numerically and updates them accordingly.
 	epsilon = np.pi/2 # to take derivative
@@ -46,11 +51,11 @@ def TTN_edge_back(input_,theta_learn):
 		## Compute f(x+epsilon)
 		theta_learn[i] = (theta_learn[i] + epsilon)%(2*np.pi)
 		## Evaluate
-		out_plus = TTN_edge_forward(input_,theta_learn)
+		out_plus = TTN_edge_forward(input_,theta_learn,properties,shots=shots,noisy=noisy)
 		## Compute f(x-epsilon)
 		theta_learn[i] = (theta_learn[i] - 2*epsilon)%(2*np.pi)
 		## Evaluate
-		out_minus = TTN_edge_forward(input_,theta_learn)
+		out_minus = TTN_edge_forward(input_,theta_learn,properties,shots=shots,noisy=noisy)
 		# Compute the gradient numerically
 		gradient[i] = (out_plus-out_minus)/2
 		## Bring theta to its original value

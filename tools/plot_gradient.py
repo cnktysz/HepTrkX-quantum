@@ -2,53 +2,54 @@ import matplotlib.pyplot as plt
 import numpy as np
 import csv
 
-log_location = 'logs/gradient/'
+noisy_log_location = 'logs/gradient/noisy/'
+noiseless_log_location = 'logs/gradient/noiseless/'
 png_location = 'png/gradient/'
-with open(log_location + 'log_gradient_10_shots.csv', 'r') as f:
+with open(noisy_log_location + 'log_gradient_10_shots.csv', 'r') as f:
 	reader = csv.reader(f, delimiter=',')
-	grad_10 = np.delete(np.array(list(reader)[:-2]),11,1).astype(float) 	
-with open(log_location + 'log_gradient_100_shots.csv', 'r') as f:
+	noisy_grad_10 = np.delete(np.array(list(reader)[:-2]),11,1).astype(float) 	
+with open(noisy_log_location + 'log_gradient_100_shots.csv', 'r') as f:
 	reader = csv.reader(f, delimiter=',')
-	grad_100 = np.delete(np.array(list(reader)[:-2]),11,1).astype(float) 	
-with open(log_location + 'log_gradient_1000_shots.csv', 'r') as f:
+	noisy_grad_100 = np.delete(np.array(list(reader)[:-2]),11,1).astype(float) 	
+with open(noisy_log_location + 'log_gradient_1000_shots.csv', 'r') as f:
 	reader = csv.reader(f, delimiter=',')
-	grad_1000 = np.delete(np.array(list(reader)[:-2]),11,1).astype(float) 	
+	noisy_grad_1000 = np.delete(np.array(list(reader)[:-2]),11,1).astype(float) 	
+with open(noiseless_log_location + 'log_gradient_10_shots.csv', 'r') as f:
+	reader = csv.reader(f, delimiter=',')
+	noiseless_grad_10 = np.delete(np.array(list(reader)[:-2]),11,1).astype(float) 	
+with open(noiseless_log_location + 'log_gradient_100_shots.csv', 'r') as f:
+	reader = csv.reader(f, delimiter=',')
+	noiseless_grad_100 = np.delete(np.array(list(reader)[:-2]),11,1).astype(float) 	
+with open(noiseless_log_location + 'log_gradient_1000_shots.csv', 'r') as f:
+	reader = csv.reader(f, delimiter=',')
+	noiseless_grad_1000 = np.delete(np.array(list(reader)[:-2]),11,1).astype(float)
 	
-
-range_ = [min(grad_10[:,0]),max(grad_10[:,0])]
-
-fig, (ax1, ax2, ax3) = plt.subplots(1, 3,sharey=True,figsize=(10,3))
-_ = ax1.hist(grad_10[:,0],bins=20,range=range_)
-ax1.set(title=r'$\mu= $'+ str(round(grad_10[:,0].mean(),3)) + r'$, \sigma= $' + str(round(grad_10[:,0].std(),3)),xlabel='Gradient',ylabel='Counts' )
-_ = ax2.hist(grad_100[:,0],bins=20,range=range_)
-ax2.set(title=r'$\mu= $'+ str(round(grad_100[:,0].mean(),3)) + r'$, \sigma= $' + str(round(grad_100[:,0].std(),3)),xlabel='Gradient',ylabel='Counts' )
-_ = ax3.hist(grad_1000[:,0],bins=20,range=range_)
-ax3.set(title=r'$\mu= $'+ str(round(grad_1000[:,0].mean(),3)) + r'$, \sigma= $' + str(round(grad_1000[:,0].std(),3)),xlabel='Gradient',ylabel='Counts' )
-plt.tight_layout()
-
-
-plt.savefig(png_location+'gradients.pdf')
-
-"""
-range_ = [min(grad_10[:,0]),max(grad_10[:,0])]
-plt.clf()	
-_ = plt.hist(grad_10[:,0],bins=20,range=range_)
-plt.title('Gradient of 0th angle: ' + r'$\mu= $'+ str(round(grad_10[:,0].mean(),3)) + r'$, \sigma= $' + str(round(grad_10[:,0].std(),3)))
-plt.xlabel('Gradient')
-plt.ylabel('Counts')
-plt.savefig(png_location+'gradient_'+str(10)+'_shots.pdf')
+for i in range(11):	
+	range_ = [min(np.minimum(noiseless_grad_10[:,i],noisy_grad_10[:,i])),max(np.maximum(noiseless_grad_10[:,i],noisy_grad_10[:,i]))]
+	fig, axes = plt.subplots(2, 3,sharey=True,figsize=(10,3))
+	_ = axes[0,0].hist(noiseless_grad_10[:,i],bins=20,range=range_,label='Noise: OFF \nShots: 10')
+	axes[0,0].set(title=r'$\mu= $'+ str(round(noiseless_grad_10[:,i].mean(),3)) + r'$, \sigma= $' + str(round(noiseless_grad_10[:,i].std(),3)),xlabel=r'$\partial \^y / \partial \theta_{{{}}} $'.format(i), ylabel='Counts' )
+	_ = axes[0,1].hist(noiseless_grad_100[:,i],bins=20,range=range_,label='Noise: OFF \nShots: 100')
+	axes[0,1].set(title=r'$\mu= $'+ str(round(noiseless_grad_100[:,i].mean(),3)) + r'$, \sigma= $' + str(round(noiseless_grad_100[:,i].std(),3)),xlabel=r'$\partial \^y / \partial \theta_{{{}}} $'.format(i), ylabel='Counts' )
+	_ = axes[0,2].hist(noiseless_grad_1000[:,i],bins=20,range=range_,label='Noise: OFF \nShots: 1000')
+	axes[0,2].set(title=r'$\mu= $'+ str(round(noiseless_grad_1000[:,i].mean(),3)) + r'$, \sigma= $' + str(round(noiseless_grad_1000[:,i].std(),3)),xlabel=r'$\partial \^y / \partial \theta_{{{}}} $'.format(i), ylabel='Counts' )
+	_ = axes[1,0].hist(noisy_grad_10[:,i],bins=20,range=range_,label='Noise: ON \nShots: 10')
+	axes[1,0].set(title=r'$\mu= $'+ str(round(noisy_grad_10[:,i].mean(),3)) + r'$, \sigma= $' + str(round(noisy_grad_10[:,i].std(),3)),xlabel=r'$\partial \^y / \partial \theta_{{{}}} $'.format(i), ylabel='Counts' )
+	_ = axes[1,1].hist(noisy_grad_100[:,i],bins=20,range=range_,label='Noise: ON \nShots: 100')
+	axes[1,1].set(title=r'$\mu= $'+ str(round(noisy_grad_100[:,i].mean(),3)) + r'$, \sigma= $' + str(round(noisy_grad_100[:,i].std(),3)),xlabel=r'$\partial \^y / \partial \theta_{{{}}} $'.format(i), ylabel='Counts' )
+	_ = axes[1,2].hist(noisy_grad_1000[:,i],bins=20,range=range_,label='Noise: ON \nShots: 1000')
+	axes[1,2].set(title=r'$\mu= $'+ str(round(noisy_grad_1000[:,i].mean(),3)) + r'$, \sigma= $' + str(round(noisy_grad_1000[:,i].std(),3)),xlabel=r'$\partial \^y / \partial \theta_{{{}}} $'.format(i), ylabel='Counts' )
 	
-plt.clf()	
-_ = plt.hist(grad_100[:,0],bins=20,range=range_)
-plt.title('Gradient of 0th angle: ' + r'$\mu= $'+ str(round(grad_100[:,0].mean(),3)) + r'$, \sigma= $' + str(round(grad_100[:,0].std(),3)))
-plt.xlabel('Gradient')
-plt.ylabel('Counts')
-plt.savefig(png_location+'gradient_'+str(100)+'_shots.pdf')
+	#legend settings
+	for k in range(2):
+		for l in range(3):
+			leg = axes[k,l].legend(bbox_to_anchor=(-0.14, 1.1),loc='upper left',frameon=False,prop={'size': 8})
+			for text in leg.get_texts():
+				text.set_color('r')
+				text.set_fontweight('bold')
+				text.set_horizontalalignment('left')
+			for item in leg.legendHandles:
+				item.set_visible(False)
 
-plt.clf()	
-_ = plt.hist(grad_1000[:,0],bins=20,range=range_)
-plt.title('Gradient of 0th angle: ' + r'$\mu= $'+ str(round(grad_1000[:,0].mean(),3)) + r'$, \sigma= $' + str(round(grad_1000[:,0].std(),3)))
-plt.xlabel('Gradient')
-plt.ylabel('Counts')
-plt.savefig(png_location+'gradient_'+str(1000)+'_shots.pdf')		
-"""
+	plt.tight_layout()
+	plt.savefig(png_location+'gradients_of_' + str(i) + 'th_angle.pdf')
