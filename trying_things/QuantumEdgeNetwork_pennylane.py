@@ -3,9 +3,10 @@ sys.path.append(os.path.abspath(os.path.join('.')))
 import matplotlib.pyplot as plt
 import pennylane as qml 
 from pennylane import numpy as np
-from datasets.hitgraphs import HitGraphDataset
-import sys, time
+from datasets.hitgraphs import get_datasets
 import multiprocessing
+from sklearn import metrics
+
 
 dev1 = qml.device("default.qubit", wires=6)
 
@@ -163,7 +164,7 @@ def get_accuracy(edge_array,labels,theta_learn,class_weight,acc_array,loss_array
 	total_acc  = 0.
 	total_loss = 0.
 	for i in range(len(edge_array)):
-		pred = TTN_edge_forward(edge_array[i],theta_learn)
+		pred = (TTN_edge_forward(edge_array[i],theta_learn)+1)/2
 		total_acc  += (1 - abs(pred - labels[i]))*class_weight[int(labels[i])]
 		total_loss += binary_cross_entropy(pred,labels[i])
 		with open(log_dir+'log_validation_preds.csv', 'a') as f:
