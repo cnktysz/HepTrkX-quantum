@@ -6,6 +6,8 @@ from pennylane import numpy as np
 from datasets.hitgraphs import get_datasets
 import multiprocessing
 from sklearn import metrics
+from random import shuffle
+from math import ceil
 
 dev1 = qml.device("default.qubit", wires=6)
 
@@ -53,8 +55,7 @@ def loss_fn(edge_array,label,theta_learn,class_weight,loss_array):
 	loss = 0.
 	for i in range(len(label)):
 		output = (TTN_edge_forward(edge_array[i],theta_learn)+1)/2
-		loss  +=(-(label[i]*np.log(output+1e-6) + (1-label[i])*np.log(1-output+1e-6))) * class_weight[int(label[i])]
-		#loss +=(((TTN_edge_forward(edge_array[i],theta_learn)+1)/2 - y[i])**2)*class_weight[int(y[i])]
+		loss  += binary_cross_entropy(output,label[i]) * class_weight[int(label[i])]
 	loss_array.append(loss)
 def cost_fn(edge_array,y,theta_learn):
 	jobs         = []
@@ -165,7 +166,7 @@ def get_accuracy(edge_array,labels,theta_learn,class_weight,acc_array,loss_array
 	for i in range(len(edge_array)):
 		pred = (TTN_edge_forward(edge_array[i],theta_learn)+1)/2
 		total_acc  += (1 - abs(pred - labels[i]))*class_weight[int(labels[i])]
-		total_loss += binary_cross_entropy(pred,labels[i])
+		total_loss += binary_cross_entropy(pred,labels[i])*class_weight[int(labels[i])]
 		with open(log_dir+'log_validation_preds.csv', 'a') as f:
 				f.write('%.4f, %.4f\n' %(pred,labels[i]))
 	acc_array.append(total_acc)
@@ -177,10 +178,17 @@ def preprocess(data):
 	bi        = np.dot(Ri.T, X)
 	B         = np.concatenate((bo,bi),axis=1)
 	return map2angle(B), y
+def preprocess(data):
+	X,Ro,Ri,y = data
+	X[:,2]    = np.abs(X[:,2]) # correction for negative z
+	bo        = np.dot(Ro.T, X)
+	bi        = np.dot(Ri.T, X)
+	B         = np.concatenate((bo,bi),axis=1)
+	return map2angle(B), y
 def delete_all_logs(log_dir):
 	log_list = os.listdir(log_dir)
 	for item in log_list:
-		if item.endswith('*.csv'):
+		if item.endswith('.csv'):
 			os.remove(log_dir+item)
 			print(str(datetime.datetime.now()) + ' Deleted old log: ' + log_dir+item)
 if __name__ == '__main__':
@@ -195,7 +203,10 @@ if __name__ == '__main__':
 	n_files     = 16*100
 	n_valid     = int(n_files * 0.1)
 	n_train     = n_files - n_valid	
-	lr          = 0.001
+	train_list  = [i for i in range(n_train)]
+	lr          = 0.01
+	batch_size  = 5
+	n_batch     = ceil(n_train/batch_size)  
 	n_epoch     = 5
 	n_threads   = 28
 	TEST_every  = 50
@@ -205,9 +216,10 @@ if __name__ == '__main__':
 	print(str(datetime.datetime.now()) + ' Training is starting!')
 	opt = qml.AdamOptimizer(stepsize=lr, beta1=0.9, beta2=0.99,eps=1e-08)
 	for epoch in range(n_epoch): 
-		for n_step in range(n_train):
+		shuffle(train_list)
+		for n_step in range(n_traim):
 			t0 = time.time()
-			B, y = preprocess(train_data[n_step])
+			B, y = preprocess(train_data[train_list[n_step]])
 			# Update learning variables
 			theta_learn = opt.step(lambda v: cost_fn(B,y,v),theta_learn,lambda z: grad_fn(B,y,theta_learn))
 			theta_learn = theta_learn % (2*np.pi)
@@ -225,7 +237,7 @@ if __name__ == '__main__':
 				f.write('\n')
 			with open(log_dir + 'log_loss.csv', 'a') as f:
 				f.write('%.4f\n' % loss)	
-			# Test every TEST_every
+			# Test every TEST_every
 			if (n_step+1)%TEST_every==0:
 				test_validation(valid_data,theta_learn,n_valid)
 		print('Epoch Complete!')
