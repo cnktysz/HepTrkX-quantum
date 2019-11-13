@@ -39,7 +39,7 @@ def TTN_edge_forward(edge,theta_learn):
 """
 dev2 = qml.device("default.qubit", wires=6)
 
-@qml.qnode(dev1)
+@qml.qnode(dev2)
 def MERA_edge_forward(edge,theta_learn):
 	# Takes the input and learning variables and applies the
 	# network to obtain the output
@@ -263,7 +263,7 @@ if __name__ == '__main__':
 	opt = qml.AdamOptimizer(stepsize=lr, beta1=0.9, beta2=0.99,eps=1e-08)
 	for epoch in range(n_epoch): 
 		shuffle(train_list)
-		for n_step in range(n_traim):
+		for n_step in range(n_train):
 			t0 = time.time()
 			B, y = preprocess(train_data[train_list[n_step]])
 			# Update learning variables
