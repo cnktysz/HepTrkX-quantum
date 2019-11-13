@@ -160,16 +160,23 @@ def grad_fn(edge_array,y,theta_learn):
 	return avg_grad	
 def binary_cross_entropy(output,label):
 	return -(label*np.log(output+1e-6) + (1-label)*np.log(1-output+1e-6))
-def test_validation(valid_data,theta_learn,n_valid):
-	if os.path.isfile(log_dir+'log_validation_preds.csv'):
-		os.remove(log_dir+'log_validation_preds.csv')
+def test(data,theta_learn,n_testing,testing='valid'):
 	t_start = time.time()
-	print('Starting testing the validation set with ' + str(n_valid) + ' subgraphs!')
+
+	if testing=='valid':
+		if os.path.isfile(log_dir+'log_validation_preds.csv'):
+			os.remove(log_dir+'log_validation_preds.csv')
+		print('Starting testing the validation set with ' + str(n_testing) + ' subgraphs!')
+	if testing=='train':
+		if os.path.isfile(log_dir+'log_training_preds.csv'):
+			os.remove(log_dir+'log_training_preds.csv')
+		print('Starting testing the training set with ' + str(n_testing) + ' subgraphs!')
+
 	jobs     = []
 	accuracy = 0.
 	loss 	 = 0.
-	for n_test in range(n_valid):
-		B,y          = preprocess(valid_data[n_test]) 
+	for n_test in range(n_testing):
+		B,y          = preprocess(data[n_test]) 
 		n_edges      = len(y)
 		n_feed       = n_edges//n_threads
 		n_class      = [n_edges - sum(y), sum(y)]
@@ -191,21 +198,36 @@ def test_validation(valid_data,theta_learn,n_valid):
 		# WAIT for jobs to finish
 		for proc in jobs: 
 			proc.join()
-		accuracy += sum(acc_array)/(n_edges * n_valid)
-		loss 	 += sum(loss_array)/(n_edges * n_valid)
+		accuracy += sum(acc_array)/(n_edges * n_testing)
+		loss 	 += sum(loss_array)/(n_edges * n_testing)
 
-	#read all preds
-	with open(log_dir + 'log_validation_preds.csv', 'r') as f:
-		reader = csv.reader(f, delimiter=',')
-		preds = np.array(list(reader)).astype(float)
-	#calcualte auc
-	fpr,tpr,thresholds = metrics.roc_curve(preds[:,1].astype(int),preds[:,0],pos_label=1 )
-	auc = metrics.auc(fpr,tpr)			
-	#log
-	with open(log_dir+'log_validation.csv', 'a') as f:
-			f.write('%.4f, %.4f, %.4f\n' %(accuracy,auc,loss))
-	duration = time.time() - t_start
-	print('Validation Loss: %.4f, Validation Acc: %.4f, Validation AUC: %.4f Elapsed: %dm%ds' %(loss, accuracy*100, auc, duration/60, duration%60))
+	if testing=='valid':
+		#read all preds
+		with open(log_dir + 'log_validation_preds.csv', 'r') as f:
+			reader = csv.reader(f, delimiter=',')
+			preds = np.array(list(reader)).astype(float)
+		#calcualte auc
+		fpr,tpr,thresholds = metrics.roc_curve(preds[:,1].astype(int),preds[:,0],pos_label=1 )
+		auc = metrics.auc(fpr,tpr)			
+		#log
+		with open(log_dir+'log_validation.csv', 'a') as f:
+				f.write('%.4f, %.4f, %.4f\n' %(accuracy,auc,loss))
+		duration = time.time() - t_start
+		print('Validation Loss: %.4f, Validation Acc: %.4f, Validation AUC: %.4f Elapsed: %dm%ds' %(loss, accuracy*100, auc, duration/60, duration%60))
+	if testing=='train':
+		#read all preds
+		with open(log_dir + 'log_training_preds.csv', 'r') as f:
+			reader = csv.reader(f, delimiter=',')
+			preds = np.array(list(reader)).astype(float)
+			#calcualte auc
+		fpr,tpr,thresholds = metrics.roc_curve(preds[:,1].astype(int),preds[:,0],pos_label=1 )
+		auc = metrics.auc(fpr,tpr)			
+		#log
+		with open(log_dir+'log_training.csv', 'a') as f:
+				f.write('%.4f, %.4f, %.4f\n' %(accuracy,auc,loss))
+		duration = time.time() - t_start
+		print('Training Loss: %.4f, Training Acc: %.4f, Training AUC: %.4f Elapsed: %dm%ds' %(loss, accuracy*100, auc, duration/60, duration%60))
+
 def get_accuracy(edge_array,labels,theta_learn,class_weight,acc_array,loss_array):
 	total_acc  = 0.
 	total_loss = 0.
@@ -258,7 +280,8 @@ if __name__ == '__main__':
 	TEST_every  = 50
 	#####################   BEGIN   #####################   	
 	train_data, valid_data = get_datasets(input_dir, n_train, n_valid)
-	test_validation(valid_data,theta_learn,n_valid)
+	test(valid_data,theta_learn,n_valid,'valid')
+	test(train_data,theta_learn,n_train,'train')
 	print(str(datetime.datetime.now()) + ' Training is starting!')
 	opt = qml.AdamOptimizer(stepsize=lr, beta1=0.9, beta2=0.99,eps=1e-08)
 	for epoch in range(n_epoch): 
@@ -285,9 +308,11 @@ if __name__ == '__main__':
 				f.write('%.4f\n' % loss)	
 			# Test every TEST_every
 			if (n_step+1)%TEST_every==0:
-				test_validation(valid_data,theta_learn,n_valid)
+					test(valid_data,theta_learn,n_valid,'valid')
+					test(train_data,theta_learn,n_train,'train')
 		print('Epoch Complete!')
-	test_validation(valid_data,theta_learn,n_valid)
+	test(valid_data,theta_learn,n_valid,'valid')
+	test(train_data,theta_learn,n_train,'train')
 	print('Training Complete!')
 
 
