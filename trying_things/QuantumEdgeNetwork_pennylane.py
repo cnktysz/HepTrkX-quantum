@@ -8,7 +8,7 @@ import multiprocessing
 from sklearn import metrics
 from random import shuffle
 from math import ceil
-
+"""
 dev1 = qml.device("default.qubit", wires=6)
 
 @qml.qnode(dev1)
@@ -36,6 +36,52 @@ def TTN_edge_forward(edge,theta_learn):
 	qml.CNOT(wires=[3,4])
 	qml.RY(theta_learn[10],wires=4)
 	return(qml.expval(qml.PauliZ(wires=4)))
+"""
+dev2 = qml.device("default.qubit", wires=6)
+
+@qml.qnode(dev1)
+def MERA_edge_forward(edge,theta_learn):
+	# Takes the input and learning variables and applies the
+	# network to obtain the output
+	# STATE PREPARATION
+	for i in range(len(edge)):
+		qml.RY(edge[i],wires=i)
+	# APPLY forward sequence
+	#######  Seq. 1  #######
+	qml.RY(theta_learn[0],wires=0)
+	qml.RY(theta_learn[1],wires=1)
+	qml.CNOT(wires=[0,1])
+	qml.RY(theta_learn[2],wires=3)
+	qml.RY(theta_learn[3],wires=4)
+	qml.CNOT(wires=[3,4])
+	#######  Seq. 2  #######
+	qml.RY(theta_learn[4],wires=0)
+	qml.RY(theta_learn[5],wires=1)
+	qml.CNOT(wires=[0,1])
+	qml.RY(theta_learn[6],wires=2)
+	qml.RY(theta_learn[7],wires=3)
+	qml.CNOT(wires=[2,3])
+	qml.RY(theta_learn[8],wires=4)
+	qml.RY(theta_learn[9],wires=5)
+	qml.CNOT(wires=[5,4])
+	#######  Seq. 3  #######
+	qml.RY(theta_learn[10],wires=1)
+	qml.RY(theta_learn[11],wires=4)
+	qml.CNOT(wires=[1,4])
+	#######  Seq. 4  #######
+	qml.RY(theta_learn[12],wires=1)
+	qml.RY(theta_learn[13],wires=2)
+	qml.CNOT(wires=[1,2])
+	qml.RY(theta_learn[14],wires=3)
+	qml.RY(theta_learn[15],wires=4)
+	qml.CNOT(wires=[4,3])
+	#######  Seq. 5  #######
+	qml.RY(theta_learn[16],wires=2)
+	qml.RY(theta_learn[17],wires=3)
+	qml.CNOT(wires=[2,3])
+	#######  Seq. 5  #######
+	qml.RY(theta_learn[18],wires=3)
+	return(qml.expval(qml.PauliZ(wires=3)))
 def map2angle(B):
 	# Maps input features to 0-2PI
 	r_min     = 0.
@@ -54,7 +100,7 @@ def map2angle(B):
 def loss_fn(edge_array,label,theta_learn,class_weight,loss_array):
 	loss = 0.
 	for i in range(len(label)):
-		output = (TTN_edge_forward(edge_array[i],theta_learn)+1)/2
+		output = (MERA_edge_forward(edge_array[i],theta_learn)+1)/2
 		loss  += binary_cross_entropy(output,label[i]) * class_weight[int(label[i])]
 	loss_array.append(loss)
 def cost_fn(edge_array,y,theta_learn):
@@ -81,7 +127,7 @@ def cost_fn(edge_array,y,theta_learn):
 def gradient(edge_array,y,theta_learn,gradient_array):
 	grad = np.zeros(len(theta_learn))
 	for i in range(len(edge_array)):
-		dcircuit = qml.grad(TTN_edge_forward, argnum=1)
+		dcircuit = qml.grad(MERA_edge_forward, argnum=1)
 		grad += dcircuit(edge_array[i],theta_learn)
 	gradient_array.append(grad)	
 def grad_fn(edge_array,y,theta_learn):
@@ -164,7 +210,7 @@ def get_accuracy(edge_array,labels,theta_learn,class_weight,acc_array,loss_array
 	total_acc  = 0.
 	total_loss = 0.
 	for i in range(len(edge_array)):
-		pred = (TTN_edge_forward(edge_array[i],theta_learn)+1)/2
+		pred = (MERA_edge_forward(edge_array[i],theta_learn)+1)/2
 		total_acc  += (1 - abs(pred - labels[i]))*class_weight[int(labels[i])]
 		total_loss += binary_cross_entropy(pred,labels[i])*class_weight[int(labels[i])]
 		with open(log_dir+'log_validation_preds.csv', 'a') as f:
@@ -192,10 +238,10 @@ def delete_all_logs(log_dir):
 			os.remove(log_dir+item)
 			print(str(datetime.datetime.now()) + ' Deleted old log: ' + log_dir+item)
 if __name__ == '__main__':
-	n_param = 11
+	n_param = 19
 	theta_learn = np.random.rand(n_param) * np.pi * 2 / np.sqrt(n_param)
 	input_dir = 'data/hitgraphs_big'
-	log_dir   = 'logs/pennylane/TTN/lr_0_1/'
+	log_dir   = 'logs/pennylane/MERA/lr_0_1/'
 	delete_all_logs(log_dir)
 	print('Log dir: ' + log_dir)
 	print('Input dir: ' + input_dir)
