@@ -3,8 +3,13 @@ import numpy as np
 import csv
 from sklearn import metrics
 
-log_location = 'logs/TTN/lr_0_1/'
-png_location = 'png/TTN/lr_0_1/'
+log_location = 'logs/MERA/lr_0_1/'
+png_location = 'png/MERA/lr_0_1/'
+circuit_type = 'MERA'
+if circuit_type=='TTN':
+	n_param = 11
+elif circuit_type=='MERA':
+	n_param = 19
 with open(log_location + 'log_loss.csv', 'r') as f:
 	reader = csv.reader(f, delimiter=',')
 	loss = np.array(list(reader)).astype(float)
@@ -13,7 +18,7 @@ with open(log_location+'log_validation.csv', 'r') as f:
 	valid = np.array(list(reader)).astype(float) 
 with open(log_location+'log_theta.csv','r') as f:
 	reader = csv.reader(f, delimiter=',')
-	theta = np.delete(np.array(list(reader)[:-2]),11,1).astype(float)
+	theta = np.delete(np.array(list(reader)[:-2]),n_param,1).astype(float)
 with open(log_location + 'log_validation_preds.csv', 'r') as f:
 	reader = csv.reader(f, delimiter=',')
 	preds = np.array(list(reader)).astype(float)
@@ -51,7 +56,7 @@ plt.savefig(png_location+'validation_auc.pdf')
 
 plt.clf()
 x = [(i+1) for i in range(len(theta))]
-for i in range(11):
+for i in range(n_param):
 	plt.scatter(x,theta[:,i],marker='.',label=r'$\theta_{'+str(i)+'}$')
 plt.xlabel('Update')
 plt.ylabel(r'Angle (0 - 2$\pi$)')

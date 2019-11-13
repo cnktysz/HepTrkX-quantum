@@ -177,52 +177,56 @@ def preprocess(data):
 	bi        = np.dot(Ri.T, X)
 	B         = np.concatenate((bo,bi),axis=1)
 	return map2angle(B), y
+def delete_all_logs(log_dir):
+	log_list = os.listdir(log_dir)
+	for item in log_list:
+		if item.endswith('*.csv'):
+			os.remove(log_dir+item)
+			print(str(datetime.datetime.now()) + ' Deleted old log: ' + log_dir+item)
 if __name__ == '__main__':
 	n_param = 11
-	theta_learn = np.random.rand(n_param) * np.pi * 2 
-	#input_dir = '/home/cenktuysuz/MyRepos/HepTrkX-quantum/data/hitgraphs'
-	#input_dir = '/Users/cenk/Repos/HEPTrkX-quantum/data/hitgraphs_big'
+	theta_learn = np.random.rand(n_param) * np.pi * 2 / np.sqrt(n_param)
 	input_dir = 'data/hitgraphs_big'
 	log_dir   = 'logs/pennylane/TTN/lr_0_1/'
+	delete_all_logs(log_dir)
 	print('Log dir: ' + log_dir)
 	print('Input dir: ' + input_dir)
+	# Run variables
 	n_files     = 16*100
 	n_valid     = int(n_files * 0.1)
 	n_train     = n_files - n_valid	
-	lr          = 0.01
+	lr          = 0.001
 	n_epoch     = 5
 	n_threads   = 28
 	TEST_every  = 50
+	#####################   BEGIN   #####################   	
 	train_data, valid_data = get_datasets(input_dir, n_train, n_valid)
 	test_validation(valid_data,theta_learn,n_valid)
 	print(str(datetime.datetime.now()) + ' Training is starting!')
 	opt = qml.AdamOptimizer(stepsize=lr, beta1=0.9, beta2=0.99,eps=1e-08)
 	for epoch in range(n_epoch): 
-		for n_file in range(n_files):
+		for n_step in range(n_train):
 			t0 = time.time()
-			B, y = preprocess(train_data[n_file])
-
+			B, y = preprocess(train_data[n_step])
 			# Update learning variables
 			theta_learn = opt.step(lambda v: cost_fn(B,y,v),theta_learn,lambda z: grad_fn(B,y,theta_learn))
 			theta_learn = theta_learn % (2*np.pi)
 			
-			loss = cost_fn(B,y,theta_learn)
+			loss = cost_fn(B,y,theta_learn) # Need this to log loss
 			t = time.time() - t0
 			
 			with open(log_dir+'summary.csv', 'a') as f:
-				f.write('Epoch: %d, Batch: %d, Loss: %.4f, Elapsed: %dm%ds\n' % (epoch+1, n_file+1, loss, t / 60, t % 60) )
-			print(str(datetime.datetime.now()) + " Epoch: %d, Batch: %d, Loss: %.4f, Elapsed: %dm%ds" % (epoch+1, n_file+1, loss ,t / 60, t % 60) )
-
+				f.write('Epoch: %d, Batch: %d, Loss: %.4f, Elapsed: %dm%ds\n' % (epoch+1, n_step+1, loss, t / 60, t % 60) )
+			print(str(datetime.datetime.now()) + " Epoch: %d, Batch: %d, Loss: %.4f, Elapsed: %dm%ds" % (epoch+1, n_step+1, loss ,t / 60, t % 60) )
 			# Log the result every update  
 			with open(log_dir + 'log_theta.csv', 'a') as f:
 				for item in theta_learn:
 					f.write('%.4f,' % item)
 				f.write('\n')
-
 			with open(log_dir + 'log_loss.csv', 'a') as f:
 				f.write('%.4f\n' % loss)	
-
-			if (n_file+1)%TEST_every==0:
+			# Test every TEST_every
+			if (n_step+1)%TEST_every==0:
 				test_validation(valid_data,theta_learn,n_valid)
 		print('Epoch Complete!')
 	test_validation(valid_data,theta_learn,n_valid)
