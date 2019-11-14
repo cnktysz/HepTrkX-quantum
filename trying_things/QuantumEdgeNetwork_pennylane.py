@@ -8,7 +8,7 @@ import multiprocessing
 from sklearn import metrics
 from random import shuffle
 from math import ceil
-"""
+
 dev1 = qml.device("default.qubit", wires=6)
 
 @qml.qnode(dev1)
@@ -82,6 +82,7 @@ def MERA_edge_forward(edge,theta_learn):
 	#######  Seq. 5  #######
 	qml.RY(theta_learn[18],wires=3)
 	return(qml.expval(qml.PauliZ(wires=3)))
+"""
 def map2angle(B):
 	# Maps input features to 0-2PI
 	r_min     = 0.
@@ -264,10 +265,10 @@ def delete_all_logs(log_dir):
 			os.remove(log_dir+item)
 			print(str(datetime.datetime.now()) + ' Deleted old log: ' + log_dir+item)
 if __name__ == '__main__':
-	n_param = 19
+	n_param = 11
 	theta_learn = np.random.rand(n_param) * np.pi * 2 / np.sqrt(n_param)
 	input_dir = 'data/hitgraphs_big'
-	log_dir   = 'logs/pennylane/MERA/lr_0_1/'
+	log_dir   = 'logs/pennylane/TTN/lr_0_1/'
 	delete_all_logs(log_dir)
 	print('Log dir: ' + log_dir)
 	print('Input dir: ' + input_dir)
@@ -287,9 +288,10 @@ if __name__ == '__main__':
 	test(valid_data,theta_learn,n_valid,'valid')
 	test(train_data,theta_learn,n_train,'train')
 	print(str(datetime.datetime.now()) + ' Training is starting!')
-	opt = qml.AdamOptimizer(stepsize=lr, beta1=0.9, beta2=0.99,eps=1e-08)
+	#opt = qml.AdamOptimizer(stepsize=lr, beta1=0.9, beta2=0.99,eps=1e-08)
+	opt = qml.GradientDescentOptimizer(stepsize=lr)
 	for epoch in range(n_epoch): 
-		shuffle(train_list)
+		shuffle(train_list) # shuffle the order every epoch
 		for n_step in range(n_train):
 			t0 = time.time()
 			B, y = preprocess(train_data[train_list[n_step]])
@@ -299,22 +301,28 @@ if __name__ == '__main__':
 			
 			loss = cost_fn(B,y,theta_learn) # Need this to log loss
 			t = time.time() - t0
-			
+
+			# Log the result every update  
 			with open(log_dir+'summary.csv', 'a') as f:
 				f.write('Epoch: %d, Batch: %d, Loss: %.4f, Elapsed: %dm%ds\n' % (epoch+1, n_step+1, loss, t / 60, t % 60) )
+			
 			print(str(datetime.datetime.now()) + " Epoch: %d, Batch: %d, Loss: %.4f, Elapsed: %dm%ds" % (epoch+1, n_step+1, loss ,t / 60, t % 60) )
-			# Log the result every update  
+			
 			with open(log_dir + 'log_theta.csv', 'a') as f:
 				for item in theta_learn:
 					f.write('%.4f,' % item)
 				f.write('\n')
+			
 			with open(log_dir + 'log_loss.csv', 'a') as f:
 				f.write('%.4f\n' % loss)	
+			
 			# Test every TEST_every
 			if (n_step+1)%TEST_every==0:
 					test(valid_data,theta_learn,n_valid,'valid')
 					test(train_data,theta_learn,n_train,'train')
+
 		print('Epoch Complete!')
+
 	test(valid_data,theta_learn,n_valid,'valid')
 	test(train_data,theta_learn,n_train,'train')
 	print('Training Complete!')
