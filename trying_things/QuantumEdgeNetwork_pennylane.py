@@ -190,9 +190,9 @@ def test(data,theta_learn,n_testing,testing='valid'):
 			start = thread*n_feed
 			end   = (thread+1)*n_feed
 			if thread==(n_threads-1):   
-				p = multiprocessing.Process(target=get_accuracy,args=(B[start:,:],y[start:],theta_learn,class_weight,acc_array,loss_array,))
+				p = multiprocessing.Process(target=get_accuracy,args=(B[start:,:],y[start:],theta_learn,class_weight,acc_array,loss_array,testing,))
 			else:
-				p = multiprocessing.Process(target=get_accuracy,args=(B[start:end,:],y[start:end],theta_learn,class_weight,acc_array,loss_array,))   
+				p = multiprocessing.Process(target=get_accuracy,args=(B[start:end,:],y[start:end],theta_learn,class_weight,acc_array,loss_array,testing,))   
 			jobs.append(p)
 			p.start()
 		# WAIT for jobs to finish
@@ -228,14 +228,18 @@ def test(data,theta_learn,n_testing,testing='valid'):
 		duration = time.time() - t_start
 		print('Training Loss: %.4f, Training Acc: %.4f, Training AUC: %.4f Elapsed: %dm%ds' %(loss, accuracy*100, auc, duration/60, duration%60))
 
-def get_accuracy(edge_array,labels,theta_learn,class_weight,acc_array,loss_array):
+def get_accuracy(edge_array,labels,theta_learn,class_weight,acc_array,loss_array,mode):
 	total_acc  = 0.
 	total_loss = 0.
 	for i in range(len(edge_array)):
 		pred = (MERA_edge_forward(edge_array[i],theta_learn)+1)/2
 		total_acc  += (1 - abs(pred - labels[i]))*class_weight[int(labels[i])]
 		total_loss += binary_cross_entropy(pred,labels[i])*class_weight[int(labels[i])]
-		with open(log_dir+'log_validation_preds.csv', 'a') as f:
+		if mode=='valid':
+			with open(log_dir+'log_validation_preds.csv', 'a') as f:
+				f.write('%.4f, %.4f\n' %(pred,labels[i]))
+		if mode=='train':
+			with open(log_dir+'log_training_preds.csv', 'a') as f:
 				f.write('%.4f, %.4f\n' %(pred,labels[i]))
 	acc_array.append(total_acc)
 	loss_array.append(total_loss)
