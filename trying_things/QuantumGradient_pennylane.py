@@ -34,13 +34,13 @@ def TTN_edge_forward(edge,theta_learn):
 	qml.CNOT(wires=[3,4])
 	qml.RY(theta_learn[10],wires=4)
 		
-	return(qml.expval(qml.PauliZ(wires=4)))
+	return qml.expval(qml.PauliZ(wires=4))
 
 
 def gradient(edge_array,y,theta_learn):
 	dcircuit = qml.grad(TTN_edge_forward, argnum=1)
 	grad = dcircuit(edge_array,theta_learn)
-	return grad
+	return -grad/2
 
 
 if __name__ == '__main__':
