@@ -101,7 +101,7 @@ def map2angle(B):
 def loss_fn(edge_array,label,theta_learn,class_weight,loss_array):
 	loss = 0.
 	for i in range(len(label)):
-		output = (TTN_edge_forward(edge_array[i],theta_learn)+1)/2
+		output = (1 - TTN_edge_forward(edge_array[i],theta_learn))/2
 		loss  += binary_cross_entropy(output,label[i]) * class_weight[int(label[i])]
 	loss_array.append(loss)
 def cost_fn(edge_array,y,theta_learn):
@@ -233,7 +233,7 @@ def get_accuracy(edge_array,labels,theta_learn,class_weight,acc_array,loss_array
 	total_acc  = 0.
 	total_loss = 0.
 	for i in range(len(edge_array)):
-		pred = (TTN_edge_forward(edge_array[i],theta_learn)+1)/2
+		pred = (1 - TTN_edge_forward(edge_array[i],theta_learn))/2
 		total_acc  += (1 - abs(pred - labels[i]))*class_weight[int(labels[i])]
 		total_loss += binary_cross_entropy(pred,labels[i])*class_weight[int(labels[i])]
 		if mode=='valid':
@@ -259,7 +259,7 @@ def delete_all_logs(log_dir):
 			print(str(datetime.datetime.now()) + ' Deleted old log: ' + log_dir+item)
 if __name__ == '__main__':
 	n_param = 11
-	theta_learn = np.random.rand(n_param) * np.pi * 2 / np.sqrt(n_param)
+	theta_learn = np.random.rand(n_param) * np.pi * 2 
 	input_dir = 'data/hitgraphs_big'
 	log_dir   = 'logs/pennylane/TTN/lr_0_1/'
 	delete_all_logs(log_dir)
@@ -270,7 +270,7 @@ if __name__ == '__main__':
 	n_valid     = int(n_files * 0.1)
 	n_train     = n_files - n_valid	
 	train_list  = [i for i in range(n_train)]
-	lr          = 0.01
+	lr          = 0.1
 	batch_size  = 5
 	n_batch     = ceil(n_train/batch_size)  
 	n_epoch     = 5
@@ -282,8 +282,8 @@ if __name__ == '__main__':
 	test(valid_data,theta_learn,n_valid,'valid')
 	#test(train_data,theta_learn,n_train,'train')
 	print(str(datetime.datetime.now()) + ' Training is starting!')
-	opt = qml.AdamOptimizer(stepsize=lr, beta1=0.9, beta2=0.99,eps=1e-08)
-	#opt = qml.GradientDescentOptimizer(stepsize=lr)
+	#opt = qml.AdamOptimizer(stepsize=lr, beta1=0.9, beta2=0.99,eps=1e-08)
+	opt = qml.GradientDescentOptimizer(stepsize=lr)
 	for epoch in range(n_epoch): 
 		shuffle(train_list) # shuffle the order every epoch
 		for n_step in range(n_train):
