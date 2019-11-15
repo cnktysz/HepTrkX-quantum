@@ -101,7 +101,7 @@ def map2angle(B):
 def loss_fn(edge_array,label,theta_learn,class_weight,loss_array):
 	loss = 0.
 	for i in range(len(label)):
-		output = (MERA_edge_forward(edge_array[i],theta_learn)+1)/2
+		output = (TTN_edge_forward(edge_array[i],theta_learn)+1)/2
 		loss  += binary_cross_entropy(output,label[i]) * class_weight[int(label[i])]
 	loss_array.append(loss)
 def cost_fn(edge_array,y,theta_learn):
@@ -128,7 +128,7 @@ def cost_fn(edge_array,y,theta_learn):
 def gradient(edge_array,y,theta_learn,gradient_array):
 	grad = np.zeros(len(theta_learn))
 	for i in range(len(edge_array)):
-		dcircuit = qml.grad(MERA_edge_forward, argnum=1)
+		dcircuit = qml.grad(TTN_edge_forward, argnum=1)
 		grad += dcircuit(edge_array[i],theta_learn)
 	gradient_array.append(grad)	
 def grad_fn(edge_array,y,theta_learn):
@@ -160,7 +160,7 @@ def grad_fn(edge_array,y,theta_learn):
 
 	return avg_grad	
 def binary_cross_entropy(output,label):
-	return -(label*np.log(output+1e-6) + (1-label)*np.log(1-output+1e-6))
+	return -( label*np.log(output+1e-6) + (1-label)*np.log(1-output+1e-6) )
 def test(data,theta_learn,n_testing,testing='valid'):
 	t_start = time.time()
 
@@ -233,7 +233,7 @@ def get_accuracy(edge_array,labels,theta_learn,class_weight,acc_array,loss_array
 	total_acc  = 0.
 	total_loss = 0.
 	for i in range(len(edge_array)):
-		pred = (MERA_edge_forward(edge_array[i],theta_learn)+1)/2
+		pred = (TTN_edge_forward(edge_array[i],theta_learn)+1)/2
 		total_acc  += (1 - abs(pred - labels[i]))*class_weight[int(labels[i])]
 		total_loss += binary_cross_entropy(pred,labels[i])*class_weight[int(labels[i])]
 		if mode=='valid':
@@ -244,13 +244,6 @@ def get_accuracy(edge_array,labels,theta_learn,class_weight,acc_array,loss_array
 				f.write('%.4f, %.4f\n' %(pred,labels[i]))
 	acc_array.append(total_acc)
 	loss_array.append(total_loss)
-def preprocess(data):
-	X,Ro,Ri,y = data
-	X[:,2]    = np.abs(X[:,2]) # correction for negative z
-	bo        = np.dot(Ro.T, X)
-	bi        = np.dot(Ri.T, X)
-	B         = np.concatenate((bo,bi),axis=1)
-	return map2angle(B), y
 def preprocess(data):
 	X,Ro,Ri,y = data
 	X[:,2]    = np.abs(X[:,2]) # correction for negative z
@@ -277,19 +270,20 @@ if __name__ == '__main__':
 	n_valid     = int(n_files * 0.1)
 	n_train     = n_files - n_valid	
 	train_list  = [i for i in range(n_train)]
-	lr          = 0.01
+	lr          = 0.001
 	batch_size  = 5
 	n_batch     = ceil(n_train/batch_size)  
 	n_epoch     = 5
 	n_threads   = 28
 	TEST_every  = 50
+	TEST_every2  = 200
 	#####################   BEGIN   #####################   	
 	train_data, valid_data = get_datasets(input_dir, n_train, n_valid)
 	test(valid_data,theta_learn,n_valid,'valid')
-	test(train_data,theta_learn,n_train,'train')
+	#test(train_data,theta_learn,n_train,'train')
 	print(str(datetime.datetime.now()) + ' Training is starting!')
-	#opt = qml.AdamOptimizer(stepsize=lr, beta1=0.9, beta2=0.99,eps=1e-08)
-	opt = qml.GradientDescentOptimizer(stepsize=lr)
+	opt = qml.AdamOptimizer(stepsize=lr, beta1=0.9, beta2=0.99,eps=1e-08)
+	#opt = qml.GradientDescentOptimizer(stepsize=lr)
 	for epoch in range(n_epoch): 
 		shuffle(train_list) # shuffle the order every epoch
 		for n_step in range(n_train):
@@ -319,12 +313,11 @@ if __name__ == '__main__':
 			# Test every TEST_every
 			if (n_step+1)%TEST_every==0:
 					test(valid_data,theta_learn,n_valid,'valid')
-					test(train_data,theta_learn,n_train,'train')
-
+		
 		print('Epoch Complete!')
 
 	test(valid_data,theta_learn,n_valid,'valid')
-	test(train_data,theta_learn,n_train,'train')
+	#test(train_data,theta_learn,n_train,'train')
 	print('Training Complete!')
 
 
