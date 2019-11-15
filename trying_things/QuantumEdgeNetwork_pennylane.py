@@ -130,7 +130,7 @@ def gradient(edge_array,y,theta_learn,gradient_array):
 	for i in range(len(edge_array)):
 		dcircuit = qml.grad(TTN_edge_forward, argnum=1)
 		grad += dcircuit(edge_array[i],theta_learn)
-	gradient_array.append(grad)	
+	gradient_array.append(-grad/2)	
 def grad_fn(edge_array,y,theta_learn):
 	jobs         = []
 	n_edges      = len(y)
@@ -158,7 +158,7 @@ def grad_fn(edge_array,y,theta_learn):
 			f.write('%.4f,' % item)
 		f.write('\n')
 
-	return avg_grad	
+	return avg_grad
 def binary_cross_entropy(output,label):
 	return -( label*np.log(output+1e-6) + (1-label)*np.log(1-output+1e-6) )
 def test(data,theta_learn,n_testing,testing='valid'):
@@ -270,7 +270,7 @@ if __name__ == '__main__':
 	n_valid     = int(n_files * 0.1)
 	n_train     = n_files - n_valid	
 	train_list  = [i for i in range(n_train)]
-	lr          = 0.001
+	lr          = 0.01
 	batch_size  = 5
 	n_batch     = ceil(n_train/batch_size)  
 	n_epoch     = 5
