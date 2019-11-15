@@ -258,10 +258,10 @@ def delete_all_logs(log_dir):
 			os.remove(log_dir+item)
 			print(str(datetime.datetime.now()) + ' Deleted old log: ' + log_dir+item)
 if __name__ == '__main__':
-	n_param = 11
+	n_param = 19
 	theta_learn = np.random.rand(n_param) * np.pi * 2 
 	input_dir = 'data/hitgraphs_big'
-	log_dir   = 'logs/pennylane/TTN/lr_0_1/'
+	log_dir   = 'logs/pennylane/MERA/lr_0_1/'
 	delete_all_logs(log_dir)
 	print('Log dir: ' + log_dir)
 	print('Input dir: ' + input_dir)
