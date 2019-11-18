@@ -3,9 +3,9 @@ import numpy as np
 import csv
 from sklearn import metrics
 
-log_location = 'logs/MERA/lr_0_1/'
-png_location = 'png/MERA/lr_0_1/'
-circuit_type = 'MERA'
+log_location = 'logs/pennylane/TTN/lr_0_1/'
+png_location = 'png/pennylane/TTN/lr_0_1/'
+circuit_type = 'TTN'
 if circuit_type=='TTN':
 	n_param = 11
 elif circuit_type=='MERA':
@@ -22,13 +22,14 @@ with open(log_location+'log_theta.csv','r') as f:
 with open(log_location + 'log_validation_preds.csv', 'r') as f:
 	reader = csv.reader(f, delimiter=',')
 	valid_preds = np.array(list(reader)).astype(float)
+"""
 with open(log_location+'log_training.csv', 'r') as f:
 	reader = csv.reader(f, delimiter=',')
 	train = np.array(list(reader)).astype(float) 
 with open(log_location + 'log_training_preds.csv', 'r') as f:
 	reader = csv.reader(f, delimiter=',')
 	train_preds = np.array(list(reader)).astype(float)
-
+"""
 # Plots
 plt.clf()   
 x = [(i+1) for i  in range(len(loss))]
@@ -44,7 +45,6 @@ for i in range(n_param):
 plt.xlabel('Update')
 plt.ylabel(r'Angle (0 - 2$\pi$)')
 plt.savefig(png_location+'statistics_angle.pdf')
-
 
 # Validation Plots
 plt.clf()   
@@ -80,7 +80,7 @@ plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('ROC Curve')
 plt.savefig(png_location+'validation_roc.pdf') 
-
+"""
 # Training Plots
 plt.clf()   
 interval = 50
@@ -114,6 +114,6 @@ plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('ROC Curve')
 plt.savefig(png_location+'training_roc.pdf') 
-
+"""
 
 
