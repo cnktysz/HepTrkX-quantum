@@ -1,5 +1,6 @@
 import sys, os, time, datetime, csv
 sys.path.append(os.path.abspath(os.path.join('.')))
+os.environ["CUDA_VISIBLE_DEVICES"]="-1" 
 import matplotlib.pyplot as plt
 import pennylane as qml 
 from pennylane import numpy as np
@@ -227,12 +228,12 @@ if __name__ == '__main__':
 	n_param = 11
 	theta_learn = tf.Variable(np.random.rand(n_param) * np.pi * 2,dtype=tf.float64,name='theta_learn')
 	input_dir = 'data/hitgraphs_big'
-	log_dir   = 'logs/tensorflow/TTN/lr_0_1/'
+	log_dir   = 'logs/tensorflow/TTN/lr_0_01/'
 	delete_all_logs(log_dir)
 	print('Log dir: ' + log_dir)
 	print('Input dir: ' + input_dir)
 	# Run variables
-	n_files     = 10 #16*100
+	n_files     = 16*100
 	n_valid     = int(n_files * 0.1)
 	n_train     = n_files - n_valid	
 	train_list  = [i for i in range(n_train)]
@@ -240,7 +241,7 @@ if __name__ == '__main__':
 	batch_size  = 5
 	n_batch     = ceil(n_train/batch_size)  
 	n_epoch     = 5
-	n_threads   = 2
+	n_threads   = 28
 	TEST_every  = 50
 	TEST_every2 = 200
 	#####################   BEGIN   #####################   	
