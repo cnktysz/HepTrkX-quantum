@@ -11,6 +11,7 @@ from random import shuffle
 from math import ceil
 import tensorflow as tf
 
+"""
 dev1 = qml.device("default.qubit", wires=6)
 
 @qml.qnode(dev1,interface='tf')
@@ -38,6 +39,51 @@ def TTN_edge_forward(edge,theta_learn):
 	qml.CNOT(wires=[3,4])
 	qml.RY(theta_learn[10],wires=4)
 	return(qml.expval(qml.PauliZ(wires=4)))
+"""
+dev = qml.device("default.qubit", wires=6)
+@qml.qnode(dev,interface='tf')
+def TTN_edge_forward(edge,theta_learn):
+	# Takes the input and learning variables and applies the
+	# network to obtain the output
+	# STATE PREPARATION
+	for i in range(len(edge)):
+		qml.RY(edge[i],wires=i)
+	# APPLY forward sequence
+	#######  Seq. 1  #######
+	qml.RY(theta_learn[0],wires=0)
+	qml.RY(theta_learn[1],wires=1)
+	qml.CNOT(wires=[0,1])
+	qml.RY(theta_learn[2],wires=3)
+	qml.RY(theta_learn[3],wires=4)
+	qml.CNOT(wires=[3,4])
+	#######  Seq. 2  #######
+	qml.RY(theta_learn[4],wires=0)
+	qml.RY(theta_learn[5],wires=1)
+	qml.CNOT(wires=[0,1])
+	qml.RY(theta_learn[6],wires=2)
+	qml.RY(theta_learn[7],wires=3)
+	qml.CNOT(wires=[2,3])
+	qml.RY(theta_learn[8],wires=4)
+	qml.RY(theta_learn[9],wires=5)
+	qml.CNOT(wires=[5,4])
+	#######  Seq. 3  #######
+	qml.RY(theta_learn[10],wires=1)
+	qml.RY(theta_learn[11],wires=4)
+	qml.CNOT(wires=[1,4])
+	#######  Seq. 4  #######
+	qml.RY(theta_learn[12],wires=1)
+	qml.RY(theta_learn[13],wires=2)
+	qml.CNOT(wires=[1,2])
+	qml.RY(theta_learn[14],wires=3)
+	qml.RY(theta_learn[15],wires=4)
+	qml.CNOT(wires=[4,3])
+	#######  Seq. 5  #######
+	qml.RY(theta_learn[16],wires=2)
+	qml.RY(theta_learn[17],wires=3)
+	qml.CNOT(wires=[2,3])
+	#######  Seq. 5  #######
+	qml.RY(theta_learn[18],wires=3)
+	return(qml.expval(qml.PauliZ(wires=3)))
 
 def map2angle(B):
 	# Maps input features to 0-2PI
@@ -225,10 +271,10 @@ def delete_all_logs(log_dir):
 			print(str(datetime.datetime.now()) + ' Deleted old log: ' + log_dir+item)
 if __name__ == '__main__':
 	tf.executing_eagerly()
-	n_param = 11
+	n_param = 19
 	theta_learn = tf.Variable(np.random.rand(n_param) * np.pi * 2,dtype=tf.float64,name='theta_learn')
 	input_dir = 'data/hitgraphs_big'
-	log_dir   = 'logs/tensorflow/TTN/lr_0_01/'
+	log_dir   = 'logs/tensorflow/MERA/lr_0_01/'
 	delete_all_logs(log_dir)
 	print('Log dir: ' + log_dir)
 	print('Input dir: ' + input_dir)
@@ -240,7 +286,7 @@ if __name__ == '__main__':
 	lr          = 0.01
 	batch_size  = 5
 	n_batch     = ceil(n_train/batch_size)  
-	n_epoch     = 5
+	n_epoch     = 1
 	n_threads   = 28
 	TEST_every  = 50
 	TEST_every2 = 200
