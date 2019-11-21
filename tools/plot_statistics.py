@@ -3,9 +3,9 @@ import numpy as np
 import csv
 from sklearn import metrics
 
-log_location = 'logs/pennylane/TTN/lr_0_1/'
-png_location = 'png/pennylane/TTN/lr_0_1/'
-circuit_type = 'TTN'
+log_location = 'logs/tensorflow/MERA/lr_0_01/'
+png_location = 'png/tensorflow/MERA/lr_0_01/'
+circuit_type = 'MERA'
 if circuit_type=='TTN':
 	n_param = 11
 elif circuit_type=='MERA':
