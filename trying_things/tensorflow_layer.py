@@ -101,13 +101,13 @@ def TTN_node_forward(edge,theta_learn):
 def edge_forward(edge_array,theta_learn):
 	outputs = []
 	for i in range(len(edge_array[:,0])):
-		outputs.append(TTN_edge_forward(edge_array[i,:],theta_learn))
-	return (1-np.array(outputs))/2
+		outputs.append(tf.dtypes.cast(TTN_edge_forward(edge_array[i,:],theta_learn),'float32'))
+	return tf.stack((1.-np.array(outputs))/2.)
 def node_forward(node_array,theta_learn):
 	outputs = []
 	for i in range(len(node_array[:,0])):
-		outputs.append(TTN_node_forward(node_array[i,:],theta_learn))
-	return (1-np.array(outputs))/2
+		outputs.append(tf.dtypes.cast(TTN_edge_forward(edge_array[i,:],theta_learn),'float32'))
+	return tf.stack((1.-np.array(outputs))/2.)
 def map2angle(B):
 	# Maps input features to 0-2PI
 	r_min     = 0.
@@ -122,8 +122,8 @@ def map2angle(B):
 	return B
 ############################################################################################
 class EdgeNet(tf.keras.layers.Layer):
-	def __init__(self):
-		super(EdgeNet, self).__init__(name='EdgeNet')
+	def __init__(self,name):
+		super(EdgeNet, self).__init__(name=name)
 		self.theta_learn = tf.Variable(np.random.rand(15) * np.pi * 2,dtype=tf.float32)
 
 	def call(self,X, Ri, Ro):
@@ -133,36 +133,52 @@ class EdgeNet(tf.keras.layers.Layer):
 		return edge_forward(B,self.theta_learn)
 
 class NodeNet(tf.keras.layers.Layer):
-	def __init__(self):
-		super(NodeNet, self).__init__(name='NodeNet')
+	def __init__(self,name):
+		super(NodeNet, self).__init__(name=name)
 		self.theta_learn = tf.Variable(np.random.rand(23) * np.pi * 2,dtype=tf.float32)
 
-	def call(self,X, e, Ri, Ro):
-		bo = tf.matmul(Ro,X,transpose_a=True)
-		bi = tf.matmul(Ri,X,transpose_a=True)
-		Rwo = Ro * e
-		Rwi = Ri * e
+	def call(self, X, e, Ri, Ro):
+
+
+		bo  = tf.matmul(Ro, X, transpose_a=True) # n_edge x 4
+		bi  = tf.matmul(Ri, X, transpose_a=True) # n_edge x 4
+	
+		print(Ri.shape)
+		print(X.shape)
+		print(bi.shape)
+
+		Rwo = tf.matmul(Ro, tf.reshape(e,[e.shape[0],1])) # n_node x 1 
+		Rwi = tf.matmul(Ri, tf.reshape(e,[e.shape[0],1])) # n_node x 1
+
+		print(bo.shape)
+		print(Ri.shape)
+		print(e.shape)
+		print(Rwi.shape)
+
 		mi = tf.matmul(Rwi, bo)
 		mo = tf.matmul(Rwo, bi)
 		M = tf.concat([mi, mo, X], axis=1)
 		return node_forward(M,self.theta_learn)
 
 class InputNet(tf.keras.layers.Layer):
-  def __init__(self, num_outputs):
-    super(InputNet, self).__init__(name='InputNet')
-    self.num_outputs = num_outputs
-    self.kernel = tf.Variable(np.random.rand(3,num_outputs),dtype=tf.float32)
+	def __init__(self, num_outputs,name):
+		super(InputNet, self).__init__(name=name)
+		self.num_outputs = num_outputs
+		#self.kernel = tf.Variable(np.random.rand(3,num_outputs),dtype=tf.float32)
 
-  def call(self, input):
-    return tf.matmul(input, kernel)
+	def build(self, input_shape):
+		self.kernel = self.add_variable("kernel",shape=[3,self.num_outputs])
+
+	def call(self, input):
+		return tf.matmul(input, self.kernel)
 
 class GNN(tf.keras.Model):
 	def __init__(self):
 		super(GNN, self).__init__(name='GNN')
-		self.InputNet = InputNet(1)
-		self.EdgeNet0 = EdgeNet()
-		self.NodeNet = NodeNet()
-		self.EdgeNet1 = EdgeNet()
+		self.InputNet = InputNet(1,name='InputNet0')
+		self.EdgeNet0 = EdgeNet(name='EdgeNet0')
+		self.NodeNet = NodeNet(name='NodeNet0')
+		self.EdgeNet1 = EdgeNet(name='EdgeNet1')
 
 	def call(self, inputs):
 		X, Ri, Ro = inputs
@@ -174,14 +190,16 @@ class GNN(tf.keras.Model):
 		e = self.EdgeNet1(H, Ri, Ro)
 		return e
 def binary_cross_entropy(output,label):
-	return - label*tf.math.log(output+1e-6) - (1-label)*tf.math.log(1-output+1e-6) 
+	return - tf.matmul(label,tf.math.log(output+1e-6)) - tf.tensordot((1-label),tf.math.log(1-output+1e-6)) 
 def gradient(block,edge_array,label):
 	with tf.GradientTape() as tape:
-		tape.watch(block.trainable_variables[0])
+		#tape.watch(block.variables)
 		output = block(edge_array)
-		loss = tf.reduce_mean(binary_cross_entropy(output,label))	
+		tape.watch(output)
+		#loss = binary_cross_entropy(output,label)
+		loss = tf.keras.losses.binary_crossentropy(label,output)
 		print(loss)
-	grad = tape.gradient(loss,block.trainable_variables[0])
+	grad = tape.gradient(loss,block.trainable_variables)
 	print(grad)
 	return grad
 ############################################################################################
@@ -198,6 +216,7 @@ if __name__ == '__main__':
 	for i in range(n_train):
 		X, Ri, Ro, labels = train_data[i]
 		X = map2angle(X)
+		
 		Ri = Ri.astype(X.dtype)
 		Ro = Ro.astype(X.dtype)
 		edge_array = [X,Ri,Ro]
@@ -205,8 +224,6 @@ if __name__ == '__main__':
 		grads = gradient(block,edge_array,labels)
 		#opt.apply_gradients(zip([grads], [theta_learn]))
 		#out  = block([X,Ri,Ro])
-	print(block.variables[0].shape)
-	block.summary()
 
 	
 
