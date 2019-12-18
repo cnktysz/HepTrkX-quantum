@@ -2,6 +2,7 @@
 # using tensorflow
 import sys, os, time, datetime, csv
 sys.path.append(os.path.abspath(os.path.join('.')))
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 import pennylane as qml 
 from pennylane import numpy as np
 import tensorflow as tf
@@ -195,13 +196,14 @@ def gradient(block,edge_array,label):
 	with tf.GradientTape() as tape:
 		loss = tf.keras.losses.binary_crossentropy(label,block(edge_array))
 		print('Loss: %.3f' %loss)
-	grad = tape.gradient(loss,block.InputNet0.trainable_variables)
+	grad = tape.gradient(loss,block.trainable_variables)
 	print(grad)
 	return grad
 ############################################################################################
 
 if __name__ == '__main__':
 	tf.executing_eagerly()
+	tf.keras.backend.set_floatx('float64')
 	input_dir = 'data/hitgraphs_big'
 	n_train = 2
 	train_data, valid_data = get_datasets(input_dir, n_train, 2)
@@ -217,8 +219,8 @@ if __name__ == '__main__':
 		Ro = tf.constant(Ro,dtype=tf.float64)
 		edge_array = [X,Ri,Ro]
 		grads = gradient(block,edge_array,labels)
-		#opt.apply_gradients(zip([grads], [theta_learn]))
-		#out  = block([X,Ri,Ro])
+		opt.apply_gradients(zip(grads, block.trainable_variables))
+	
 
 	
 
