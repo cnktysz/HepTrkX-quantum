@@ -29,14 +29,14 @@ def test(data,n_testing,testing='valid'):
 
 	for n_test in range(n_testing):
 		graph_array, labels_ = preprocess(data[n_test])
-		labels.append(labels_)
-		preds.append(block(graph_array))
-		
-
+		labels = np.append(labels,labels_)
+		preds  = np.append(preds,block(graph_array))
+	
+	print(len(labels))
 	n_edges      = len(labels)
 	n_class      = [n_edges - sum(labels), sum(labels)]
 	class_weight = [n_edges/(n_class[0]*2), n_edges/(n_class[1]*2)]	
-	accuracy     = mean((1 - abs(preds - labels)) * class_weight[int(labels[i])])
+	accuracy     = np.mean((1 - np.abs(preds - labels)) * [class_weight[int(labels[i])] for i in range(n_edges)]  )
 	loss         = tf.keras.losses.binary_crossentropy(labels,preds) 
 
 	if testing=='valid':
@@ -45,7 +45,7 @@ def test(data,n_testing,testing='valid'):
 			for i in range(len(preds)):
 				f.write('%.4f, %.4f\n' %(preds[i],labels[i]))
 		#calcualte auc
-		fpr,tpr,thresholds = metrics.roc_curve(preds[:,1].astype(int),preds[:,0],pos_label=1 )
+		fpr,tpr,thresholds = metrics.roc_curve(labels.astype(int),preds,pos_label=1 )
 		auc = metrics.auc(fpr,tpr)			
 		#log
 		with open(log_dir+'log_validation.csv', 'a') as f:
