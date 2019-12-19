@@ -4,6 +4,7 @@ import sys, os, time, datetime, csv
 sys.path.append(os.path.abspath(os.path.join('.')))
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 import tensorflow as tf
+import numpy as np
 from datasets.hitgraphs import get_datasets
 from sklearn import metrics
 from random import shuffle
