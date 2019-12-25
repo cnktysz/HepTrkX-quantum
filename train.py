@@ -78,14 +78,13 @@ def preprocess(data):
 def gradient(block,edge_array,label):
 	with tf.GradientTape() as tape:
 		loss = tf.keras.losses.binary_crossentropy(label,block(edge_array))
-		print('Loss: %.3f' %loss)
+		#print('Loss: %.3f' %loss)
 	return loss, tape.gradient(loss,block.trainable_variables)
 ############################################################################################
 if __name__ == '__main__':
-	tf.executing_eagerly()
 	tf.keras.backend.set_floatx('float64')
 	input_dir = 'data/hitgraphs_big'
-	log_dir   = 'logs/tensorflow/ENE/lr_0_1/'
+	log_dir   = 'logs/'#tensorflow/ENE/lr_0_1/'
 	delete_all_logs(log_dir)
 	print('Log dir: ' + log_dir)
 	print('Input dir: ' + input_dir)
@@ -111,7 +110,7 @@ if __name__ == '__main__':
 	# Log Learning variables
 	log_tensor_array(block.trainable_variables,log_dir, 'log_learning_variables.csv')
 
-	test(valid_data,n_valid,testing='valid')
+	#test(valid_data,n_valid,testing='valid')
 
 	for epoch in range(n_epoch): 
 		shuffle(train_list) # shuffle the order every epoch
