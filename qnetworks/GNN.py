@@ -39,7 +39,7 @@ def TTN_edge_forward(edge,theta_learn):
 	#Last Layer
 	qml.RY(theta_learn[14],wires=5)		
 	return qml.expval(qml.PauliZ(wires=5))
-
+#################################################
 dev2 = qml.device("default.qubit", wires=12)
 @qml.qnode(dev2,interface='tf')
 def TTN_node_forward(edge,theta_learn):
@@ -91,19 +91,21 @@ def TTN_node_forward(edge,theta_learn):
 	qml.RY(theta_learn[22],wires=4)		
 
 	return qml.expval(qml.PauliZ(wires=9))
-	#######################################
+#################################################
 def edge_forward(edge_array,theta_learn):
 	outputs = []
 	for i in range(len(edge_array[:,0])):
 		out = tf.constant((1-TTN_edge_forward(edge_array[i,:],theta_learn))/2.,dtype=tf.float64)
 		outputs.append(out)
 	return tf.stack(outputs)
+#################################################
 def node_forward(node_array,theta_learn):
 	outputs = []
 	for i in range(len(node_array[:,0])):
 		out = tf.constant((1-TTN_node_forward(node_array[i,:],theta_learn))/2.,dtype=tf.float64)
 		outputs.append(out)
 	return tf.stack(outputs)
+#################################################
 class EdgeNet(tf.keras.layers.Layer):
 	def __init__(self,name):
 		super(EdgeNet, self).__init__(name=name)
@@ -115,7 +117,7 @@ class EdgeNet(tf.keras.layers.Layer):
 		bi = tf.matmul(Ri,X,transpose_a=True)
 		B  = tf.concat([bo, bi], axis=1)  
 		return edge_forward(B,self.theta_learn)
-
+#################################################
 class NodeNet(tf.keras.layers.Layer):
 	def __init__(self,name):
 		super(NodeNet, self).__init__(name=name)
@@ -136,7 +138,7 @@ class NodeNet(tf.keras.layers.Layer):
 		mo = tf.matmul(Rwo, bi)
 		M = tf.concat([mi, mo, X], axis=1)
 		return node_forward(M,self.theta_learn)
-
+#################################################
 class InputNet(tf.keras.layers.Layer):
 	def __init__(self, num_outputs,name):
 		super(InputNet, self).__init__(name=name)
@@ -146,7 +148,7 @@ class InputNet(tf.keras.layers.Layer):
 
 	def call(self, arr):
 		return tf.matmul(arr, self.kernel)
-
+#################################################
 class GNN(tf.keras.Model):
 	def __init__(self):
 		super(GNN, self).__init__(name='GNN')
@@ -164,3 +166,4 @@ class GNN(tf.keras.Model):
 		H = tf.concat([H[:,None],X],axis=1)
 		e = self.EdgeNet1(H, Ri, Ro)
 		return e
+#################################################
