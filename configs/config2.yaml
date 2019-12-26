@@ -1,5 +1,5 @@
 input_dir   : 'data/hitgraphs_big'
-log_dir     : 'logs/tensorflow/ENE2/lr_0_01'
+log_dir     : 'logs/tensorflow/ENE2/lr_0_01/'
 n_files     : 1600
 n_valid     : 150
 n_train     : 1450 

@@ -1,6 +1,6 @@
 # Calculates gradients of a pennylane quantum circuit
 # using tensorflow
-import sys, os, time, datetime, csv,yaml
+import sys, os, time, datetime, csv, yaml, argparse
 sys.path.append(os.path.abspath(os.path.join('.')))
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1" # use CPU
 import tensorflow as tf
@@ -30,7 +30,7 @@ def test(data,n_testing,testing='valid'):
 	for n_test in range(n_testing):
 		graph_array, labels_ = preprocess(data[n_test])
 		labels = np.append(labels,labels_)
-		preds  = np.append(preds,block(graph_array))
+		preds  = np.append(preds,block(graph_array,config['n_iters']))
 	
 	print(len(labels))
 	n_edges      = len(labels)
@@ -88,10 +88,14 @@ def parse_args():
 	return parser.parse_args()
 def load_config(config_file):
 	with open(args.config, 'r') as ymlfile:
-		delete_all_logs(config['log_dir'])
+		config = yaml.load(ymlfile)
+		print('Printing configs: ')
+		for key in config:
+			print(key + ': ' + str(config[key]))
 		print('Log dir: ' + config['log_dir'])
 		print('Input dir: ' + config['input_dir'])
-    	return yaml.load(ymlfile)
+		delete_all_logs(config['log_dir'])
+		return config
 ############################################################################################
 if __name__ == '__main__':
 	tf.keras.backend.set_floatx('float64')
@@ -109,7 +113,7 @@ if __name__ == '__main__':
 
 	log_tensor_array(block.trainable_variables,config['log_dir'], 'log_learning_variables.csv') # Log Learning variables
 
-	#test(valid_data,config['n_valid'],testing='valid')
+	test(valid_data,config['n_valid'],testing='valid')
 
 	for epoch in range(config['n_epoch']): 
 		shuffle(train_list) # shuffle the order every epoch
