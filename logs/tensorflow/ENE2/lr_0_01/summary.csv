@@ -1,7 +1,5 @@
-Epoch: 1, Batch: 1, Loss: 0.8010, Elapsed: 12m35s
-Epoch: 1, Batch: 2, Loss: 0.8923, Elapsed: 10m29s
-Epoch: 1, Batch: 3, Loss: 0.7883, Elapsed: 15m18s
-Epoch: 1, Batch: 4, Loss: 0.8407, Elapsed: 13m44s
-Epoch: 1, Batch: 5, Loss: 0.8512, Elapsed: 7m19s
-Epoch: 1, Batch: 6, Loss: 0.7313, Elapsed: 13m39s
-Epoch: 1, Batch: 7, Loss: 0.8567, Elapsed: 11m26s
+Epoch: 1, Batch: 1, Loss: 0.7872, Elapsed: 12m33s
+Epoch: 1, Batch: 2, Loss: 0.7785, Elapsed: 11m7s
+Epoch: 1, Batch: 3, Loss: 0.7244, Elapsed: 15m45s
+Epoch: 1, Batch: 4, Loss: 0.7748, Elapsed: 9m21s
+Epoch: 1, Batch: 5, Loss: 0.7341, Elapsed: 10m1s
