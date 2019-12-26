@@ -152,18 +152,18 @@ class InputNet(tf.keras.layers.Layer):
 class GNN(tf.keras.Model):
 	def __init__(self):
 		super(GNN, self).__init__(name='GNN')
-		self.InputNet0 = InputNet(1,name='InputNet0')
-		self.EdgeNet0 = EdgeNet(name='EdgeNet0')
-		self.NodeNet0 = NodeNet(name='NodeNet0')
-		self.EdgeNet1 = EdgeNet(name='EdgeNet1')
+		self.InputNet = InputNet(1,name='InputNet')
+		self.EdgeNet = EdgeNet(name='EdgeNet')
+		self.NodeNet = NodeNet(name='NodeNet')
 
-	def call(self, edge_array):
+	def call(self, edge_array, n_iters):
 		X,Ri,Ro = edge_array
-		H = self.InputNet0(X) # not normalized, be careful !
+		H = self.InputNet(X) # not normalized, be careful !
 		H = tf.concat([H,X],axis=1)
-		e = self.EdgeNet0(H, Ri, Ro)
-		H = self.NodeNet0(H, e, Ri, Ro)
-		H = tf.concat([H[:,None],X],axis=1)
-		e = self.EdgeNet1(H, Ri, Ro)
+		e = self.EdgeNet(H, Ri, Ro)
+		for i in range(n_iters):
+			H = self.NodeNet(H, e, Ri, Ro)
+			H = tf.concat([H[:,None],X],axis=1)
+			e = self.EdgeNet(H, Ri, Ro)
 		return e
 #################################################

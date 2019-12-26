@@ -75,9 +75,9 @@ def preprocess(data):
 	edge_array = [X,Ri,Ro]
 	return edge_array, tf.constant(y,dtype=tf.float64)
 ############################################################################################
-def gradient(block,edge_array,label):
+def gradient(edge_array,label):
 	with tf.GradientTape() as tape:
-		loss = tf.keras.losses.binary_crossentropy(label,block(edge_array))
+		loss = tf.keras.losses.binary_crossentropy(label,block(edge_array,n_iters))
 		#print('Loss: %.3f' %loss)
 	return loss, tape.gradient(loss,block.trainable_variables)
 ############################################################################################
@@ -93,13 +93,10 @@ if __name__ == '__main__':
 	n_valid     = int(n_files * 0.01)
 	n_train     = n_files - n_valid	
 	train_list  = [i for i in range(n_train)]
-	lr          = 0.1
-	batch_size  = 5
-	n_batch     = ceil(n_train/batch_size)  
-	n_epoch     = 1
-	n_threads   = 28
+	lr          = 0.01
+	n_iters     = 2
+	n_epoch     = 5
 	TEST_every  = 50
-	TEST_every2 = 200
 	##################### BEGIN TRAINING #####################   	
 	train_data, valid_data = get_datasets(input_dir, n_train, n_valid)
 	print(str(datetime.datetime.now()) + ' Training is starting!')
@@ -118,7 +115,7 @@ if __name__ == '__main__':
 			t0 = time.time()
 
 			graph_array, labels = preprocess(train_data[train_list[n_step]])
-			loss, grads = gradient(block,graph_array,labels)
+			loss, grads = gradient(graph_array,labels)
 			opt.apply_gradients(zip(grads, block.trainable_variables))
 			t = time.time() - t0
 
