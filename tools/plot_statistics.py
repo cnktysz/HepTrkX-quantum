@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import csv
 from sklearn import metrics
+from scipy import special
 import sys
 
 def plot_statistics(log_location,png_location):
@@ -56,8 +57,11 @@ def plot_statistics(log_location,png_location):
 	plt.tight_layout()
 	plt.savefig(png_location+'validation_auc.pdf')
 	
-	fpr,tpr,thresholds = metrics.roc_curve(valid_preds[:,1].astype(int),valid_preds[:,0],pos_label=1 )
+	y_pred = valid_preds[:,0]
+	y_true = valid_preds[:,1].astype(int)
+	fpr,tpr,thresholds = metrics.roc_curve(y_true,y_pred,pos_label=1)
 	auc = metrics.auc(fpr,tpr)
+	print(auc)
 	# Plot
 	plt.clf()   
 	plt.plot(fpr,tpr,c='navy')
@@ -67,6 +71,17 @@ def plot_statistics(log_location,png_location):
 	plt.title('ROC Curve')
 	plt.tight_layout()
 	plt.savefig(png_location+'validation_roc.pdf') 
+
+	# Plot the model outputs
+	
+	plt.clf()
+	binning=dict(bins=50, range=(0,1), histtype='bar', log=True)
+	plt.hist(valid_preds[valid_preds[:,1]==0,0], label='fake', **binning)
+	plt.hist(valid_preds[valid_preds[:,1]==1,0], label='true', **binning)
+	plt.xlabel('Model output')
+	plt.legend(loc=0)
+	plt.savefig(png_location+'validation_outputs.pdf') 
+
 
 	fig, axs = plt.subplots(1,3,figsize=(10,4))
 	x = [i for i  in range(len(learning_vars))]
@@ -106,9 +121,9 @@ def plot_statistics(log_location,png_location):
 	fig.tight_layout()
 	fig.savefig(png_location+'statistics_grads.pdf')
 ########################################################
-file_list = ['ENE/lr_0_1/','ENE2/lr_0_1/','ENE3/lr_0_1/']
+file_list = ['ENE/lr_0_01/','ENE2/lr_0_01/','ENE3/lr_0_01/','ENE/lr_0_1/','ENE2/lr_0_1/','ENE3/lr_0_1/']
 
-for i in range(3):
+for i in range(len(file_list)):
 	file_name = file_list[i]
 	log_location = 'logs/tensorflow/' + file_name
 	png_location = 'png/tensorflow/' + file_name

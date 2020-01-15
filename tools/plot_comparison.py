@@ -36,9 +36,9 @@ x1 = [i*interval for i  in range(len(valid1))]
 x2 = [i*interval for i  in range(len(valid2))]
 
 plt.clf()   
-plt.plot(x0,valid0[:,2],label='ENE1',c='darkorange')
-plt.plot(x1,valid1[:,2],label='ENE2',c='navy')
-plt.plot(x2,valid2[:,2],label='ENE3',c='red')
+plt.plot(x0,valid0[:,2],label='iteration=1',c='darkorange')
+plt.plot(x1,valid1[:,2],label='iteration=2',c='navy')
+plt.plot(x2,valid2[:,2],label='iteration=3',c='red')
 plt.title('Validation Loss')
 plt.xlabel('Update')
 plt.ylabel('Loss')
@@ -46,9 +46,9 @@ plt.legend()
 plt.savefig(png_location+'validation_loss.pdf')
 
 plt.clf()   
-plt.plot(x0,valid0[:,1],label='ENE1',c='darkorange')
-plt.plot(x1,valid1[:,1],label='ENE2',c='navy')
-plt.plot(x2,valid2[:,1],label='ENE3',c='red')
+plt.plot(x0,valid0[:,1],label='iteration=1',c='darkorange')
+plt.plot(x1,valid1[:,1],label='iteration=2',c='navy')
+plt.plot(x2,valid2[:,1],label='iteration=3',c='red')
 plt.title('Validation AUC')
 plt.xlabel('Update')
 plt.ylabel('AUC')
@@ -61,9 +61,9 @@ x1 = [i+1 for i  in range(len(loss1))]
 x2 = [i+1 for i  in range(len(loss2))]
 
 plt.clf()   
-plt.plot(x0,loss0,label='ENE1',c='darkorange')
-plt.plot(x1,loss1,label='ENE2',c='navy')
-plt.plot(x2,loss2,label='ENE3',c='red')
+plt.plot(x0,loss0,label='iteration=1',c='darkorange')
+plt.plot(x1,loss1,label='iteration=2',c='navy')
+plt.plot(x2,loss2,label='iteration=3',c='red')
 plt.title('Validation Loss')
 plt.xlabel('Update')
 plt.ylabel('Loss')
