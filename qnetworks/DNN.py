@@ -22,7 +22,7 @@ class EdgeNet(tf.keras.layers.Layer):
 		super(EdgeNet, self).__init__(name=name)
 		#self.theta_learn = tf.Variable(np.random.rand(15) * np.pi * 2,dtype=tf.float64)
 		self.theta_learn = tf.Variable(tf.random.uniform(shape=[15,],minval=0,maxval=np.pi*2,dtype=tf.float64))
-		self.kernel = tf.Variable(tf.random.uniform(shape=[6,1],minval=0,maxval=1.,dtype=tf.float64))
+		self.kernel = tf.Variable(tf.random.uniform(shape=[8,1],minval=0,maxval=1.,dtype=tf.float64))
 	def call(self,X, Ri, Ro):
 		bo = tf.matmul(Ro,X,transpose_a=True)
 		bi = tf.matmul(Ri,X,transpose_a=True)
@@ -34,7 +34,7 @@ class NodeNet(tf.keras.layers.Layer):
 		super(NodeNet, self).__init__(name=name)
 		#self.theta_learn = tf.Variable(np.random.rand(23) * np.pi * 2,dtype=tf.float64)
 		self.theta_learn = tf.Variable(tf.random.uniform(shape=[23,],minval=0,maxval=np.pi*2,dtype=tf.float64))
-		self.kernel = tf.Variable(tf.random.uniform(shape=[9,1],minval=0,maxval=1.,dtype=tf.float64))
+		self.kernel = tf.Variable(tf.random.uniform(shape=[12,1],minval=0,maxval=1.,dtype=tf.float64))
 	def call(self, X, e, Ri, Ro):
 
 		bo  = tf.matmul(Ro, X, transpose_a=True) # n_edge x 4
@@ -42,13 +42,11 @@ class NodeNet(tf.keras.layers.Layer):
 	
 		#Rwo = tf.multiply(Ro, tf.reshape(e,[e.shape[0],1])) # n_node x 1 
 		#Rwi = tf.multiply(Ri, tf.reshape(e,[e.shape[0],1])) # n_node x 1
-		Rwo = tf.math.multiply(Ro,e)
-		Rwi = tf.math.multiply(Ri,e)
-		
+		Rwo = Ro * tf.transpose(e)
+		Rwi = Ri * tf.transpose(e)
 		mi = tf.matmul(Rwi, bo)
-		mo = tf.matmul(Rwo, bi)
+		mo = tf.matmul(Rwo,bi)
 		M = tf.concat([mi, mo, X], axis=1)
-		return node_forward(M,self.theta_learn)
 		return tf.matmul(M, self.kernel)
 #################################################
 class InputNet(tf.keras.layers.Layer):
@@ -75,7 +73,7 @@ class GNN(tf.keras.Model):
 		e = self.EdgeNet(H, Ri, Ro)
 		for i in range(n_iters):
 			H = self.NodeNet(H, e, Ri, Ro)
-			H = tf.concat([H[:,None],X],axis=1)
+			H = tf.concat([H,X],axis=1)
 			e = self.EdgeNet(H, Ri, Ro)
 		return e
 #################################################
