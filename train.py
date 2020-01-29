@@ -10,7 +10,7 @@ from sklearn import metrics
 from random import shuffle
 from math import ceil
 from tools.tools import *
-from qnetworks.DNN import GNN
+from qnetworks.GNN_general import GNN
 ############################################################################################
 def test(data,n_testing,testing='valid'):
 	t_start = time.time()
@@ -124,8 +124,7 @@ if __name__ == '__main__':
 			loss, grads = gradient(graph_array,labels)
 			opt.apply_gradients(zip(grads, block.trainable_variables))
 			t = time.time() - t0
-			loss = tf.reduce_mean(loss)
-		
+			
 			# Log summary 
 			with open(config['log_dir']+'summary.csv', 'a') as f:
 				f.write('Epoch: %d, Batch: %d, Loss: %.4f, Elapsed: %dm%ds\n' % (epoch+1, n_step+1, loss, t / 60, t % 60) )
@@ -136,10 +135,10 @@ if __name__ == '__main__':
 			# Log loss
 			with open(config['log_dir'] + 'log_loss.csv', 'a') as f:
 				f.write('%.4f\n' %loss)	
-			'''
+			
 			# Log gradients
 			log_tensor_array(grads,config['log_dir'], 'log_grads.csv')
-			'''
+			
 			# Test every TEST_every
 			if (n_step+1)%config['TEST_every']==0:
 					test(valid_data,config['n_valid'],testing='valid')

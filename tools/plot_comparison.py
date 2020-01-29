@@ -4,11 +4,11 @@ import csv
 from sklearn import metrics
 import sys
 
-log_location0 = 'logs/tensorflow/ENE/lr_0_1/'
-log_location1 = 'logs/tensorflow/ENE2/lr_0_1/'
-log_location2 = 'logs/tensorflow/ENE3/lr_0_1/'
+log_location0 = 'logs/tensorflow/ENE/lr_0_01/'
+log_location1 = 'logs/tensorflow/ENE2/lr_0_01/'
+log_location2 = 'logs/tensorflow/ENE3/lr_0_01/'
 
-png_location = 'png/comparison/lr_0_1/'
+png_location = 'png/comparison/lr_0_01/'
 
 
 with open(log_location0+'log_validation.csv', 'r') as f:
