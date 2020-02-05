@@ -111,7 +111,7 @@ if __name__ == '__main__':
 	block = GNN()
 	opt = tf.keras.optimizers.Adam(learning_rate=config['lr'])
 
-	log_tensor_array(block.trainable_variables,config['log_dir'], 'log_learning_variables.csv') # Log Learning variables
+	#log_tensor_array(block.trainable_variables,config['log_dir'], 'log_learning_variables.csv') # Log Learning variables
 
 	test(valid_data,config['n_valid'],testing='valid')
 
