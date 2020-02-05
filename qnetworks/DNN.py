@@ -21,8 +21,8 @@ class EdgeNet(tf.keras.layers.Layer):
 	def __init__(self,name):
 		super(EdgeNet, self).__init__(name=name)
 		self.network = tf.keras.Sequential([
-            		tf.keras.layers.Dense(400,input_shape=(13*2,),activation='tanh'),
-            		tf.keras.layers.Dense(1,activation='sigmoid')
+            		tf.keras.layers.Dense(100,input_shape=(4*2,),activation='tanh'),
+            		tf.keras.layers.Dense(1,input_shape=(100,),activation='sigmoid')
             		])
 	def call(self,X, Ri, Ro):
 		bo = tf.matmul(Ro,X,transpose_a=True)
@@ -34,8 +34,8 @@ class NodeNet(tf.keras.layers.Layer):
 	def __init__(self,name):
 		super(NodeNet, self).__init__(name=name)
 		self.network = tf.keras.Sequential([
-            		tf.keras.layers.Dense(400,input_shape=(13*3,),activation='tanh'),
-            		tf.keras.layers.Dense(10,activation='sigmoid')
+            		tf.keras.layers.Dense(100,input_shape=(4*3,),activation='tanh'),
+            		tf.keras.layers.Dense(1,activation='sigmoid')
             		])
 	def call(self, X, e, Ri, Ro):
 
@@ -52,19 +52,15 @@ class InputNet(tf.keras.layers.Layer):
 	def __init__(self, num_outputs,name):
 		super(InputNet, self).__init__(name=name)
 		self.num_outputs = num_outputs
-		#self.kernel = tf.Variable(np.random.rand(3,num_outputs),dtype=tf.float64,trainable=True)
-		#self.kernel = tf.Variable(tf.random.uniform(shape=[3,self.num_outputs],minval=0,maxval=1.,dtype=tf.float64))
-		self.layer = tf.keras.layers.Dense(10,input_shape=(3,),activation='sigmoid')
+		self.layer = tf.keras.layers.Dense(num_outputs,input_shape=(3,),activation='sigmoid')
 	
 	def call(self, arr):
-		#outputs = tf.matmul(arr, self.kernel)
-		#return tf.nn.sigmoid(outputs)
 		return self.layer(arr)
 #################################################
 class GNN(tf.keras.Model):
 	def __init__(self):
 		super(GNN, self).__init__(name='GNN')
-		self.InputNet = InputNet(100,name='InputNet')
+		self.InputNet = InputNet(1,name='InputNet')
 		self.EdgeNet = EdgeNet(name='EdgeNet0')
 		self.NodeNet = NodeNet(name='NodeNet')
 
