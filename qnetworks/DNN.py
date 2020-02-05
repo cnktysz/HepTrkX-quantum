@@ -27,7 +27,8 @@ class EdgeNet(tf.keras.layers.Layer):
 		bo = tf.matmul(Ro,X,transpose_a=True)
 		bi = tf.matmul(Ri,X,transpose_a=True)
 		B  = tf.concat([bo, bi], axis=1)  
-		return tf.matmul(B, self.kernel)
+		outputs =  tf.matmul(B, self.kernel)
+		return tf.nn.sigmoid(outputs)
 #################################################
 class NodeNet(tf.keras.layers.Layer):
 	def __init__(self,name):
@@ -47,7 +48,8 @@ class NodeNet(tf.keras.layers.Layer):
 		mi = tf.matmul(Rwi, bo)
 		mo = tf.matmul(Rwo,bi)
 		M = tf.concat([mi, mo, X], axis=1)
-		return tf.matmul(M, self.kernel)
+		outputs = tf.matmul(M, self.kernel)
+		return tf.nn.sigmoid(outputs)
 #################################################
 class InputNet(tf.keras.layers.Layer):
 	def __init__(self, num_outputs,name):
@@ -57,7 +59,8 @@ class InputNet(tf.keras.layers.Layer):
 		self.kernel = tf.Variable(tf.random.uniform(shape=[3,self.num_outputs],minval=0,maxval=1.,dtype=tf.float64))
 
 	def call(self, arr):
-		return tf.matmul(arr, self.kernel)
+		outputs = tf.matmul(arr, self.kernel)
+		return tf.nn.sigmoid(outputs)
 #################################################
 class GNN(tf.keras.Model):
 	def __init__(self):
