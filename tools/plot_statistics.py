@@ -122,7 +122,7 @@ def plot_statistics(log_location,png_location):
 	fig.tight_layout()
 	fig.savefig(png_location+'statistics_grads.pdf')
 ########################################################
-file_list = ['ENE/lr_0_01/','ENE2/lr_0_01/','ENE3/lr_0_01/','ENE/lr_0_1/','ENE2/lr_0_1/','ENE3/lr_0_1/','ENE8/lr_0_1/']
+file_list = ['ENE2/general/lr_0_01/']
 
 for i in range(len(file_list)):
 	file_name = file_list[i]

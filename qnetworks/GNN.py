@@ -129,31 +129,29 @@ class NodeNet(tf.keras.layers.Layer):
 		bo  = tf.matmul(Ro, X, transpose_a=True) # n_edge x 4
 		bi  = tf.matmul(Ri, X, transpose_a=True) # n_edge x 4
 	
-		#Rwo = tf.multiply(Ro, tf.reshape(e,[e.shape[0],1])) # n_node x 1 
-		#Rwi = tf.multiply(Ri, tf.reshape(e,[e.shape[0],1])) # n_node x 1
 		Rwo = tf.math.multiply(Ro,e)
 		Rwi = tf.math.multiply(Ri,e)
 		
 		mi = tf.matmul(Rwi, bo)
 		mo = tf.matmul(Rwo, bi)
 		M = tf.concat([mi, mo, X], axis=1)
+		
 		return node_forward(M,self.theta_learn)
 #################################################
 class InputNet(tf.keras.layers.Layer):
-	def __init__(self, num_outputs,name):
+	def __init__(self, num_outputs, name):
 		super(InputNet, self).__init__(name=name)
 		self.num_outputs = num_outputs
-		#self.kernel = tf.Variable(np.random.rand(3,num_outputs),dtype=tf.float64,trainable=True)
-		self.kernel = tf.Variable(tf.random.uniform(shape=[3,self.num_outputs],minval=0,maxval=1.,dtype=tf.float64))
+		self.layer = tf.keras.layers.Dense(num_outputs,input_shape=(3,),activation='sigmoid')
 
 	def call(self, arr):
-		return tf.matmul(arr, self.kernel)
+		return self.layer(arr)
 #################################################
 class GNN(tf.keras.Model):
 	def __init__(self):
 		super(GNN, self).__init__(name='GNN')
 		self.InputNet = InputNet(1,name='InputNet')
-		self.EdgeNet = EdgeNet(name='EdgeNet0')
+		self.EdgeNet = EdgeNet(name='EdgeNet')
 		self.NodeNet = NodeNet(name='NodeNet')
 
 	def call(self, edge_array, n_iters):
