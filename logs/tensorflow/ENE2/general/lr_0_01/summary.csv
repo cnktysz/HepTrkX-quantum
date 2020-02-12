@@ -103,3 +103,5 @@ Epoch: 1, Batch: 102, Loss: 0.6854, Elapsed: 107m54s
 Epoch: 1, Batch: 103, Loss: 0.6713, Elapsed: 87m23s
 Epoch: 1, Batch: 104, Loss: 0.6689, Elapsed: 77m37s
 Epoch: 1, Batch: 105, Loss: 0.6906, Elapsed: 103m53s
+Epoch: 1, Batch: 106, Loss: 0.6886, Elapsed: 68m36s
+Epoch: 1, Batch: 107, Loss: 0.6663, Elapsed: 91m16s

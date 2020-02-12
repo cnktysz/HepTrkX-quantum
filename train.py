@@ -30,7 +30,7 @@ def test(data,n_testing,testing='valid'):
 	for n_test in range(n_testing):
 		graph_array, labels_ = preprocess(data[n_test])
 		labels = np.append(labels,labels_)
-		preds  = np.append(preds,block(graph_array,config['n_iters']))
+		preds  = np.append(preds,block(graph_array))
 	
 	print(len(labels))
 	n_edges      = len(labels)
@@ -78,7 +78,7 @@ def preprocess(data):
 ############################################################################################
 def gradient(edge_array,label):
 	with tf.GradientTape() as tape:
-		loss = tf.keras.losses.binary_crossentropy(label,block(edge_array,config['n_iters']))
+		loss = tf.keras.losses.binary_crossentropy(label,block(edge_array))
 		return loss, tape.gradient(loss,block.trainable_variables)
 ############################################################################################
 def parse_args():
@@ -108,7 +108,7 @@ if __name__ == '__main__':
 	train_data, valid_data = get_datasets(config['input_dir'], config['n_train'], config['n_valid'])
 	print(str(datetime.datetime.now()) + ': Training is starting!')
 
-	block = GNN()
+	block = GNN(config['hid_dim'],config['n_iters'])
 	opt = tf.keras.optimizers.Adam(learning_rate=config['lr'])
 
 	#log_tensor_array(block.trainable_variables,config['log_dir'], 'log_learning_variables.csv') # Log Learning variables
