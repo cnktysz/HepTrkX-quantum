@@ -2,7 +2,7 @@
 # using tensorflow
 import sys, os, time, datetime, csv, yaml, argparse
 sys.path.append(os.path.abspath(os.path.join('.')))
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1" # use CPU
+os.environ["CUDA_VISIBLE_DEVICES"] = "1" # use CPU
 import tensorflow as tf
 import numpy as np
 from datasets.hitgraphs import get_datasets
@@ -36,9 +36,11 @@ def test(data,n_testing,testing='valid'):
 	n_edges      = len(labels)
 	n_class      = [n_edges - sum(labels), sum(labels)]
 	class_weight = [n_edges/(n_class[0]*2), n_edges/(n_class[1]*2)]	
-	accuracy     = np.mean((1 - np.abs(preds - labels)) * [class_weight[int(labels[i])] for i in range(n_edges)]  )
-	loss         = tf.keras.losses.binary_crossentropy(labels,preds) 
-
+	#accuracy    = np.mean((1 - np.abs(preds - labels)) * [class_weight[int(labels[i])] for i in range(n_edges)]  )
+	accuracy     = metrics.accuracy_score(labels.astype(int), preds > 0.5, class_weight)
+	loss         = tf.reduce_mean(tf.keras.losses.binary_crossentropy(labels,preds) * np.array([class_weight[int(labels[i])] for i in range(n_edges)]))
+	
+	
 	if testing=='valid':
 		#log all preds
 		with open(config['log_dir']+'log_validation_preds.csv', 'a') as f:
@@ -58,8 +60,8 @@ def test(data,n_testing,testing='valid'):
 		with open(config['log_dir']+'log_training_preds.csv', 'a') as f:
 			for i in range(len(preds)):
 				f.write('%.4f, %.4f\n' %(preds[i],labels[i]))
-			#calcualte auc
-		fpr,tpr,thresholds = metrics.roc_curve(preds[:,1].astype(int),preds[:,0],pos_label=1 )
+		#calcualte auc
+		fpr,tpr,thresholds = metrics.roc_curve(labels.astype(int),preds,pos_label=1 )
 		auc = metrics.auc(fpr,tpr)			
 		#log
 		with open(config['log_dir']+'log_training.csv', 'a') as f:
@@ -77,8 +79,11 @@ def preprocess(data):
 	return edge_array, tf.constant(y,dtype=tf.float64)
 ############################################################################################
 def gradient(edge_array,label):
+	n_edges      = len(labels)
+	n_class      = [n_edges - sum(labels), sum(labels)]
+	class_weight = [n_edges/(n_class[0]*2), n_edges/(n_class[1]*2)]	
 	with tf.GradientTape() as tape:
-		loss = tf.keras.losses.binary_crossentropy(label,block(edge_array))
+		loss = tf.keras.losses.binary_crossentropy(label,block(edge_array)) * np.array([class_weight[int(labels[i])] for i in range(n_edges)])
 		return loss, tape.gradient(loss,block.trainable_variables)
 ############################################################################################
 def parse_args():
@@ -114,6 +119,7 @@ if __name__ == '__main__':
 	#log_tensor_array(block.trainable_variables,config['log_dir'], 'log_learning_variables.csv') # Log Learning variables
 
 	test(valid_data,config['n_valid'],testing='valid')
+	test(train_data,config['n_train'],testing='train')
 
 	for epoch in range(config['n_epoch']): 
 		shuffle(train_list) # shuffle the order every epoch
@@ -144,6 +150,7 @@ if __name__ == '__main__':
 			# Test every TEST_every
 			if (n_step+1)%config['TEST_every']==0:
 					test(valid_data,config['n_valid'],testing='valid')
+					test(train_data,config['n_train'],testing='train')
 	##################### END TRAINING ##################### 
 
 
