@@ -100,7 +100,7 @@ def load_config(config_file):
 		print('Input dir: ' + config['input_dir'])
 		delete_all_logs(config['log_dir'])
 	# LOG the config
-	with open(config['log_dir'] + '/config.yaml', 'w') as f:
+	with open(config['log_dir'] + 'config.yaml', 'w') as f:
 		for key in config:
 			f.write('%s : %s \n' %(key,str(config[key])))
 	return config
