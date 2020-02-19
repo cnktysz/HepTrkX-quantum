@@ -1,0 +1,10 @@
+input_dir   : 'data/hitgraphs_small'
+log_dir     : 'logs/test'
+n_files     : 2000
+n_valid     : 200
+n_train     : 1800 
+lr          : 0.001
+n_iters     : 2
+n_epoch     : 10
+TEST_every  : 200
+hid_dim     : 10

@@ -1,7 +1,5 @@
 import numpy as np
 import tensorflow as tf
-
-
 #################################################
 def edge_forward(edge_array,theta_learn):
 	outputs = []

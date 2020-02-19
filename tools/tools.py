@@ -15,12 +15,13 @@ def log_tensor_array(tensor,log_dir,filename):
 		f.write('\n')	
 def map2angle(arr0):
 	# Maps input features to 0-2PI
+	# This might depend on the data. BE CAREFUL!
 	arr = np.zeros(arr0.shape)
 	r_min     = 0.
 	r_max     = 1.1
 	phi_min   = -1.
 	phi_max   = 1.
-	z_min     = 0.
+	z_min     = -1.1
 	z_max     = 1.1
 	arr[:,0] =  (arr0[:,0]-r_min)/(r_max-r_min) * 2 * PI
 	arr[:,1] =  (arr0[:,1]-phi_min)/(phi_max-phi_min) * 2 * PI 

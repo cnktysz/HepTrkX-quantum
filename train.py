@@ -2,7 +2,7 @@
 # using tensorflow
 import sys, os, time, datetime, csv, yaml, argparse
 sys.path.append(os.path.abspath(os.path.join('.')))
-os.environ["CUDA_VISIBLE_DEVICES"] = "1" # use CPU
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1" # use CPU
 import tensorflow as tf
 import numpy as np
 from datasets.hitgraphs import get_datasets
@@ -71,7 +71,6 @@ def test(data,n_testing,testing='valid'):
 ############################################################################################
 def preprocess(data):
 	X,Ro,Ri,y  = data
-	X[:,2]     = np.abs(X[:,2]) # correction for negative z
 	X 	       = tf.constant(map2angle(X),dtype=tf.float64)
 	Ri         = tf.constant(Ri,dtype=tf.float64)
 	Ro         = tf.constant(Ro,dtype=tf.float64)	
@@ -100,11 +99,15 @@ def load_config(config_file):
 		print('Log dir: ' + config['log_dir'])
 		print('Input dir: ' + config['input_dir'])
 		delete_all_logs(config['log_dir'])
-		return config
+	# LOG the config
+	with open(config['log_dir'] + '/config.yaml', 'w') as f:
+		for key in config:
+			f.write('%s : %s \n' %(key,str(config[key])))
+	return config
 ############################################################################################
 if __name__ == '__main__':
 	tf.keras.backend.set_floatx('float64')
-
+	tf.config.threading.set_inter_op_parallelism_threads(4)
 	args = parse_args()
 	config = load_config(args)
 	train_list  = [i for i in range(config['n_train'])]
