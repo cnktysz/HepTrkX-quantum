@@ -1,20 +1,6 @@
 import numpy as np
 import tensorflow as tf
 #################################################
-def edge_forward(edge_array,theta_learn):
-	outputs = []
-	for i in range(len(edge_array[:,0])):
-		out = tf.constant((1-TTN_edge_forward(edge_array[i,:],theta_learn))/2.,dtype=tf.float64)
-		outputs.append(out)
-	return tf.stack(outputs)
-#################################################
-def node_forward(node_array,theta_learn):
-	outputs = []
-	for i in range(len(node_array[:,0])):
-		out = tf.constant((1-TTN_node_forward(node_array[i,:],theta_learn))/2.,dtype=tf.float64)
-		outputs.append(out)
-	return tf.stack(outputs)
-#################################################
 class EdgeNet(tf.keras.layers.Layer):
 	def __init__(self,hid_dim,name):
 		super(EdgeNet, self).__init__(name=name)
@@ -36,7 +22,6 @@ class NodeNet(tf.keras.layers.Layer):
             		tf.keras.layers.Dense(hid_dim,activation='sigmoid')
             		])
 	def call(self, X, e, Ri, Ro):
-
 		bo  = tf.matmul(Ro, X, transpose_a=True) # n_edge x 4
 		bi  = tf.matmul(Ri, X, transpose_a=True) # n_edge x 4	
 		Rwo = Ro * tf.transpose(e)

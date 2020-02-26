@@ -19,8 +19,8 @@ def map2angle(arr0):
 	arr = np.zeros(arr0.shape)
 	r_min     = 0.
 	r_max     = 1.1
-	phi_min   = -1.
-	phi_max   = 1.
+	phi_min   = -1.0
+	phi_max   = 1.0
 	z_min     = -1.1
 	z_max     = 1.1
 	arr[:,0] =  (arr0[:,0]-r_min)/(r_max-r_min) * 2 * PI
@@ -32,5 +32,6 @@ def mapping_check(arr):
 	for row in arr:
 		for item in row:
 			if (item > (2 * PI)) or (item < 0):
+				raise ValueError('WARNING!: WRONG MAPPING!!!!!!')
 				print('WARNING!: WRONG MAPPING!!!!!!')
 				

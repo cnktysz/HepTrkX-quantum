@@ -2,9 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import csv, sys
 
-log_location = 'logs/comparisons/dnn/hid20/'
+log_location = 'logs/test/'
 
-png_location = 'png/dnn/hid20/'
+png_location = 'png/test/'
 
 
 with open(log_location+'log_validation.csv', 'r') as f:

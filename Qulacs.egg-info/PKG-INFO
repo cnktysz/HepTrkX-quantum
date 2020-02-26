@@ -1,0 +1,19 @@
+Metadata-Version: 1.1
+Name: Qulacs
+Version: 0.1.9
+Summary: Quantum circuit simulator for research
+Home-page: http://www.qulacs.org
+Author: QunaSys
+Author-email: qulacs@qunasys.com
+License: UNKNOWN
+Description: UNKNOWN
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Environment :: Console
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: MacOS :: MacOS X
+Classifier: Operating System :: Microsoft :: Windows
+Classifier: Operating System :: POSIX
+Classifier: Programming Language :: Python
+Classifier: Topic :: Communications :: Email
