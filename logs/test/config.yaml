@@ -1,10 +1,10 @@
-input_dir : data/hitgraphs_small 
+input_dir : data/hitgraphs_big 
 log_dir : logs/test/ 
-n_files : 2000 
-n_valid : 200 
-n_train : 1800 
+n_files : 4 
+n_valid : 2 
+n_train : 2 
 lr : 0.001 
-n_iters : 2 
+n_iters : 1 
 n_epoch : 10 
 TEST_every : 200 
-hid_dim : 100 
+hid_dim : 1 

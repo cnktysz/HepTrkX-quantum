@@ -22,8 +22,8 @@ class NodeNet(tf.keras.layers.Layer):
             		tf.keras.layers.Dense(hid_dim,activation='sigmoid')
             		])
 	def call(self, X, e, Ri, Ro):
-		bo  = tf.matmul(Ro, X, transpose_a=True) # n_edge x 4
-		bi  = tf.matmul(Ri, X, transpose_a=True) # n_edge x 4	
+		bo  = tf.matmul(Ro, X, transpose_a=True) 
+		bi  = tf.matmul(Ri, X, transpose_a=True) 
 		Rwo = Ro * tf.transpose(e)
 		Rwi = Ri * tf.transpose(e)
 		mi = tf.matmul(Rwi, bo)
@@ -49,7 +49,7 @@ class GNN(tf.keras.Model):
 
 	def call(self, edge_array):
 		X,Ri,Ro = edge_array
-		H = self.InputNet(X) # not normalized, be careful !
+		H = self.InputNet(X) 
 		H = tf.concat([H,X],axis=1)
 		e = self.EdgeNet(H, Ri, Ro)
 		for i in range(self.n_iters):

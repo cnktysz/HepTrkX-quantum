@@ -1,0 +1,10 @@
+input_dir   : 'data/hitgraphs_big'
+log_dir     : 'logs/comparisons/qgnn/iteration_comparison/it1/'
+n_files     : 1600
+n_valid     : 200
+n_train     : 1400
+lr          : 0.01
+n_iters     : 1
+n_epoch     : 2
+TEST_every  : 200
+hid_dim     : 1

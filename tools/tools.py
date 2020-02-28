@@ -1,21 +1,23 @@
-import os,csv,datetime
+import sys, os, time, datetime, csv, yaml, argparse
 import numpy as np
 from numpy import pi as PI
+import tensorflow as tf
 def delete_all_logs(log_dir):
+# Delete all .csv files in directory
 	log_list = os.listdir(log_dir)
 	for item in log_list:
 		if item.endswith('.csv'):
 			os.remove(log_dir+item)
 			print(str(datetime.datetime.now()) + ' Deleted old log: ' + log_dir+item)
 def log_tensor_array(tensor,log_dir,filename):
+# Log 2D tensorflow array
 	with open(log_dir + filename, 'a') as f:
 		for i in range(len(tensor)):
 			for item in tensor[i].numpy():
 				f.write('%.4f,' %item)
 		f.write('\n')	
 def map2angle(arr0):
-	# Maps input features to 0-2PI
-	# This might depend on the data. BE CAREFUL!
+# Mapping the cylindrical coordinates to 0-2PI
 	arr = np.zeros(arr0.shape)
 	r_min     = 0.
 	r_max     = 1.1
@@ -33,5 +35,31 @@ def mapping_check(arr):
 		for item in row:
 			if (item > (2 * PI)) or (item < 0):
 				raise ValueError('WARNING!: WRONG MAPPING!!!!!!')
-				print('WARNING!: WRONG MAPPING!!!!!!')
+def preprocess(data):
+	X,Ro,Ri,y  = data
+	X 	       = tf.constant(map2angle(X),dtype=tf.float64)
+	Ri         = tf.constant(Ri,dtype=tf.float64)
+	Ro         = tf.constant(Ro,dtype=tf.float64)	
+	edge_array = [X,Ri,Ro]
+	return edge_array, tf.constant(y,dtype=tf.float64)
+############################################################################################
+def parse_args():
+	parser = argparse.ArgumentParser(description='Load config file!')
+	add_arg = parser.add_argument
+	add_arg('config')
+	return parser.parse_args()
+def load_config(args):
+	with open(args.config, 'r') as ymlfile:
+		config = yaml.load(ymlfile)
+		print('Printing configs: ')
+		for key in config:
+			print(key + ': ' + str(config[key]))
+		print('Log dir: ' + config['log_dir'])
+		print('Input dir: ' + config['input_dir'])
+		delete_all_logs(config['log_dir'])
+	# LOG the config (OPTIONAL)
+	with open(config['log_dir'] + 'config.yaml', 'w') as f:
+		for key in config:
+			f.write('%s : %s \n' %(key,str(config[key])))
+	return config
 				
