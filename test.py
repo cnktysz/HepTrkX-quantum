@@ -32,7 +32,7 @@ def test_validation(config,network,data):
 	#calcualte auc
 	fpr,tpr,thresholds = metrics.roc_curve(labels.astype(int),preds,pos_label=1 )
 	auc = metrics.auc(fpr,tpr)		
-	accuracy = ((1-fpr[len(fpr)/2])*n_class[0]+tpr[len(tpr/2)]*n_class[1])/n_edges	
+	accuracy = ((1-fpr[len(fpr)//2])*n_class[0]+tpr[len(tpr)//2]*n_class[1])/n_edges	
 	#log
 	with open(config['log_dir']+'log_validation.csv', 'a') as f:
 		f.write('%.4f, %.4f, %.4f\n' %(accuracy,auc,loss))
@@ -57,7 +57,7 @@ def test_train(config,network,data):
 	n_edges      = len(labels)
 	n_class      = [n_edges - sum(labels), sum(labels)]
 	class_weight = [n_edges/(n_class[0]*2), n_edges/(n_class[1]*2)]	
-	accuracy     = np.mean((1 - np.abs(preds - labels)) * [class_weight[int(labels[i])] for i in range(n_edges)]  )
+	#accuracy     = np.mean((1 - np.abs(preds - labels)) * [class_weight[int(labels[i])] for i in range(n_edges)]  )
 	loss         = tf.reduce_mean(tf.keras.losses.binary_crossentropy(labels,preds) * np.array([class_weight[int(labels[i])] for i in range(n_edges)]))
 	
 	#log all preds
@@ -69,7 +69,7 @@ def test_train(config,network,data):
 	#calcualte auc
 	fpr,tpr,thresholds = metrics.roc_curve(labels.astype(int),preds,pos_label=1 )
 	auc = metrics.auc(fpr,tpr)	
-	accuracy = ((1-fpr[len(fpr)/2])*n_class[0]+tpr[len(tpr/2)]*n_class[1])/n_edges			
+	accuracy = ((1-fpr[len(fpr)//2])*n_class[0]+tpr[len(tpr)//2]*n_class[1])/n_edges			
 	#log
 	with open(config['log_dir']+'log_training.csv', 'a') as f:
 			f.write('%.4f, %.4f, %.4f\n' %(accuracy,auc,loss))

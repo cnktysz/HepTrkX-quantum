@@ -18,7 +18,7 @@ def gradient(edge_array,label):
 	n_class      = [n_edges - sum(labels), sum(labels)]
 	class_weight = [n_edges/(n_class[0]*2), n_edges/(n_class[1]*2)]	
 	with tf.GradientTape() as tape:
-		loss = tf.reduce_mean(tf.keras.losses.binary_crossentropy(label,block(edge_array))/(2*np.pi) * np.array([class_weight[int(labels[i])] for i in range(n_edges)]))
+		loss = tf.reduce_mean(tf.keras.losses.binary_crossentropy(label,block(edge_array)) * np.array([class_weight[int(labels[i])] for i in range(n_edges)]))
 		return loss, tape.gradient(loss,block.trainable_variables)
 ############################################################################################
 if __name__ == '__main__':
@@ -69,7 +69,7 @@ if __name__ == '__main__':
 			"""
 			# Test every TEST_every
 			if (n_step+1)%config['TEST_every']==0:
-					test(config,block,valid_data)
+					test_validation(config,block,valid_data)
 					#test(train_data,config['n_train'],testing='train')
 	##################### END TRAINING ##################### 
 

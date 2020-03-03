@@ -6,5 +6,5 @@ n_train     : 1400
 lr          : 0.01
 n_iters     : 3
 n_epoch     : 2
-TEST_every  : 200
+TEST_every  : 50
 hid_dim     : 1
