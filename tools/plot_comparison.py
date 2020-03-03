@@ -4,11 +4,11 @@ import csv
 from sklearn import metrics
 import sys
 
-log_location0 = 'logs/tensorflow/ENE/lr_0_1/'
-log_location1 = 'logs/tensorflow/ENE2/lr_0_1/'
-log_location2 = 'logs/tensorflow/ENE3/lr_0_1/'
+log_location0 = 'logs/comparisons/qgnn/iteration_comparison/it1/'
+log_location1 = 'logs/comparisons/qgnn/iteration_comparison/it2/'
+log_location2 = 'logs/comparisons/qgnn/iteration_comparison/it3/'
 
-png_location = 'png/comparison/lr_0_1/'
+pdf_location = 'pdf/comparison/qgnn/iteration_comparison/'
 
 
 with open(log_location0+'log_validation.csv', 'r') as f:
@@ -43,7 +43,7 @@ plt.title('Validation Loss')
 plt.xlabel('Update')
 plt.ylabel('Loss')
 plt.legend()
-plt.savefig(png_location+'validation_loss.pdf')
+plt.savefig(pdf_location+'validation_loss.pdf')
 
 plt.clf()   
 plt.plot(x0,valid0[:,1],label='iteration=1',c='darkorange')
@@ -53,7 +53,7 @@ plt.title('Validation AUC')
 plt.xlabel('Update')
 plt.ylabel('AUC')
 plt.legend()
-plt.savefig(png_location+'validation_auc.pdf')
+plt.savefig(pdf_location+'validation_auc.pdf')
 
 
 x0 = [i+1 for i  in range(len(loss0))]
@@ -68,5 +68,5 @@ plt.title('Validation Loss')
 plt.xlabel('Update')
 plt.ylabel('Loss')
 plt.legend()
-plt.savefig(png_location+'loss.pdf')
+plt.savefig(pdf_location+'loss.pdf')
 
