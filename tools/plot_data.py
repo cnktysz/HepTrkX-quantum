@@ -35,17 +35,19 @@ if __name__ == '__main__':
     print('Min phi: %.2f, Max phi: %.2f' %(np.min(p_combined), np.max(p_combined)))
     print('Min z: %.2f, Max z: %.2f' %(np.min(z_combined), np.max(z_combined)))
 
-    fig, axs = plt.subplots(1, 3, figsize = (10,4),sharey=True, tight_layout=True)
-		
+    fig, axs = plt.subplots(1, 3, figsize = (10,2),sharey=True, tight_layout=True)
+    plt.ticklabel_format(axis="y", style="sci", scilimits=(0,0))
+
     axs[0].hist(r_combined, bins=[0.03,0.04,0.07,0.08,0.11,0.12,0.17,0.18,0.255,0.265,0.355,0.365,0.495,0.505,0.655,0.665,0.815,0.825,1.015,1.025])
     axs[1].hist(p_combined, bins=n_bins)
     axs[2].hist(z_combined, bins=n_bins)
 
-    axs[0].set_xlabel('$r[m] $')
-    axs[1].set_xlabel('$\Phi $')
-    axs[2].set_xlabel('$z[m] $')
+    axs[0].set_xlabel('r [m]')
+    axs[0].set_ylabel('Hit Counts [#]')
+    axs[1].set_xlabel(r'$\phi$')
+    axs[2].set_xlabel('z [m]')
     plt.savefig(pdf_dir+'data_preprocessed.pdf')
-
+    '''
     r_combined = []
     p_combined = []
     z_combined = []
@@ -73,7 +75,7 @@ if __name__ == '__main__':
     axs[1].set_xlabel('$\Phi $')
     axs[2].set_xlabel('$z[m] $')
     plt.savefig(pdf_dir+'data_mapped.pdf')
-
+    '''
 
 
 
