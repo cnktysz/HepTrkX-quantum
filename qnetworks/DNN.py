@@ -34,7 +34,7 @@ class NodeNet(tf.keras.layers.Layer):
 class InputNet(tf.keras.layers.Layer):
 	def __init__(self, num_outputs,name):
 		super(InputNet, self).__init__(name=name)
-		self.layer = tf.keras.layers.Dense(num_outputs,input_shape=(3,),activation='sigmoid')
+		self.layer = tf.keras.layers.Dense(num_outputs,input_shape=(3,),activation='tanh')
 	
 	def call(self, arr):
 		return self.layer(arr)
@@ -43,7 +43,7 @@ class GNN(tf.keras.Model):
 	def __init__(self, hid_dim=1, n_iters=2):
 		super(GNN, self).__init__(name='GNN')
 		self.InputNet = InputNet(hid_dim, name='InputNet')
-		self.EdgeNet = EdgeNet(hid_dim, name='EdgeNet0')
+		self.EdgeNet = EdgeNet(hid_dim, name='EdgeNet')
 		self.NodeNet = NodeNet(hid_dim, name='NodeNet')
 		self.n_iters = n_iters
 

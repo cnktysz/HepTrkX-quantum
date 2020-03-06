@@ -1,4 +1,4 @@
-# Calculates gradients of a pennylane quantum circuit
+x# Calculates gradients of a pennylane quantum circuit
 # using tensorflow
 import sys, os, time, datetime, csv, yaml, argparse
 sys.path.append(os.path.abspath(os.path.join('.')))
@@ -6,7 +6,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "-1" # use CPU
 # import scripts
 from datasets.hitgraphs import get_datasets
 from tools.tools import *
-from qnetworks.GNN import GNN
+from qnetworks.DNN import GNN
 from test import *
 # import external
 import tensorflow as tf

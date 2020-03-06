@@ -37,7 +37,7 @@ def mapping_check(arr):
 				raise ValueError('WARNING!: WRONG MAPPING!!!!!!')
 def preprocess(data):
 	X,Ro,Ri,y  = data
-	X 	       = tf.constant(map2angle(X),dtype=tf.float64)
+	X 	       = tf.constant(X,dtype=tf.float64) # map2angle(X) with quantum circuits
 	Ri         = tf.constant(Ri,dtype=tf.float64)
 	Ro         = tf.constant(Ro,dtype=tf.float64)	
 	edge_array = [X,Ri,Ro]
