@@ -1,4 +1,4 @@
-x# Calculates gradients of a pennylane quantum circuit
+# Calculates gradients of a pennylane quantum circuit
 # using tensorflow
 import sys, os, time, datetime, csv, yaml, argparse
 sys.path.append(os.path.abspath(os.path.join('.')))

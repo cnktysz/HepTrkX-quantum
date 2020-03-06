@@ -1,0 +1,10 @@
+input_dir   : 'data/hitgraphs_big'
+log_dir     : 'logs/comparisons/dnn/dim-comparison/hid10/'
+n_files     : 1600
+n_valid     : 200
+n_train     : 1400 
+lr          : 0.001
+n_iters     : 4
+n_epoch     : 10
+TEST_every  : 200
+hid_dim     : 10
