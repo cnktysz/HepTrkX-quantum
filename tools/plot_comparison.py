@@ -4,16 +4,27 @@ import csv
 from sklearn import metrics
 import sys
 
-log_loc = 'logs/comparisons/dnn/dim-comparison/'
-log_location0 = log_loc + 'hid1/'
-log_location1 = log_loc + 'hid10/'
-log_location2 = log_loc + 'hid100/'
+#log_loc = 'logs/comparisons/dnn/dim-comparison/'
+log_loc = 'logs/comparisons/qgnn/iteration_comparison/'
 
-pdf_location = 'pdf/comparison/dnn/dim-comparison/'
+#log_location0 = log_loc + 'hid1/'
+#log_location1 = log_loc + 'hid10/'
+#log_location2 = log_loc + 'hid100/'
 
-label1 = r'$N_{dim}=1$'
-label2 = r'$N_{dim}=10$'
-label3 = r'$N_{dim}=100$'
+log_location0 = log_loc + 'it1/'
+log_location1 = log_loc + 'it2/'
+log_location2 = log_loc + 'it3/'
+
+pdf_location = 'pdf/comparison/qgnn/iteration_comparison/'
+
+#label1 = r'$N_{dim}=1$'
+#label2 = r'$N_{dim}=10$'
+#label3 = r'$N_{dim}=100$'
+
+label1 = r'$N_{it}=1$'
+label2 = r'$N_{it}=2$'
+label3 = r'$N_{it}=3$'
+
 
 with open(log_location0+'log_validation.csv', 'r') as f:
 	reader = csv.reader(f, delimiter=',')
