@@ -1,6 +1,7 @@
 import pennylane as qml 
 from pennylane import numpy as np
 import tensorflow as tf
+from tools.tools import get_params
 
 dev1 = qml.device("default.qubit", wires=8)
 @qml.qnode(dev1,interface='tf')
@@ -110,8 +111,7 @@ class EdgeNet(tf.keras.layers.Layer):
 	def __init__(self,hid_dim=1,name='EdgeNet'):
 		super(EdgeNet, self).__init__(name=name)
 		# can only work with hid_dim = 1 at the moment
-		self.theta_learn = tf.Variable(tf.random.uniform(shape=[15,],minval=0,maxval=np.pi*2,dtype=tf.float64))
-
+		self.theta_learn = tf.Variable(get_params('edge'))
 	def call(self,X, Ri, Ro):
 		bo = tf.matmul(Ro,X,transpose_a=True)
 		bi = tf.matmul(Ri,X,transpose_a=True)
@@ -122,8 +122,7 @@ class NodeNet(tf.keras.layers.Layer):
 	def __init__(self,hid_dim=1,name='NodeNet'):
 		super(NodeNet, self).__init__(name=name)
 		# can only work with hid_dim = 1 at the moment
-		self.theta_learn = tf.Variable(tf.random.uniform(shape=[23,],minval=0,maxval=np.pi*2,dtype=tf.float64))
-
+		self.theta_learn = tf.Variable(get_params('node'))
 	def call(self, X, e, Ri, Ro):
 		bo  = tf.matmul(Ro, X, transpose_a=True) 
 		bi  = tf.matmul(Ri, X, transpose_a=True) 
@@ -138,8 +137,8 @@ class InputNet(tf.keras.layers.Layer):
 	def __init__(self, num_outputs, name):
 		super(InputNet, self).__init__(name=name)
 		self.num_outputs = num_outputs
-		self.layer = tf.keras.layers.Dense(num_outputs,input_shape=(3,),activation='sigmoid')
-
+		init = tf.constant_initializer(get_params('input'))
+		self.layer = tf.keras.layers.Dense(num_outputs,input_shape=(3,),activation='sigmoid',kernel_initializer=init)
 	def call(self, arr):
 		return self.layer(arr)*2*np.pi # to map it 0-2PI
 #################################################

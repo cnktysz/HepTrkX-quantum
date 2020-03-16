@@ -2,6 +2,7 @@ import sys, os, time, datetime, csv, yaml, argparse
 import numpy as np
 from numpy import pi as PI
 import tensorflow as tf
+############################################################################################
 def delete_all_logs(log_dir):
 # Delete all .csv files in directory
 	log_list = os.listdir(log_dir)
@@ -9,13 +10,15 @@ def delete_all_logs(log_dir):
 		if item.endswith('.csv'):
 			os.remove(log_dir+item)
 			print(str(datetime.datetime.now()) + ' Deleted old log: ' + log_dir+item)
+############################################################################################
 def log_tensor_array(tensor,log_dir,filename):
 # Log 2D tensorflow array
 	with open(log_dir + filename, 'a') as f:
 		for i in range(len(tensor)):
 			for item in tensor[i].numpy():
-				f.write('%.4f,' %item)
+				f.write('%.15f,' %item)
 		f.write('\n')	
+############################################################################################
 def map2angle(arr0):
 # Mapping the cylindrical coordinates to 0-2PI
 	arr = np.zeros(arr0.shape)
@@ -30,11 +33,13 @@ def map2angle(arr0):
 	arr[:,2] =  (arr0[:,2]-z_min)/(z_max-z_min) * 2 * PI
 	mapping_check(arr)
 	return arr
+############################################################################################
 def mapping_check(arr):
 	for row in arr:
 		for item in row:
 			if (item > (2 * PI)) or (item < 0):
 				raise ValueError('WARNING!: WRONG MAPPING!!!!!!')
+############################################################################################
 def preprocess(data):
 	X,Ro,Ri,y  = data
 	X 	       = tf.constant(X,dtype=tf.float64) # map2angle(X) with quantum circuits
@@ -48,6 +53,7 @@ def parse_args():
 	add_arg = parser.add_argument
 	add_arg('config')
 	return parser.parse_args()
+############################################################################################
 def load_config(args):
 	with open(args.config, 'r') as ymlfile:
 		config = yaml.load(ymlfile)
@@ -55,11 +61,17 @@ def load_config(args):
 		for key in config:
 			print(key + ': ' + str(config[key]))
 		print('Log dir: ' + config['log_dir'])
-		print('Input dir: ' + config['input_dir'])
+		print('Training data input dir: ' + config['train_dir'])
+		print('Validation data input dir: ' + config['train_dir'])
 		delete_all_logs(config['log_dir'])
 	# LOG the config (OPTIONAL)
 	with open(config['log_dir'] + 'config.yaml', 'w') as f:
 		for key in config:
 			f.write('%s : %s \n' %(key,str(config[key])))
 	return config
-				
+############################################################################################
+def get_params(param_type):
+	with open('params/'+param_type+'_params.csv', 'r') as f:
+		reader = csv.reader(f, delimiter=',')
+		return np.array(list(reader))[0,:-1].astype(float)
+############################################################################################
