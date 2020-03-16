@@ -45,20 +45,21 @@ with open(log_location2 + 'log_loss.csv', 'r') as f:
 	reader = csv.reader(f, delimiter=',')
 	loss2 = np.array(list(reader)).astype(float)
 
-interval = 200 
+interval = 50
+
 x0 = [i*interval for i  in range(len(valid0))]
 x1 = [i*interval for i  in range(len(valid1))]
 x2 = [i*interval for i  in range(len(valid2))]
 
 plt.clf()   
-plt.plot(x0,valid0[:,2],label=label1,c='darkorange')
-plt.plot(x1,valid1[:,2],label=label2,c='navy')
-plt.plot(x2,valid2[:,2],label=label3,c='red')
-plt.title('Validation Loss')
+plt.plot(x0,valid0[:,0],label=label1,c='darkorange')
+plt.plot(x1,valid1[:,0],label=label2,c='navy')
+plt.plot(x2,valid2[:,0],label=label3,c='red')
+plt.title('Validation Accuracy')
 plt.xlabel('Update')
-plt.ylabel('Loss')
+plt.ylabel('Accuracy')
 plt.legend()
-plt.savefig(pdf_location+'validation_loss.pdf')
+plt.savefig(pdf_location+'validation_accuracy.pdf')
 
 plt.clf()   
 plt.plot(x0,valid0[:,1],label=label1,c='darkorange')
@@ -70,6 +71,15 @@ plt.ylabel('AUC')
 plt.legend()
 plt.savefig(pdf_location+'validation_auc.pdf')
 
+plt.clf()   
+plt.plot(x0,valid0[:,2],label=label1,c='darkorange')
+plt.plot(x1,valid1[:,2],label=label2,c='navy')
+plt.plot(x2,valid2[:,2],label=label3,c='red')
+plt.title('Validation Loss')
+plt.xlabel('Update')
+plt.ylabel('Loss')
+plt.legend()
+plt.savefig(pdf_location+'validation_loss.pdf')
 
 x0 = [i+1 for i  in range(len(loss0))]
 x1 = [i+1 for i  in range(len(loss1))]
@@ -79,9 +89,9 @@ plt.clf()
 plt.plot(x0,loss0,label=label1,c='darkorange')
 plt.plot(x1,loss1,label=label2,c='navy')
 plt.plot(x2,loss2,label=label3,c='red')
-plt.title('Validation Loss')
+plt.title('Training Loss')
 plt.xlabel('Update')
 plt.ylabel('Loss')
 plt.legend()
-plt.savefig(pdf_location+'loss.pdf')
+plt.savefig(pdf_location+'training_loss.pdf')
 
