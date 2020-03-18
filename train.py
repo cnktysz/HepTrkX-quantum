@@ -25,7 +25,7 @@ def gradient(edge_array,label):
 if __name__ == '__main__':
 	# Tensorflow settings
 	tf.keras.backend.set_floatx('float64')
-	tf.config.threading.set_inter_op_parallelism_threads(4)
+	#tf.config.threading.set_inter_op_parallelism_threads(4)
 	
 	# Read config file
 	args = parse_args()

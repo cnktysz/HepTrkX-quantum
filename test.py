@@ -3,30 +3,6 @@ sys.path.append(os.path.abspath(os.path.join('.')))
 import numpy as np
 from sklearn import metrics
 from tools.tools import *
-import multiprocessing
-
-def network_fn(network,data,start,end,preds_labels):
-	for i in range(start,end):
-		graph_array, labels = preprocess(data[i])
-		preds_labels.append([network(graph_array) , labels])
-
-def network_multiprocessing(network,data,n_data,n_thread):
-	jobs         = []
-	n_feed       = n_data//n_thread
-	manager      = multiprocessing.Manager()
-	preds_labels = manager.list()
-	for thread in range(n_thread):
-		start = thread*n_feed
-		end   = (thread+1)*n_feed
-		if thread==(n_thread-1):
-			end = n_data
-		p = multiprocessing.Process(target=network_fn,args=(network,data,start,end,preds_labels,)) 
-		jobs.append(p)
-		p.start()
-	# WAIT for jobs to finish
-	for proc in jobs: 
-		proc.join()	
-	return preds_labels
 
 def test_validation(config,network,data):
 	t_start = time.time()
@@ -34,10 +10,13 @@ def test_validation(config,network,data):
 	n_testing = config['n_valid']
 	print('Starting testing the validation set with ' + str(n_testing) + ' subgraphs!')
 
-	pred_list = network_multiprocessing(network,data,n_testing,config['n_thread'])
-
-	preds = pred_list[:,0]
-	labels = pred_list[:,1]
+	# Obtain predictions and labels
+	preds   = []
+	labels  = []
+	for n_test in range(n_testing):
+		graph_array, labels_ = preprocess(data[n_test])
+		labels = np.append(labels,labels_)
+		preds  = np.append(preds,network(graph_array))
 	
 	# Calculate weighted loss
 	n_edges      = len(labels)
