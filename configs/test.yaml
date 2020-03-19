@@ -9,5 +9,5 @@ lr          : 0.01
 n_iters     : 2
 n_epoch     : 1
 TEST_every  : 200
-hid_dim     : 1
+hid_dim     : 2
 n_thread    : 20

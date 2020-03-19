@@ -11,13 +11,16 @@ def delete_all_logs(log_dir):
 			os.remove(log_dir+item)
 			print(str(datetime.datetime.now()) + ' Deleted old log: ' + log_dir+item)
 ############################################################################################
+def shape(tensor):
+    s = tensor.get_shape()
+    return s[i].value 
 def log_tensor_array(tensor,log_dir,filename):
 # Log 2D tensorflow array
 	with open(log_dir + filename, 'a') as f:
-		for i in range(len(tensor)):
+		for i in range(tensor.shape[0]):
 			for item in tensor[i].numpy():
-				f.write('%.15f,' %item)
-		f.write('\n')	
+					f.write('%.15f,' %item)
+			f.write('\n')	
 ############################################################################################
 def map2angle(arr0):
 # Mapping the cylindrical coordinates to 0-2PI
@@ -71,7 +74,7 @@ def load_config(args):
 	return config
 ############################################################################################
 def get_params(param_type):
-	with open('params/'+param_type+'_params.csv', 'r') as f:
+	with open('params/test/'+param_type+'_params.csv', 'r') as f:
 		reader = csv.reader(f, delimiter=',')
-		return np.array(list(reader))[0,:-1].astype(float)
+		return np.array(list(reader))[:,0:-1].astype(float)
 ############################################################################################

@@ -4,7 +4,7 @@ sys.path.append(os.path.abspath(os.path.join('.')))
 # import scripts
 from datasets.hitgraphs import get_datasets
 from tools.tools import *
-from qnetworks.GNN import GNN
+from qnetworks.GNN2 import GNN
 from test import *
 # import external
 import tensorflow as tf
@@ -46,8 +46,11 @@ if __name__ == '__main__':
 	block = GNN(config['hid_dim'],config['n_iters'])
 	opt = tf.keras.optimizers.Adam(learning_rate=config['lr'])
 
+	print(block.trainable_variables[0])
 	# Log Learning variables
-	log_tensor_array(block.trainable_variables,config['log_dir'], 'log_params.csv') 
+	log_tensor_array(block.trainable_variables[0],config['log_dir'], 'log_params_IN.csv') 
+	log_tensor_array(block.trainable_variables[1],config['log_dir'], 'log_params_EN.csv') 
+	log_tensor_array(block.trainable_variables[2],config['log_dir'], 'log_params_NN.csv') 
 
 	# Test the validation set
 	test_validation(config,block,valid_data)
