@@ -3,7 +3,7 @@ valid_dir : data/graph_data/valid
 log_dir : logs/test/ 
 gpu : -1 
 n_files : 1600 
-n_valid : 20 
+n_valid : 200 
 n_train : 1400 
 lr : 0.01 
 n_iters : 2 
