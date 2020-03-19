@@ -1,7 +1,9 @@
 # Particle Track Reconstruction with Quantum Algorithms
 
-The latest results are produced with QuantumEdgeNetwork.py
+CHEP 2019 proceeding is available at https://arxiv.org/abs/2003.08126
 
-See public/chep19_poster.pdf for the latest presentation.
+The scripts used to produce CHEP 2019 results is at trying_things/QuantumEdgeNetwork.py
 
-The repository has many scripts which are not complete! Work in Progress!
+Notice that this is a project in progress. Latest results are produced using train.py and are different from the ones in the proceeding.
+
+*The repository has many scripts which are not complete! Work in Progress!*
