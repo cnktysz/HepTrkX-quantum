@@ -46,7 +46,6 @@ if __name__ == '__main__':
 	block = GNN(config['hid_dim'],config['n_iters'])
 	opt = tf.keras.optimizers.Adam(learning_rate=config['lr'])
 
-	print(block.trainable_variables[0])
 	# Log Learning variables
 	log_tensor_array(block.trainable_variables[0],config['log_dir'], 'log_params_IN.csv') 
 	log_tensor_array(block.trainable_variables[1],config['log_dir'], 'log_params_EN.csv') 

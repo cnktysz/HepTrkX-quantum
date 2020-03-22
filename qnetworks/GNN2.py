@@ -175,7 +175,7 @@ class GNN(tf.keras.Model):
 		e = self.EdgeNet(H, Ri, Ro)
 		for i in range(self.n_iters):
 			H = self.NodeNet(H, e, Ri, Ro)
-			H = tf.concat([H[:,None],X],axis=1)
+			H = tf.concat([H,X], axis=1)
 			e = self.EdgeNet(H, Ri, Ro)
 		return e
 #################################################
