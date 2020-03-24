@@ -82,10 +82,14 @@ if __name__ == '__main__':
 				f.write('%.4f\n' %loss)	
 				
 			# Log gradients
-			log_tensor_array(grads,config['log_dir'], 'log_grads.csv')
+			log_tensor_array(grads[0],config['log_dir'], 'log_grads_IN.csv')
+			log_tensor_array(grads[1],config['log_dir'], 'log_grads_EN.csv')
+			log_tensor_array(grads[2],config['log_dir'], 'log_grads_NN.csv')
 
 			# Log Learning variables
-			log_tensor_array(block.trainable_variables,config['log_dir'], 'log_params.csv') 
+			log_tensor_array(block.trainable_variables[0],config['log_dir'], 'log_params_IN.csv') 
+			log_tensor_array(block.trainable_variables[1],config['log_dir'], 'log_params_EN.csv') 
+			log_tensor_array(block.trainable_variables[2],config['log_dir'], 'log_params_NN.csv') 
 			
 			# Test every TEST_every
 			if (n_step+1)%config['TEST_every']==0:
