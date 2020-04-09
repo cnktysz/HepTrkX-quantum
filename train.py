@@ -2,7 +2,6 @@
 import sys, os, time, datetime, csv, yaml, argparse
 sys.path.append(os.path.abspath(os.path.join('.')))
 # import internal
-from datasets.hitgraphs import get_datasets
 from tools.tools import *
 from qnetworks.GNN2 import GNN
 from test import *
