@@ -7,8 +7,11 @@ from tools.tools import *
 def test_validation(config,network,data):
 	t_start = time.time()
 	
-	n_testing = config['n_valid']
+	
 	print('Starting testing the validation set with ' + str(n_testing) + ' subgraphs!')
+
+	n_testing = config['n_valid']
+	data = get_datasets(config['valid_dir'], n_testing)
 
 	# Obtain predictions and labels
 	preds   = []
@@ -48,8 +51,10 @@ def test_validation(config,network,data):
 def test_train(config,network,data):
 	t_start = time.time()
 	
-	n_testing = config['n_train']
 	print('Starting testing the training set with ' + str(n_testing) + ' subgraphs!')
+
+	n_testing = config['n_train']
+	data = get_datasets(config['train_dir'], n_testing)
 
 	preds   = []
 	labels  = []

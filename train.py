@@ -1,7 +1,7 @@
 # Calculates gradients of a pennylane quantum circuit using tensorflow
 import sys, os, time, datetime, csv, yaml, argparse
 sys.path.append(os.path.abspath(os.path.join('.')))
-# import scripts
+# import internal
 from datasets.hitgraphs import get_datasets
 from tools.tools import *
 from qnetworks.GNN2 import GNN
@@ -38,9 +38,8 @@ if __name__ == '__main__':
 	delete_all_logs(config['log_dir'])
 	 	
 	# Load data
-	train_data, _ = get_datasets(config['train_dir'], config['n_train'], 0)
-	train_list  = [i for i in range(config['n_train'])]
-	_, valid_data = get_datasets(config['valid_dir'], 0, config['n_valid'])
+	train_data = get_datasets(config['train_dir'], config['n_train'])
+	train_list = [i for i in range(config['n_train'])]
 
 	# Setup the network
 	block = GNN(config['hid_dim'],config['n_iters'])
@@ -52,9 +51,10 @@ if __name__ == '__main__':
 	log_tensor_array(block.trainable_variables[2],config['log_dir'], 'log_params_NN.csv') 
 
 	# Test the validation set
-	test_validation(config,block,valid_data)
+	test_validation(config,block)
 	
-	##################### BEGIN TRAINING #####################  
+	########################################## BEGIN TRAINING ########################################## 
+
 	print(str(datetime.datetime.now()) + ': Training is starting!')
 	for epoch in range(config['n_epoch']): 
 		shuffle(train_list) # shuffle the order every epoch
@@ -70,8 +70,6 @@ if __name__ == '__main__':
 
 			# Print summary
 			print(str(datetime.datetime.now()) + ": Epoch: %d, Batch: %d, Loss: %.4f, Elapsed: %dm%ds" % (epoch+1, n_step+1, loss ,t / 60, t % 60) )
-
-			# Start Logging
 
 			# Log summary 
 			with open(config['log_dir']+'summary.csv', 'a') as f:
@@ -93,14 +91,15 @@ if __name__ == '__main__':
 			
 			# Test every TEST_every
 			if (n_step+1)%config['TEST_every']==0:
-					test_validation(config,block,valid_data)
+					test_validation(config,block)
 					#test(train_data,config['n_train'],testing='train')
 
 		# Test the validation set after every epoch
-		test_validation(config,block,valid_data)
+		test_validation(config,block)
 
 	print(str(datetime.datetime.now()) + ': Training completed!')
-	##################### END TRAINING ##################### 
+
+	########################################## END TRAINING ##########################################  
 
 
 	
