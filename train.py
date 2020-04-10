@@ -3,7 +3,7 @@ import sys, os, time, datetime, csv, yaml, argparse
 sys.path.append(os.path.abspath(os.path.join('.')))
 # import internal
 from tools.tools import *
-from qnetworks.GNN2 import GNN
+from qnetworks.DNN import GNN
 from test import *
 # import external
 import tensorflow as tf
@@ -37,7 +37,7 @@ if __name__ == '__main__':
 	delete_all_logs(config['log_dir'])
 	 	
 	# Load data
-	train_data = get_datasets(config['train_dir'], config['n_train'])
+	train_data = get_dataset(config['train_dir'], config['n_train'])
 	train_list = [i for i in range(config['n_train'])]
 
 	# Setup the network
@@ -45,10 +45,11 @@ if __name__ == '__main__':
 	opt = tf.keras.optimizers.Adam(learning_rate=config['lr'])
 
 	# Log Learning variables
+	'''
 	log_tensor_array(block.trainable_variables[0],config['log_dir'], 'log_params_IN.csv') 
 	log_tensor_array(block.trainable_variables[1],config['log_dir'], 'log_params_EN.csv') 
 	log_tensor_array(block.trainable_variables[2],config['log_dir'], 'log_params_NN.csv') 
-
+	'''
 	# Test the validation set
 	test_validation(config,block)
 	
@@ -77,7 +78,8 @@ if __name__ == '__main__':
 			# Log loss
 			with open(config['log_dir'] + 'log_loss.csv', 'a') as f:
 				f.write('%.4f\n' %loss)	
-				
+			
+			'''			
 			# Log gradients
 			log_tensor_array(grads[0],config['log_dir'], 'log_grads_IN.csv')
 			log_tensor_array(grads[1],config['log_dir'], 'log_grads_EN.csv')
@@ -88,6 +90,7 @@ if __name__ == '__main__':
 			log_tensor_array(block.trainable_variables[1],config['log_dir'], 'log_params_EN.csv') 
 			log_tensor_array(block.trainable_variables[2],config['log_dir'], 'log_params_NN.csv') 
 			
+			'''
 			# Test every TEST_every
 			if (n_step+1)%config['TEST_every']==0:
 					test_validation(config,block)

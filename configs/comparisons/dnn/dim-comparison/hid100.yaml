@@ -1,10 +1,12 @@
-input_dir   : 'data/hitgraphs_big'
+train_dir   : 'data/graph_data/train'
+valid_dir   : 'data/graph_data/valid'
 log_dir     : 'logs/comparisons/dnn/dim-comparison/hid100/'
+gpu         : '-1'
 n_files     : 1600
 n_valid     : 200
 n_train     : 1400 
-lr          : 0.001
-n_iters     : 4
-n_epoch     : 10
-TEST_every  : 200
+lr          : 0.01
+n_iters     : 1
+n_epoch     : 2
+TEST_every  : 50
 hid_dim     : 100

@@ -4,14 +4,14 @@ import numpy as np
 from sklearn import metrics
 from tools.tools import *
 
-def test_validation(config,network,data):
+def test_validation(config,network):
 	t_start = time.time()
 	
 	
+	n_testing = config['n_valid']
 	print('Starting testing the validation set with ' + str(n_testing) + ' subgraphs!')
 
-	n_testing = config['n_valid']
-	data = get_datasets(config['valid_dir'], n_testing)
+	data = get_dataset(config['valid_dir'], n_testing)
 
 	# Obtain predictions and labels
 	preds   = []
@@ -48,13 +48,13 @@ def test_validation(config,network,data):
 	# Print summary
 	print(str(datetime.datetime.now()) + ': Validation Loss: %.4f, Validation Acc: %.4f, Validation AUC: %.4f Elapsed: %dm%ds' %(loss, accuracy*100, auc, duration/60, duration%60))
 	
-def test_train(config,network,data):
+def test_train(config,network):
 	t_start = time.time()
 	
+	n_testing = config['n_train']
 	print('Starting testing the training set with ' + str(n_testing) + ' subgraphs!')
 
-	n_testing = config['n_train']
-	data = get_datasets(config['train_dir'], n_testing)
+	data = get_dataset(config['train_dir'], n_testing)
 
 	preds   = []
 	labels  = []
