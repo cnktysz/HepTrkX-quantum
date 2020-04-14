@@ -35,10 +35,12 @@ with open(log_location2+'log_grads.csv','r') as f:
 	reader = csv.reader(f, delimiter=',')
 	grads2 = np.array(list(reader))[:,0:-1].astype(float) 
 
-fig, axs = plt.subplots(3,3,sharey=True)
+
 x = [(i+1) for i  in range(len(grads2))]
 grads0 = grads0[:len(grads2),:]
 grads1 = grads1[:len(grads2),:]
+'''
+fig, axs = plt.subplots(3,3,sharey=True)
 for i in range(3):
 	axs[0,0].scatter(x,grads0[:,i],marker='.',label=r'$\theta_{'+str(i)+'}$')
 	axs[0,0].set_title('InputNet')
@@ -86,3 +88,51 @@ plt.xlabel('Update')
 plt.ylabel('Avg')
 plt.legend()
 plt.savefig(pdf_location+'grad_avg.pdf')
+'''
+
+
+fig, axs = plt.subplots(3,1,sharex=True, figsize=(5,20))
+fig.tight_layout()
+
+plt.xlabel('Update')
+plt.xlabel('Gradient')
+axs[0].set_title('InputNet')
+for i in range(3):
+	axs[i].plot(x,grads0[:,i],label=label1)
+	axs[i].plot(x,grads1[:,i],label=label2)
+	axs[i].plot(x,grads2[:,i],label=label3)
+
+plt.legend()
+fig.savefig(pdf_location+'grads_InputNet.pdf')
+
+plt.clf()  
+fig, axs = plt.subplots(15,1,sharex=True,figsize=(5,20))
+
+
+plt.xlabel('Update')
+plt.xlabel('Gradient')
+axs[0].set_title('EdgeNet')
+for i in range(3,18):
+	axs[i-3].plot(x,grads0[:,i],label=label1)
+	axs[i-3].plot(x,grads1[:,i],label=label2)
+	axs[i-3].plot(x,grads2[:,i],label=label3)
+	
+plt.legend()
+fig.tight_layout()
+fig.savefig(pdf_location+'grads_EdgeNet.pdf')
+
+plt.clf()  
+fig, axs = plt.subplots(23,1,sharex=True,figsize=(5,20))
+
+
+plt.xlabel('Update')
+plt.xlabel('Gradient')
+axs[0].set_title('NodeNet')
+for i in range(18,41):
+	axs[i-18].plot(x,grads0[:,i],label=label1)
+	axs[i-18].plot(x,grads1[:,i],label=label2)
+	axs[i-18].plot(x,grads2[:,i],label=label3)
+
+plt.legend()
+fig.tight_layout()
+fig.savefig(pdf_location+'grads_NodeNet.pdf')

@@ -23,11 +23,10 @@ png_location = 'png/comparison/cla-qua/'
 #label2 = r'$N_{dim}=10$'
 #label3 = r'$N_{dim}=100$'
 
-
-label0 = r'$Classical_Network_with_Hid_Dim = 1$'
-label1 = r'$Classical_Network_with_Hid_Dim = 10$'
-label2 = r'$Classical_Network_with_Hid_Dim = 100$'
-label3 = r'$Quantum_Network_with_Hid_Dim = 1$'
+label0 = r'$Classical \, Network \, with \, N_{Dim} = 1$'
+label1 = r'$Classical \, Network \, with \, N_{Dim} = 10$'
+label2 = r'$Classical \, Network \, with \, N_{Dim} = 100$'
+label3 = r'$Quantum \, Network \, with \, N_{Dim} = 1$'
 
 print('Comparison plots will be saved to:')
 print('PDF: ' + pdf_location)
