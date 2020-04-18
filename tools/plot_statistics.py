@@ -83,7 +83,7 @@ def plot_statistics(log_location,png_location):
 	plt.legend(loc=0)
 	plt.savefig(png_location+'validation_outputs.pdf') 
 
-
+	'''
 	fig, axs = plt.subplots(1,3,figsize=(10,4))
 	x = [i for i  in range(len(learning_vars))]
 	for i in range(3):
@@ -121,13 +121,14 @@ def plot_statistics(log_location,png_location):
 		axs[2].set_xlabel('Update')
 	fig.tight_layout()
 	fig.savefig(png_location+'statistics_grads.pdf')
+	'''
 ########################################################
-file_list = ['ENE2/general/lr_0_01/']
+file_list = ['it1/']
 
 for i in range(len(file_list)):
 	file_name = file_list[i]
-	log_location = 'logs/tensorflow/' + file_name
-	png_location = 'png/tensorflow/' + file_name
+	log_location = 'logs/comparisons/qgnn/iteration_comparison/' + file_name
+	png_location = 'png/comparisons/qgnn/iteration_comparison/' + file_name
 	plot_statistics(log_location,png_location)
 
 

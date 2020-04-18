@@ -28,12 +28,11 @@ def test_validation(config,network):
 	loss         = tf.reduce_mean(tf.keras.losses.binary_crossentropy(labels,preds) * np.array([class_weight[int(labels[i])] for i in range(n_edges)]))
 	
 	# Log all predictons (takes some considerable time - use only for debugging)
-	'''
+	
 	with open(config['log_dir']+'log_validation_preds.csv', 'a') as f:
 		for i in range(len(preds)):
 			f.write('%.4f, %.4f\n' %(preds[i],labels[i]))
-	'''
-
+	
 	# Calculate Metrics
 	fpr,tpr,thresholds = metrics.roc_curve(labels.astype(int),preds,pos_label=1 )
 	auc = metrics.auc(fpr,tpr)		
