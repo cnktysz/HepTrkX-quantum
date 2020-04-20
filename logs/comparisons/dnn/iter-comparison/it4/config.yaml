@@ -1,0 +1,13 @@
+train_dir : data/graph_data/train 
+valid_dir : data/graph_data/valid 
+log_dir : logs/comparisons/dnn/iter-comparison/it4/ 
+network : CGNN 
+gpu : -1 
+n_files : 1600 
+n_valid : 200 
+n_train : 1400 
+lr : 1e-05 
+n_iters : 4 
+n_epoch : 2 
+TEST_every : 50 
+hid_dim : 100 

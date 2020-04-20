@@ -113,14 +113,14 @@ def node_forward(node_array,theta_learn):
 	return tf.stack(outputs) # output is between [0,2*pi]
 ##################################################################################################
 class EdgeNet(tf.keras.layers.Layer):
-	def __init__(self,hid_dim=1,name='EdgeNet'):
+	def __init__(self, config, name='EdgeNet'):
 		super(EdgeNet, self).__init__(name=name)
 		# can only work with hid_dim = 1 at the moment
 		# hid = 2 is executed using qnetworks/GNN2.py
 		# TO DO: need to write a script to include all circuits in one file.
 		# read parameters of the network from file
 		# params are created using tools/init_params.py
-		self.theta_learn = tf.Variable(get_params('edge'))
+		self.theta_learn = tf.Variable(get_params('EN',config))
 	def call(self,X, Ri, Ro):
 		bo = tf.matmul(Ro,X,transpose_a=True)
 		bi = tf.matmul(Ri,X,transpose_a=True)
@@ -130,14 +130,14 @@ class EdgeNet(tf.keras.layers.Layer):
 		return edge_forward(B,self.theta_learn)
 ##################################################################################################
 class NodeNet(tf.keras.layers.Layer):
-	def __init__(self,hid_dim=1,name='NodeNet'):
+	def __init__(self, config, name='NodeNet'):
 		super(NodeNet, self).__init__(name=name)
 		# can only work with hid_dim = 1 at the moment
 		# hid = 2 is executed using qnetworks/GNN2.py
 		# TO DO: need to write a script to include all circuits in one file.
 		# read parameters of the network from file
 		# params are created using tools/init_params.py
-		self.theta_learn = tf.Variable(get_params('node'))
+		self.theta_learn = tf.Variable(get_params('NN',config))
 	def call(self, X, e, Ri, Ro):
 		bo  = tf.matmul(Ro, X, transpose_a=True) 
 		bi  = tf.matmul(Ri, X, transpose_a=True) 
@@ -151,25 +151,25 @@ class NodeNet(tf.keras.layers.Layer):
 		return node_forward(M,self.theta_learn)
 ##################################################################################################
 class InputNet(tf.keras.layers.Layer):
-	def __init__(self, num_outputs, name):
+	def __init__(self, config, name):
 		super(InputNet, self).__init__(name=name)
-		self.num_outputs = num_outputs # num_outputs = number of hidden dimensions
+		self.num_outputs = config['hid_dim'] # num_outputs = number of hidden dimensions
 		# read parameters of the network from file
 		# params are created using tools/init_params.py
-		init = tf.constant_initializer(get_params('input'))
+		init = tf.constant_initializer(get_params('IN',config))
 		# setup a Dense layer with the given config
 		self.layer = tf.keras.layers.Dense(num_outputs,input_shape=(3,),activation='sigmoid',kernel_initializer=init)
 	def call(self, arr):
 		return self.layer(arr)*2*np.pi # to map to output to [0,2*pi]
 ##################################################################################################
 class GNN(tf.keras.Model):
-	def __init__(self, hid_dim=1, n_iters=2):
+	def __init__(self, config):
 		# Network definitions here
 		super(GNN, self).__init__(name='GNN')
-		self.InputNet = InputNet(num_outputs=hid_dim,name='InputNet')
-		self.EdgeNet  = EdgeNet(hid_dim=hid_dim,name='EdgeNet')
-		self.NodeNet  = NodeNet(hid_dim=hid_dim,name='NodeNet')
-		self.n_iters = n_iters
+		self.InputNet = InputNet(config = config, name='InputNet')
+		self.EdgeNet  = EdgeNet(config  = config, name='EdgeNet')
+		self.NodeNet  = NodeNet(config  = config, name='NodeNet')
+		self.n_iters  = config['n_iters']
 
 	def call(self, graph_array):
 		X,Ri,Ro = graph_array                   # decompose the graph array

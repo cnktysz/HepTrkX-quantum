@@ -113,13 +113,22 @@ def load_config(args):
 	# return the config dictionary
 	return config
 ############################################################################################
-def get_params(param_type):
+def get_params(param_type,config):
 	# read parameters of networks from a file specified below
-	# To Do: add file location to config
 	# parameters are created using tools/init_params.py
-	with open('params/test/'+param_type+'_params.csv', 'r') as f:
-		reader = csv.reader(f, delimiter=',')
-		return np.array(list(reader))[:,0:-1].astype(float)
+
+	if config['run_type'] == 'new_run':  # load params from params directory to initialize a network
+		with open(config['param_loc']+'params_' + param_type + '.csv', 'r') as f:
+			reader = csv.reader(f, delimiter=',')
+			return np.array(list(reader))[:,0:-1].astype(float)
+
+	elif config['run_type'] == 'recovery_run': # load params to continue an aborted job to initialize a network
+		with open(config['log_dir']+param_type+'log_params_' + param_type + '.csv', 'r') as f:
+			reader = csv.reader(f, delimiter=',')
+			return np.array(list(reader))[-1:,0:-1].astype(float)
+
+	else: 
+		RaiseValueError('Wrong paramater setting chosen or not implemented yet!')
 ############################################################################################
 
 

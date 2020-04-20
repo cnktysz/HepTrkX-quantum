@@ -3,7 +3,6 @@ import sys, os, time, datetime, csv, yaml, argparse
 sys.path.append(os.path.abspath(os.path.join('.')))
 # import internal
 from tools.tools import *
-from qnetworks.DNN import GNN
 from test import *
 # import external
 import tensorflow as tf
@@ -40,8 +39,18 @@ if __name__ == '__main__':
 	train_data = get_dataset(config['train_dir'], config['n_train'])
 	train_list = [i for i in range(config['n_train'])]
 
+	# Load network
+	if config['network'] == 'QGNN' and  config['hid_dim'] == 1:	 # load q. networks with 1 Hid. Dim. 
+		from qnetworks.GNN import GNN
+	elif config['network'] == 'QGNN' and config['hid_dim'] == 2:       # load q. networks with 2 Hid. Dim. 
+		from qnetworks.GNN2 import GNN
+	elif config['network'] == 'CGNN':                                # load classical network
+		from qnetworks.DNN import GNN
+	else:
+		RaiseValueError('You chose wrong config settings or this setting is not implemented yet!')
+
 	# Setup the network
-	block = GNN(config['hid_dim'],config['n_iters'])
+	block = GNN(config)
 	opt = tf.keras.optimizers.Adam(learning_rate=config['lr'])
 
 	# Log Learning variables

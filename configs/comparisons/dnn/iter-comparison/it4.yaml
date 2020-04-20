@@ -1,6 +1,7 @@
 train_dir   : 'data/graph_data/train'
 valid_dir   : 'data/graph_data/valid'
 log_dir     : 'logs/comparisons/dnn/iter-comparison/it4/'
+network     : 'CGNN'
 gpu         : '-1'
 n_files     : 1600
 n_valid     : 200
