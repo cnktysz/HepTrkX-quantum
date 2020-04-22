@@ -115,9 +115,7 @@ def node_forward(node_array,theta_learn):
 class EdgeNet(tf.keras.layers.Layer):
 	def __init__(self, config, name='EdgeNet'):
 		super(EdgeNet, self).__init__(name=name)
-		# can only work with hid_dim = 1 at the moment
-		# hid = 2 is executed using qnetworks/GNN2.py
-		# TO DO: need to write a script to include all circuits in one file.
+		# can only work with hid_dim = 1
 		# read parameters of the network from file
 		# params are created using tools/init_params.py
 		self.theta_learn = tf.Variable(get_params('EN',config))
@@ -132,9 +130,7 @@ class EdgeNet(tf.keras.layers.Layer):
 class NodeNet(tf.keras.layers.Layer):
 	def __init__(self, config, name='NodeNet'):
 		super(NodeNet, self).__init__(name=name)
-		# can only work with hid_dim = 1 at the moment
-		# hid = 2 is executed using qnetworks/GNN2.py
-		# TO DO: need to write a script to include all circuits in one file.
+		# can only work with hid_dim = 1
 		# read parameters of the network from file
 		# params are created using tools/init_params.py
 		self.theta_learn = tf.Variable(get_params('NN',config))

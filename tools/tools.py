@@ -116,12 +116,11 @@ def load_config(args):
 def get_params(param_type,config):
 	# read parameters of networks from a file specified below
 	# parameters are created using tools/init_params.py
-
 	if config['run_type'] == 'new_run':  # load params from params directory to initialize a network
-		with open(config['param_loc']+'params_' + param_type + '.csv', 'r') as f:
+		with open(config['param_dir'] + 'QGNN' + str(config['hid_dim']) + 'params_' + param_type + '.csv', 'r') as f:
 			reader = csv.reader(f, delimiter=',')
 			return np.array(list(reader))[:,0:-1].astype(float)
-
+	# NOT TESTED YET!
 	elif config['run_type'] == 'recovery_run': # load params to continue an aborted job to initialize a network
 		with open(config['log_dir']+param_type+'log_params_' + param_type + '.csv', 'r') as f:
 			reader = csv.reader(f, delimiter=',')

@@ -23,17 +23,14 @@ def gradient(edge_array,label):
 if __name__ == '__main__':
 	# Tensorflow settings
 	tf.keras.backend.set_floatx('float64')
-	#tf.config.threading.set_inter_op_parallelism_threads(4)
-	
+
 	# Read config file
 	args = parse_args()
 	config = load_config(args)
 
-	# Set CPU or GPU
-	os.environ["CUDA_VISIBLE_DEVICES"] = config['gpu']
-	
 	# Delete old logs
-	delete_all_logs(config['log_dir'])
+	if config['run_type'] == 'new_run':
+		delete_all_logs(config['log_dir'])
 	 	
 	# Load data
 	train_data = get_dataset(config['train_dir'], config['n_train'])
@@ -46,19 +43,23 @@ if __name__ == '__main__':
 		from qnetworks.GNN2 import GNN
 	elif config['network'] == 'CGNN':                                # load classical network
 		from qnetworks.DNN import GNN
+		tf.config.threading.set_inter_op_parallelism_threads(config[n_thread])
 	else:
 		RaiseValueError('You chose wrong config settings or this setting is not implemented yet!')
+
+	# Select CPU or GPU
+	os.environ["CUDA_VISIBLE_DEVICES"] = config['gpu']
 
 	# Setup the network
 	block = GNN(config)
 	opt = tf.keras.optimizers.Adam(learning_rate=config['lr'])
 
 	# Log Learning variables
-	'''
-	log_tensor_array(block.trainable_variables[0],config['log_dir'], 'log_params_IN.csv') 
-	log_tensor_array(block.trainable_variables[1],config['log_dir'], 'log_params_EN.csv') 
-	log_tensor_array(block.trainable_variables[2],config['log_dir'], 'log_params_NN.csv') 
-	'''
+	if config['log_verbosity']>=2:
+		log_tensor_array(block.trainable_variables[0],config['log_dir'], 'log_params_IN.csv') 
+		log_tensor_array(block.trainable_variables[1],config['log_dir'], 'log_params_EN.csv') 
+		log_tensor_array(block.trainable_variables[2],config['log_dir'], 'log_params_NN.csv') 
+	
 	# Test the validation set
 	test_validation(config,block)
 	
@@ -88,18 +89,17 @@ if __name__ == '__main__':
 			with open(config['log_dir'] + 'log_loss.csv', 'a') as f:
 				f.write('%.4f\n' %loss)	
 			
-			'''			
-			# Log gradients
-			log_tensor_array(grads[0],config['log_dir'], 'log_grads_IN.csv')
-			log_tensor_array(grads[1],config['log_dir'], 'log_grads_EN.csv')
-			log_tensor_array(grads[2],config['log_dir'], 'log_grads_NN.csv')
+			if config['log_verbosity']>=2:			
+				# Log gradients
+				log_tensor_array(grads[0],config['log_dir'], 'log_grads_IN.csv')
+				log_tensor_array(grads[1],config['log_dir'], 'log_grads_EN.csv')
+				log_tensor_array(grads[2],config['log_dir'], 'log_grads_NN.csv')
 
-			# Log Learning variables
-			log_tensor_array(block.trainable_variables[0],config['log_dir'], 'log_params_IN.csv') 
-			log_tensor_array(block.trainable_variables[1],config['log_dir'], 'log_params_EN.csv') 
-			log_tensor_array(block.trainable_variables[2],config['log_dir'], 'log_params_NN.csv') 
-			
-			'''
+				# Log Learning variables
+				log_tensor_array(block.trainable_variables[0],config['log_dir'], 'log_params_IN.csv') 
+				log_tensor_array(block.trainable_variables[1],config['log_dir'], 'log_params_EN.csv') 
+				log_tensor_array(block.trainable_variables[2],config['log_dir'], 'log_params_NN.csv') 
+				
 			# Test every TEST_every
 			if (n_step+1)%config['TEST_every']==0:
 					test_validation(config,block)

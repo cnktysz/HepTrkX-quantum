@@ -1,6 +1,8 @@
 train_dir   : 'data/graph_data/train'
 valid_dir   : 'data/graph_data/valid'
+param_dir   : 'params/'
 log_dir     : 'logs/test/'
+run_type    : 'new_run'
 gpu         : '-1'
 n_files     : 1600
 n_valid     : 2
@@ -10,4 +12,7 @@ n_iters     : 1
 n_epoch     : 1
 TEST_every  : 200
 hid_dim     : 2
-n_thread    : 20
+network     : 'CGNN'
+n_thread    : 4
+log_verbosity: 2
+
