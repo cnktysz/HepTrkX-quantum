@@ -2,8 +2,10 @@ import pennylane as qml
 from pennylane import numpy as np
 import tensorflow as tf
 from tools.tools import get_params
-
-dev1 = qml.device("default.qubit", wires=10)
+import pennylane_qulacs
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = '0,1,2,3'
+dev1 = qml.device("qulacs.simulator", wires=10, gpu=True)
 @qml.qnode(dev1,interface='tf')
 def TTN_edge_forward(edge,theta_learn):
 	# STATE PREPARATION
@@ -45,7 +47,7 @@ def TTN_edge_forward(edge,theta_learn):
 	qml.RY(theta_learn[18],wires=7)		
 	return qml.expval(qml.PauliZ(wires=7))
 #################################################
-dev2 = qml.device("default.qubit", wires=15)
+dev2 = qml.device("qulacs.simulator", wires=15,gpu=True)
 @qml.qnode(dev2,interface='tf')
 def TTN_node_forward(edge,theta_learn):
 	# STATE PREPARATION
@@ -126,10 +128,10 @@ def node_forward(node_array,theta_learn):
 	return tf.stack(outputs)
 #################################################
 class EdgeNet(tf.keras.layers.Layer):
-	def __init__(self,hid_dim=1,name='EdgeNet'):
+	def __init__(self,config,name='EdgeNet'):
 		super(EdgeNet, self).__init__(name=name)
 		# can only work with hid_dim = 1 at the moment
-		self.theta_learn = tf.Variable(get_params('edge'))
+		self.theta_learn = tf.Variable(get_params('EN',config))
 	def call(self,X, Ri, Ro):
 		bo = tf.matmul(Ro,X,transpose_a=True)
 		bi = tf.matmul(Ri,X,transpose_a=True)
@@ -137,10 +139,10 @@ class EdgeNet(tf.keras.layers.Layer):
 		return edge_forward(B,self.theta_learn)
 #################################################
 class NodeNet(tf.keras.layers.Layer):
-	def __init__(self,hid_dim=1,name='NodeNet'):
+	def __init__(self,config,name='NodeNet'):
 		super(NodeNet, self).__init__(name=name)
 		# can only work with hid_dim = 1 at the moment
-		self.theta_learn = tf.Variable(get_params('node'))
+		self.theta_learn = tf.Variable(get_params('NN',config))
 	def call(self, X, e, Ri, Ro):
 		bo  = tf.matmul(Ro, X, transpose_a=True) 
 		bi  = tf.matmul(Ri, X, transpose_a=True) 
@@ -152,30 +154,30 @@ class NodeNet(tf.keras.layers.Layer):
 		return node_forward(M,self.theta_learn)
 #################################################
 class InputNet(tf.keras.layers.Layer):
-	def __init__(self, num_outputs, name):
+	def __init__(self, config, name):
 		super(InputNet, self).__init__(name=name)
-		self.params = tf.Variable(get_params('input'))
+		self.params = tf.Variable(get_params('IN',config))
 		#self.layer = tf.keras.layers.Dense(num_outputs,input_shape=(3,),activation='sigmoid',kernel_initializer=init, trainable=True)
 	def call(self, arr):
 		return tf.math.sigmoid(tf.matmul(arr, self.params))*2*np.pi
 #################################################
 class GNN(tf.keras.Model):
-	def __init__(self, hid_dim=1, n_iters=2):
+	def __init__(self, config):
 		super(GNN, self).__init__(name='GNN')
 
-		self.InputNet = InputNet(num_outputs=hid_dim,name='InputNet')
-		self.EdgeNet  = EdgeNet(hid_dim=hid_dim,name='EdgeNet')
-		self.NodeNet  = NodeNet(hid_dim=hid_dim,name='NodeNet')
-		self.n_iters = n_iters
+		self.InputNet = InputNet(config,name='InputNet')
+		self.EdgeNet  = EdgeNet(config,name='EdgeNet')
+		self.NodeNet  = NodeNet(config,name='NodeNet')
+		self.n_iters = config['n_iters']
 
 	def call(self, edge_array):
 		X,Ri,Ro = edge_array
 		H = self.InputNet(X) 
 		H = tf.concat([H,X],axis=1)
-		e = self.EdgeNet(H, Ri, Ro)
 		for i in range(self.n_iters):
+			e = self.EdgeNet(H, Ri, Ro)
 			H = self.NodeNet(H, e, Ri, Ro)
 			H = tf.concat([H,X], axis=1)
-			e = self.EdgeNet(H, Ri, Ro)
+		e = self.EdgeNet(H, Ri, Ro)
 		return e
 #################################################

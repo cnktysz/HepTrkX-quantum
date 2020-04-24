@@ -1,6 +1,7 @@
 # Calculates gradients of a pennylane quantum circuit using tensorflow
 import sys, os, time, datetime, csv, yaml, argparse
 sys.path.append(os.path.abspath(os.path.join('.')))
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # Turn off warnings and errors 
 # import internal
 from tools.tools import *
 from test import *
@@ -23,10 +24,10 @@ def gradient(edge_array,label):
 if __name__ == '__main__':
 	# Tensorflow settings
 	tf.keras.backend.set_floatx('float64')
-
-	# Read config file
-	args = parse_args()
-	config = load_config(args)
+	tf.autograph.set_verbosity(2) # don't print warning
+	
+        # Read config file
+	config = load_config(parse_args())
 
 	# Delete old logs
 	if config['run_type'] == 'new_run':
@@ -36,30 +37,33 @@ if __name__ == '__main__':
 	train_data = get_dataset(config['train_dir'], config['n_train'])
 	train_list = [i for i in range(config['n_train'])]
 
+	# Select CPU or GPU
+	os.environ["CUDA_VISIBLE_DEVICES"] = config['gpu']
+
 	# Load network
 	if config['network'] == 'QGNN' and  config['hid_dim'] == 1:	 # load q. networks with 1 Hid. Dim. 
-		from qnetworks.GNN import GNN
+		from qnetworks.GNN1 import GNN
 	elif config['network'] == 'QGNN' and config['hid_dim'] == 2:       # load q. networks with 2 Hid. Dim. 
 		from qnetworks.GNN2 import GNN
 	elif config['network'] == 'CGNN':                                # load classical network
-		from qnetworks.DNN import GNN
-		tf.config.threading.set_inter_op_parallelism_threads(config[n_thread])
+		from qnetworks.CGNN import GNN
+		tf.config.threading.set_inter_op_parallelism_threads(config['n_thread'])
 	else:
 		RaiseValueError('You chose wrong config settings or this setting is not implemented yet!')
-
-	# Select CPU or GPU
-	os.environ["CUDA_VISIBLE_DEVICES"] = config['gpu']
 
 	# Setup the network
 	block = GNN(config)
 	opt = tf.keras.optimizers.Adam(learning_rate=config['lr'])
 
-	# Log Learning variables
-	if config['log_verbosity']>=2:
+
+	'''
+	print(block.trainable_variables)
+	if config['log_verbosity']>=2:			
+		# Log Learning variables
 		log_tensor_array(block.trainable_variables[0],config['log_dir'], 'log_params_IN.csv') 
 		log_tensor_array(block.trainable_variables[1],config['log_dir'], 'log_params_EN.csv') 
 		log_tensor_array(block.trainable_variables[2],config['log_dir'], 'log_params_NN.csv') 
-	
+	'''			
 	# Test the validation set
 	test_validation(config,block)
 	
@@ -89,17 +93,39 @@ if __name__ == '__main__':
 			with open(config['log_dir'] + 'log_loss.csv', 'a') as f:
 				f.write('%.4f\n' %loss)	
 			
+
 			if config['log_verbosity']>=2:			
 				# Log gradients
-				log_tensor_array(grads[0],config['log_dir'], 'log_grads_IN.csv')
-				log_tensor_array(grads[1],config['log_dir'], 'log_grads_EN.csv')
-				log_tensor_array(grads[2],config['log_dir'], 'log_grads_NN.csv')
-
+				log_tensor_array(grads[0],config['log_dir'], 'log_grads_IN.csv') 
+		
+				with open(config['log_dir'] + 'log_grads_IN.csv', 'a') as f:
+					f.write('%f,\n' %grads[1].numpy())
+		
+				with open(config['log_dir'] + 'log_grads_EN.csv', 'a') as f:
+					for item in grads[2].numpy():
+						f.write('%f,' %item)
+					f.write('\n')	
+				
+				with open(config['log_dir'] + 'log_grads_NN.csv', 'a') as f:
+					for item in grads[3].numpy():
+						f.write('%f,' %item)
+					f.write('\n')	
+			
 				# Log Learning variables
 				log_tensor_array(block.trainable_variables[0],config['log_dir'], 'log_params_IN.csv') 
-				log_tensor_array(block.trainable_variables[1],config['log_dir'], 'log_params_EN.csv') 
-				log_tensor_array(block.trainable_variables[2],config['log_dir'], 'log_params_NN.csv') 
+				with open(config['log_dir'] + 'log_params_IN.csv', 'a') as f:
+					f.write('%f,\n' %block.trainable_variables[1].numpy())
+					
+				with open(config['log_dir'] + 'log_params_EN.csv', 'a') as f:
+					for item in block.trainable_variables[2].numpy():
+						f.write('%f,' %item)
+					f.write('\n')	
 				
+				with open(config['log_dir'] + 'log_params_NN.csv', 'a') as f:
+					for item in block.trainable_variables[3].numpy():
+						f.write('%f,' %item)
+					f.write('\n')	
+			
 			# Test every TEST_every
 			if (n_step+1)%config['TEST_every']==0:
 					test_validation(config,block)

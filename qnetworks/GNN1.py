@@ -2,10 +2,12 @@ import pennylane as qml
 from pennylane import numpy as np
 import tensorflow as tf
 from tools.tools import get_params
+import pennylane_qulacs
+import os
 ##################################################################################################
 # Use default.qubit for default pennylane simulation
 # use tf.interface for TF integration
-dev1 = qml.device("default.qubit", wires=8)
+dev1 = qml.device("qulacs.simulator", wires=8, gpu=True)
 @qml.qnode(dev1,interface='tf')
 def TTN_edge_forward(edge_array,theta_learn):
 	# Takes the input and learning variables and applies the
@@ -44,7 +46,7 @@ def TTN_edge_forward(edge_array,theta_learn):
 ##################################################################################################
 # Use default.qubit for default pennylane simulation
 # use tf.interface for TF integration
-dev2 = qml.device("default.qubit", wires=12)
+dev2 = qml.device("qulacs.simulator", wires=12, gpu=True)
 @qml.qnode(dev2,interface='tf')
 def TTN_node_forward(node_array,theta_learn):
 	# Takes the input and learning variables and applies the
@@ -118,7 +120,8 @@ class EdgeNet(tf.keras.layers.Layer):
 		# can only work with hid_dim = 1
 		# read parameters of the network from file
 		# params are created using tools/init_params.py
-		self.theta_learn = tf.Variable(get_params('EN',config))
+		#self.theta_learn = tf.Variable(get_params('EN',config)[0])
+		self.theta_learn =  tf.Variable(tf.random.uniform(shape=[15,],minval=0,maxval=np.pi*2,dtype=tf.float64))
 	def call(self,X, Ri, Ro):
 		bo = tf.matmul(Ro,X,transpose_a=True)
 		bi = tf.matmul(Ri,X,transpose_a=True)
@@ -133,7 +136,8 @@ class NodeNet(tf.keras.layers.Layer):
 		# can only work with hid_dim = 1
 		# read parameters of the network from file
 		# params are created using tools/init_params.py
-		self.theta_learn = tf.Variable(get_params('NN',config))
+		#self.theta_learn = tf.Variable(get_params('NN',config)[0])
+		self.theta_learn =  tf.Variable(tf.random.uniform(shape=[23,],minval=0,maxval=np.pi*2,dtype=tf.float64))
 	def call(self, X, e, Ri, Ro):
 		bo  = tf.matmul(Ro, X, transpose_a=True) 
 		bi  = tf.matmul(Ri, X, transpose_a=True) 
@@ -152,9 +156,9 @@ class InputNet(tf.keras.layers.Layer):
 		self.num_outputs = config['hid_dim'] # num_outputs = number of hidden dimensions
 		# read parameters of the network from file
 		# params are created using tools/init_params.py
-		init = tf.constant_initializer(get_params('IN',config))
+		#init = tf.constant_initializer(get_params('IN',config)[0])
 		# setup a Dense layer with the given config
-		self.layer = tf.keras.layers.Dense(num_outputs,input_shape=(3,),activation='sigmoid',kernel_initializer=init)
+		self.layer = tf.keras.layers.Dense(self.num_outputs,input_shape=(3,),activation='sigmoid')
 	def call(self, arr):
 		return self.layer(arr)*2*np.pi # to map to output to [0,2*pi]
 ##################################################################################################
@@ -166,9 +170,9 @@ class GNN(tf.keras.Model):
 		self.EdgeNet  = EdgeNet(config  = config, name='EdgeNet')
 		self.NodeNet  = NodeNet(config  = config, name='NodeNet')
 		self.n_iters  = config['n_iters']
-
+	
 	def call(self, graph_array):
-		X,Ri,Ro = graph_array                   # decompose the graph array
+		X,Ri,Ro = graph_array                   # decompose the graph array
 		H = self.InputNet(X)                    # execute InputNet to produce hidden dimensions
 		H = tf.concat([H,X],axis=1)             # add new dimensions to original X matrix
 		for i in range(self.n_iters):           # recurrent iteration of the network

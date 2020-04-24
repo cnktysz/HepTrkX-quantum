@@ -28,24 +28,25 @@ def test_validation(config,network):
 	loss         = tf.reduce_mean(tf.keras.losses.binary_crossentropy(labels,preds) * np.array([class_weight[int(labels[i])] for i in range(n_edges)]))
 	
 	# Log all predictons (takes some considerable time - use only for debugging)
-	
-	with open(config['log_dir']+'log_validation_preds.csv', 'a') as f:
-		for i in range(len(preds)):
-			f.write('%.4f, %.4f\n' %(preds[i],labels[i]))
+	if config['log_verbosity']>=3:	
+		with open(config['log_dir']+'log_validation_preds.csv', 'a') as f:
+			for i in range(len(preds)):
+				f.write('%.4f, %.4f\n' %(preds[i],labels[i]))
 	
 	# Calculate Metrics
 	fpr,tpr,thresholds = metrics.roc_curve(labels.astype(int),preds,pos_label=1 )
 	auc = metrics.auc(fpr,tpr)		
-	accuracy = ((1-fpr[len(fpr)//2])*n_class[0]+tpr[len(tpr)//2]*n_class[1])/n_edges	
+	accuracy  = ((1-fpr[len(fpr)//2])*n_class[0]+tpr[len(tpr)//2]*n_class[1])/n_edges	
+	precision = metrics.average_precision_score(labels.astype(int),preds)
 
 	# Log Metrics
 	with open(config['log_dir']+'log_validation.csv', 'a') as f:
-		f.write('%.4f, %.4f, %.4f\n' %(accuracy,auc,loss))
+		f.write('%.4f, %.4f, %.4f, %.4f\n' %(accuracy,auc,loss,precision))
 	
 	duration = time.time() - t_start
 
 	# Print summary
-	print(str(datetime.datetime.now()) + ': Validation Loss: %.4f, Validation Acc: %.4f, Validation AUC: %.4f Elapsed: %dm%ds' %(loss, accuracy*100, auc, duration/60, duration%60))
+	print(str(datetime.datetime.now()) + ': Validation Test:  Loss: %.4f,  Acc: %.4f, AUC: %.4f, Precision: %.4f -- Elapsed: %dm%ds' %(loss, accuracy*100, auc, precision, duration/60, duration%60))
 	
 def test_train(config,network):
 	t_start = time.time()

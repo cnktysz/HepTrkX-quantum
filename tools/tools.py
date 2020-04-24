@@ -50,12 +50,12 @@ def delete_all_logs(log_dir):
 			print(str(datetime.datetime.now()) + ' Deleted old log: ' + log_dir+item)
 ############################################################################################
 def log_tensor_array(tensor,log_dir,filename):
-# Log 2D tensorflow array
+	# Log 2D tensorflow array
 	with open(log_dir + filename, 'a') as f:
 		for i in range(tensor.shape[0]):
 			for item in tensor[i].numpy():
-					f.write('%.15f,' %item)
-			f.write('\n')	
+				f.write('%f,' %item)
+			f.write('\n')
 ############################################################################################
 def map2angle(arr0):
 # Mapping the cylindrical coordinates to 0-2PI
@@ -117,7 +117,7 @@ def get_params(param_type,config):
 	# read parameters of networks from a file specified below
 	# parameters are created using tools/init_params.py
 	if config['run_type'] == 'new_run':  # load params from params directory to initialize a network
-		with open(config['param_dir'] + 'QGNN' + str(config['hid_dim']) + 'params_' + param_type + '.csv', 'r') as f:
+		with open(config['param_dir'] + 'QGNN' + str(config['hid_dim']) + '/params_' + param_type + '.csv', 'r') as f:
 			reader = csv.reader(f, delimiter=',')
 			return np.array(list(reader))[:,0:-1].astype(float)
 	# NOT TESTED YET!
