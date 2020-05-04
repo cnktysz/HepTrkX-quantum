@@ -40,7 +40,6 @@ def sparse_to_graph(X, Ri_rows, Ri_cols, Ro_rows, Ro_cols, y, dtype=np.uint8):
     return Graph(X, Ri, Ro, y)
 
 ######################################## OTHER TOOLS #######################################
-
 def delete_all_logs(log_dir):
 # Delete all .csv files in directory
 	log_list = os.listdir(log_dir)
@@ -64,11 +63,11 @@ def map2angle(arr0):
 	r_max     = 1.1
 	phi_min   = -1.0
 	phi_max   = 1.0
-	z_min     = -1.1
+	z_min     = 0
 	z_max     = 1.1
-	arr[:,0] =  (arr0[:,0]-r_min)/(r_max-r_min) * 2 * PI
-	arr[:,1] =  (arr0[:,1]-phi_min)/(phi_max-phi_min) * 2 * PI 
-	arr[:,2] =  (arr0[:,2]-z_min)/(z_max-z_min) * 2 * PI
+	arr[:,0] =  (arr0[:,0]-r_min)/(r_max-r_min) * 4 * PI         # map to 2PI due to ry gate
+	arr[:,1] =  (arr0[:,1]-phi_min)/(phi_max-phi_min) * 4 * PI 
+	arr[:,2] =  (np.abs(arr0[:,2])-z_min)/(z_max-z_min) * 4 * PI # take abs of z due to symmetry of z
 	mapping_check(arr)
 	return arr
 ############################################################################################
@@ -76,7 +75,7 @@ def mapping_check(arr):
 # check if every element of the input array is within limits [0,2*pi]
 	for row in arr:
 		for item in row:
-			if (item > (2 * PI)) or (item < 0):
+			if (item > (4 * PI)) or (item < 0):
 				raise ValueError('WARNING!: WRONG MAPPING!!!!!!')
 ############################################################################################
 def preprocess(data):

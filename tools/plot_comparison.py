@@ -34,7 +34,7 @@ label2 = r'$N_{dim}=10$'
 label3 = r'$N_{dim}=100$'
 '''
 
-
+'''
 log_location0 = log_loc1 + 'it1/'
 log_location1 = log_loc1 + 'it2/'
 log_location2 = log_loc1 + 'it3/'
@@ -47,9 +47,9 @@ label0 = r'$N_{it}=1$'
 label1 = r'$N_{it}=2$'
 label2 = r'$N_{it}=3$'
 label3 = r'$N_{it}=4$'
-
-
 '''
+
+
 log_location0 = log_loc2 + 'lr_1e-2/'
 log_location1 = log_loc2 + 'lr_2e-2/'
 log_location2 = log_loc2 + 'lr_3e-2/'
@@ -60,7 +60,7 @@ png_location = 'png/comparison/qgnn/learning_rate_comparison/'
 label0 = r'$lr=1x10^{-2}$'
 label1 = r'$lr=2x10^{-2}$'
 label2 = r'$lr=3x10^{-2}$'
-'''
+
 
 print('Comparison plots will be saved to:')
 print('PDF: ' + pdf_location)
@@ -78,11 +78,12 @@ with open(log_location2+'log_validation.csv', 'r') as f:
 	reader = csv.reader(f, delimiter=',')
 	valid2 = np.array(list(reader)).astype(float) 
 	valid2 = valid2[:28] 
+'''
 with open(log_location3+'log_validation.csv', 'r') as f:
 	reader = csv.reader(f, delimiter=',')
 	valid3 = np.array(list(reader)).astype(float) 
 	valid3 = valid3[:28] 
-
+'''
 
 with open(log_location0 + 'log_loss.csv', 'r') as f:
 	reader = csv.reader(f, delimiter=',')
@@ -96,23 +97,24 @@ with open(log_location2 + 'log_loss.csv', 'r') as f:
 	reader = csv.reader(f, delimiter=',')
 	loss2 = np.array(list(reader)).astype(float)
 	loss2 = loss2[:1399] 
+'''
 with open(log_location3 + 'log_loss.csv', 'r') as f:
 	reader = csv.reader(f, delimiter=',')
 	loss3 = np.array(list(reader)).astype(float)
 	loss3 = loss3[:1399] 
-
+'''
 interval = 50
 
 x0 = [i*interval for i  in range(len(valid0))]
 x1 = [i*interval for i  in range(len(valid1))]
 x2 = [i*interval for i  in range(len(valid2))]
-x3 = [i*interval for i  in range(len(valid3))]
+#x3 = [i*interval for i  in range(len(valid3))]
 
 plt.clf()   
 plt.plot(x0,valid0[:,0],label=label0,c='darkorange')
 plt.plot(x1,valid1[:,0],label=label1,c='navy')
 plt.plot(x2,valid2[:,0],label=label2,c='red')
-plt.plot(x3,valid3[:,0],label=label3,c='green')
+#plt.plot(x3,valid3[:,0],label=label3,c='green')
 plt.title('Validation Accuracy')
 plt.xlabel('Update')
 plt.ylabel('Accuracy')
@@ -125,7 +127,7 @@ plt.clf()
 plt.plot(x0,valid0[:,1],label=label0,c='darkorange')
 plt.plot(x1,valid1[:,1],label=label1,c='navy')
 plt.plot(x2,valid2[:,1],label=label2,c='red')
-plt.plot(x3,valid3[:,1],label=label3,c='green')
+#plt.plot(x3,valid3[:,1],label=label3,c='green')
 plt.title('Validation AUC')
 plt.xlabel('Update')
 plt.ylabel('AUC')
@@ -137,7 +139,7 @@ plt.clf()
 plt.plot(x0,valid0[:,2],label=label0,c='darkorange')
 plt.plot(x1,valid1[:,2],label=label1,c='navy')
 plt.plot(x2,valid2[:,2],label=label2,c='red')
-plt.plot(x3,valid3[:,2],label=label3,c='green')
+#plt.plot(x3,valid3[:,2],label=label3,c='green')
 plt.title('Validation Loss')
 plt.xlabel('Update')
 plt.ylabel('Loss')
@@ -149,13 +151,13 @@ plt.savefig(png_location+'validation_loss.png')
 x0 = [i+1 for i  in range(len(loss0))]
 x1 = [i+1 for i  in range(len(loss1))]
 x2 = [i+1 for i  in range(len(loss2))]
-x3 = [i+1 for i  in range(len(loss3))]
+#x3 = [i+1 for i  in range(len(loss3))]
 
 plt.clf()   
 plt.plot(x0,loss0,label=label0,c='darkorange')
 plt.plot(x1,loss1,label=label1,c='navy')
 plt.plot(x2,loss2,label=label2,c='red')
-plt.plot(x3,loss3,label=label3,c='green')
+#plt.plot(x3,loss3,label=label3,c='green')
 plt.title('Training Loss')
 plt.xlabel('Update')
 plt.ylabel('Loss')
