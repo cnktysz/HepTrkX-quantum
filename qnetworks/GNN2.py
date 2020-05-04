@@ -4,7 +4,9 @@ import tensorflow as tf
 from tools.tools import get_params
 import pennylane_qulacs
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = '0,1,2,3'
+##################################################################################################
+# Use default.qubit for default pennylane simulation
+# use tf.interface for TF integration
 dev1 = qml.device("qulacs.simulator", wires=10, gpu=True)
 @qml.qnode(dev1,interface='tf')
 def TTN_edge_forward(edge,theta_learn):
@@ -46,7 +48,9 @@ def TTN_edge_forward(edge,theta_learn):
 	#Last Layer
 	qml.RY(theta_learn[18],wires=7)		
 	return qml.expval(qml.PauliZ(wires=7))
-#################################################
+##################################################################################################
+# Use default.qubit for default pennylane simulation
+# use tf.interface for TF integration
 dev2 = qml.device("qulacs.simulator", wires=15,gpu=True)
 @qml.qnode(dev2,interface='tf')
 def TTN_node_forward(edge,theta_learn):
@@ -114,6 +118,8 @@ def TTN_node_forward(edge,theta_learn):
 	return qml.expval(qml.PauliZ(wires=5)), qml.expval(qml.PauliZ(wires=10))
 #################################################
 def edge_forward(edge_array,theta_learn):
+	# executes TTN_edge circuit for each edge in edge_array
+	# To Do: can parallize the for loop
 	outputs = []
 	for i in range(len(edge_array[:,0])):
 		out = tf.constant((1-TTN_edge_forward(edge_array[i,:],theta_learn[0,:]))/2.,dtype=tf.float64)
@@ -121,28 +127,38 @@ def edge_forward(edge_array,theta_learn):
 	return tf.stack(outputs)
 #################################################
 def node_forward(node_array,theta_learn):
+	# executes TTN_node circuit for each node in node_array
+	# To Do: can parallize the for loop
 	outputs = []
 	for i in range(len(node_array[:,0])):
-		out = tf.constant(2*np.pi*(1-TTN_node_forward(node_array[i,:],theta_learn[0,:]))/2.,dtype=tf.float64)
+		out = tf.constant(4*np.pi*(1-TTN_node_forward(node_array[i,:],theta_learn[0,:]))/2.,dtype=tf.float64)
 		outputs.append(out)
-	return tf.stack(outputs)
+	return tf.stack(outputs) # output is between [0,4*pi]
 #################################################
 class EdgeNet(tf.keras.layers.Layer):
 	def __init__(self,config,name='EdgeNet'):
 		super(EdgeNet, self).__init__(name=name)
-		# can only work with hid_dim = 1 at the moment
-		self.theta_learn = tf.Variable(get_params('EN',config))
+		# can only work with hid_dim = 2
+		# read parameters of the network from file
+		# params are created using tools/init_params.py
+		#self.theta_learn = tf.Variable(get_params('EN',config)[0])
+		self.theta_learn =  tf.Variable(tf.random.uniform(shape=[19,],minval=0,maxval=np.pi*2,dtype=tf.float64))
 	def call(self,X, Ri, Ro):
 		bo = tf.matmul(Ro,X,transpose_a=True)
 		bi = tf.matmul(Ri,X,transpose_a=True)
+		# Shape of B = N_edges x 6 (2x (3 coordinates))
+		# each row consists of two node that are possibly connected.
 		B  = tf.concat([bo, bi], axis=1)  
 		return edge_forward(B,self.theta_learn)
 #################################################
 class NodeNet(tf.keras.layers.Layer):
 	def __init__(self,config,name='NodeNet'):
 		super(NodeNet, self).__init__(name=name)
-		# can only work with hid_dim = 1 at the moment
-		self.theta_learn = tf.Variable(get_params('NN',config))
+		# can only work with hid_dim = 1
+		# read parameters of the network from file
+		# params are created using tools/init_params.py
+		#self.theta_learn = tf.Variable(get_params('NN',config)[0])
+		self.theta_learn =  tf.Variable(tf.random.uniform(shape=[31,],minval=0,maxval=np.pi*2,dtype=tf.float64))
 	def call(self, X, e, Ri, Ro):
 		bo  = tf.matmul(Ro, X, transpose_a=True) 
 		bi  = tf.matmul(Ri, X, transpose_a=True) 
@@ -156,8 +172,12 @@ class NodeNet(tf.keras.layers.Layer):
 class InputNet(tf.keras.layers.Layer):
 	def __init__(self, config, name):
 		super(InputNet, self).__init__(name=name)
-		self.params = tf.Variable(get_params('IN',config))
-		#self.layer = tf.keras.layers.Dense(num_outputs,input_shape=(3,),activation='sigmoid',kernel_initializer=init, trainable=True)
+		self.num_outputs = config['hid_dim'] # num_outputs = number of hidden dimensions
+		# read parameters of the network from file
+		# params are created using tools/init_params.py
+		#init = tf.constant_initializer(get_params('IN',config)[0])
+		# setup a Dense layer with the given config
+		self.layer = tf.keras.layers.Dense(self.num_outputs,input_shape=(3,),activation='sigmoid')
 	def call(self, arr):
 		return tf.math.sigmoid(tf.matmul(arr, self.params))*2*np.pi
 #################################################
@@ -177,7 +197,7 @@ class GNN(tf.keras.Model):
 		for i in range(self.n_iters):
 			e = self.EdgeNet(H, Ri, Ro)
 			H = self.NodeNet(H, e, Ri, Ro)
-			H = tf.concat([H,X], axis=1)
+			H = tf.concat([H[:,None],X], axis=1)
 		e = self.EdgeNet(H, Ri, Ro)
 		return e
 #################################################
