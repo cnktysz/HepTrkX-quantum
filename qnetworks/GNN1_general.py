@@ -160,7 +160,7 @@ class InputNet(tf.keras.layers.Layer):
 		# setup a Dense layer with the given config
 		self.layer = tf.keras.layers.Dense(self.num_outputs,input_shape=(3,),activation='sigmoid')
 	def call(self, arr):
-		return self.layer(arr)*2*np.pi # to map to output to [0,2*pi]
+		return self.layer(arr)*4*np.pi # to map to output to [0,2*pi]
 ##################################################################################################
 class GNN(tf.keras.Model):
 	def __init__(self, config):
