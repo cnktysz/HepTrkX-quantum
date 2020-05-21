@@ -121,7 +121,7 @@ class EdgeNet(tf.keras.layers.Layer):
 		# read parameters of the network from file
 		# params are created using tools/init_params.py
 		#self.theta_learn = tf.Variable(get_params('EN',config)[0])
-		self.theta_learn =  tf.Variable(tf.random.uniform(shape=[15,],minval=0,maxval=np.pi*2,dtype=tf.float64))
+		self.theta_learn =  tf.Variable(tf.random.uniform(shape=[15,],minval=0,maxval=np.pi*4,dtype=tf.float64))
 	def call(self,X, Ri, Ro):
 		bo = tf.matmul(Ro,X,transpose_a=True)
 		bi = tf.matmul(Ri,X,transpose_a=True)
@@ -137,7 +137,7 @@ class NodeNet(tf.keras.layers.Layer):
 		# read parameters of the network from file
 		# params are created using tools/init_params.py
 		#self.theta_learn = tf.Variable(get_params('NN',config)[0])
-		self.theta_learn =  tf.Variable(tf.random.uniform(shape=[23,],minval=0,maxval=np.pi*2,dtype=tf.float64))
+		self.theta_learn =  tf.Variable(tf.random.uniform(shape=[23,],minval=0,maxval=np.pi*4,dtype=tf.float64))
 	def call(self, X, e, Ri, Ro):
 		bo  = tf.matmul(Ro, X, transpose_a=True) 
 		bi  = tf.matmul(Ri, X, transpose_a=True) 

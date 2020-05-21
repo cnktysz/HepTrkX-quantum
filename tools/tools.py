@@ -57,7 +57,7 @@ def log_tensor_array(tensor,log_dir,filename):
 			f.write('\n')
 ############################################################################################
 def map2angle(arr0):
-# Mapping the cylindrical coordinates to 0-2PI
+# Mapping the cylindrical coordinates to 0-4PI
 	arr = np.zeros(arr0.shape)
 	r_min     = 0.
 	r_max     = 1.1
@@ -65,7 +65,7 @@ def map2angle(arr0):
 	phi_max   = 1.0
 	z_min     = 0
 	z_max     = 1.1
-	arr[:,0] =  (arr0[:,0]-r_min)/(r_max-r_min) * 4 * PI         # map to 2PI due to ry gate
+	arr[:,0] =  (arr0[:,0]-r_min)/(r_max-r_min) * 4 * PI         # map to 4PI due to ry gate
 	arr[:,1] =  (arr0[:,1]-phi_min)/(phi_max-phi_min) * 4 * PI 
 	arr[:,2] =  (np.abs(arr0[:,2])-z_min)/(z_max-z_min) * 4 * PI # take abs of z due to symmetry of z
 	mapping_check(arr)

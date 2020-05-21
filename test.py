@@ -35,13 +35,14 @@ def test_validation(config,network):
 	
 	# Calculate Metrics
 	fpr,tpr,thresholds = metrics.roc_curve(labels.astype(int),preds,pos_label=1 )
-	auc = metrics.auc(fpr,tpr)		
-	accuracy  = ((1-fpr[len(fpr)//2])*n_class[0]+tpr[len(tpr)//2]*n_class[1])/n_edges	
-	precision = metrics.average_precision_score(labels.astype(int),preds)
+	auc                = metrics.auc(fpr,tpr)		
+	accuracy           = ((1-fpr[len(fpr)//2])*n_class[0]+tpr[len(tpr)//2]*n_class[1])/n_edges	
+	precision          = metrics.average_precision_score(labels.astype(int),preds)
+	tn, fp, fn, tp     = metrics.confusion_matrix(labels.astype(int),(preds > 0.5)*1).ravel() # get the confusion matrix for 0.5 threshold
 
 	# Log Metrics
 	with open(config['log_dir']+'log_validation.csv', 'a') as f:
-		f.write('%.4f, %.4f, %.4f, %.4f\n' %(accuracy,auc,loss,precision))
+		f.write('%.4f, %.4f, %.4f, %.4f, %d, %d, %d, %d\n' %(accuracy, auc, loss, precision,tn, fp, fn, tp))
 	
 	duration = time.time() - t_start
 
