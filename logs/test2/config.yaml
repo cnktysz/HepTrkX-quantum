@@ -1,0 +1,17 @@
+train_dir : data/graph_data/train 
+valid_dir : data/graph_data/valid 
+param_dir : params/ 
+log_dir : logs/test2/ 
+run_type : new_run 
+gpu : 7 
+n_files : 1600 
+n_valid : 200 
+n_train : 1400 
+lr : 0.03 
+n_iters : 2 
+n_epoch : 1 
+TEST_every : 50 
+hid_dim : 1 
+network : QGNN 
+n_thread : 4 
+log_verbosity : 2 
