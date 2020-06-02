@@ -110,9 +110,9 @@ def node_forward(node_array,theta_learn):
 	# To Do: can parallize the for loop
 	outputs = []
 	for i in range(len(node_array[:,0])):
-		out = tf.constant(4*np.pi*(1-TTN_node_forward(node_array[i,:],theta_learn))/2.,dtype=tf.float64)
+		out = tf.constant(2*np.pi*(1-TTN_node_forward(node_array[i,:],theta_learn))/2.,dtype=tf.float64)
 		outputs.append(out)
-	return tf.stack(outputs) # output is between [0,4*pi]
+	return tf.stack(outputs) # output is between [0,2*pi]
 ##################################################################################################
 class EdgeNet(tf.keras.layers.Layer):
 	def __init__(self, config, name='EdgeNet'):
@@ -121,7 +121,7 @@ class EdgeNet(tf.keras.layers.Layer):
 		# read parameters of the network from file
 		# params are created using tools/init_params.py
 		#self.theta_learn = tf.Variable(get_params('EN',config)[0])
-		self.theta_learn =  tf.Variable(tf.random.uniform(shape=[15,],minval=0,maxval=np.pi*4,dtype=tf.float64))
+		self.theta_learn =  tf.Variable(tf.random.uniform(shape=[15,],minval=0,maxval=np.pi*2,dtype=tf.float64))
 	def call(self,X, Ri, Ro):
 		bo = tf.matmul(Ro,X,transpose_a=True)
 		bi = tf.matmul(Ri,X,transpose_a=True)
@@ -137,7 +137,7 @@ class NodeNet(tf.keras.layers.Layer):
 		# read parameters of the network from file
 		# params are created using tools/init_params.py
 		#self.theta_learn = tf.Variable(get_params('NN',config)[0])
-		self.theta_learn =  tf.Variable(tf.random.uniform(shape=[23,],minval=0,maxval=np.pi*4,dtype=tf.float64))
+		self.theta_learn =  tf.Variable(tf.random.uniform(shape=[23,],minval=0,maxval=np.pi*2,dtype=tf.float64))
 	def call(self, X, e, Ri, Ro):
 		bo  = tf.matmul(Ro, X, transpose_a=True) 
 		bi  = tf.matmul(Ri, X, transpose_a=True) 
@@ -160,7 +160,7 @@ class InputNet(tf.keras.layers.Layer):
 		# setup a Dense layer with the given config
 		self.layer = tf.keras.layers.Dense(self.num_outputs,input_shape=(3,),activation='sigmoid')
 	def call(self, arr):
-		return self.layer(arr)*4*np.pi # to map to output to [0,2*pi]
+		return self.layer(arr)*2*np.pi # to map to output to [0,2*pi]
 ##################################################################################################
 class GNN(tf.keras.Model):
 	def __init__(self, config):

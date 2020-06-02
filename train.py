@@ -48,6 +48,8 @@ if __name__ == '__main__':
 	elif config['network'] == 'CGNN':                                # load classical network
 		from qnetworks.CGNN import GNN
 		tf.config.threading.set_inter_op_parallelism_threads(config['n_thread'])
+	elif config['network'] == 'QGNN_general' and config['hid_dim'] == 1:     # load q. networks with 2 Hid. Dim. 
+		from qnetworks.GNN1_general import GNN
 	else:
 		RaiseValueError('You chose wrong config settings or this setting is not implemented yet!')
 

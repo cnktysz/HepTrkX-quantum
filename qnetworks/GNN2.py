@@ -131,7 +131,7 @@ def node_forward(node_array,theta_learn):
 	# To Do: can parallize the for loop
 	outputs = []
 	for i in range(len(node_array[:,0])):
-		out = tf.constant(4*np.pi*(1-TTN_node_forward(node_array[i,:],theta_learn))/2.,dtype=tf.float64)
+		out = tf.constant(2*np.pi*(1-TTN_node_forward(node_array[i,:],theta_learn))/2.,dtype=tf.float64)
 		outputs.append(out)
 	return tf.stack(outputs) # output is between [0,4*pi]
 #################################################
@@ -179,7 +179,7 @@ class InputNet(tf.keras.layers.Layer):
 		# setup a Dense layer with the given config
 		self.layer = tf.keras.layers.Dense(self.num_outputs,input_shape=(3,),activation='sigmoid')
 	def call(self, arr):
-		return self.layer(arr)*4*np.pi # to map to output to [0,2*pi]
+		return self.layer(arr)*2*np.pi # to map to output to [0,2*pi]
 #################################################
 class GNN(tf.keras.Model):
 	def __init__(self, config):

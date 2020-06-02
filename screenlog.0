@@ -12265,4 +12265,958 @@ Starting testing the validation set with 200 subgraphs!
 Starting testing the validation set with 200 subgraphs!
 2020-05-23 03:24:21.649503: Validation Test:  Loss: 0.6996,  Acc: 50.2105, AUC: 0.5041, Precision: 0.5515 -- Elapsed: 42m5s
 2020-05-23 03:24:21.649603: Training completed!
-Singularity> 
+Singularity> [KSingularity> clear
+[H[JSingularity> python3 train.py configs/lo  comparisons/qgnn/arch_comparison/TTN_general.py 
+/storage/user/ctuysuz/HepTrkX-quantum/tools/tools.py:99: YAMLLoadWarning: calling yaml.load() without Loader=... is deprecated, as the default Loader is unsafe. Please read https://msg.pyyaml.org/load for full details.
+  config = yaml.load(ymlfile)
+Printing configs: 
+train_dir: data/graph_data/train
+valid_dir: data/graph_data/valid
+param_dir: params/
+log_dir: logs/comparisons/qgnn/arch_comparison/TTN_general/
+run_type: new_run
+gpu: 7
+n_files: 1600
+n_valid: 200
+n_train: 1400
+lr: 0.03
+n_iters: 2
+n_epoch: 1
+TEST_every: 50
+hid_dim: 1
+network: QGNN_general
+n_thread: 4
+log_verbosity: 2
+Log dir: logs/comparisons/qgnn/arch_comparison/TTN_general/
+Training data input dir: data/graph_data/train
+Validation data input dir: data/graph_data/train
+Starting testing the validation set with 200 subgraphs!
+Traceback (most recent call last):
+  File "/storage/user/ctuysuz/.local/lib/python3.6/site-packages/pennylane/qnode.py", line 97, in decompose_queue
+    new_ops.extend(_decompose_queue([op], device))
+  File "/storage/user/ctuysuz/.local/lib/python3.6/site-packages/pennylane/qnode.py", line 76, in _decompose_queue
+    decomposition = _decompose_queue(decomposed_ops, device)
+  File "/storage/user/ctuysuz/.local/lib/python3.6/site-packages/pennylane/qnode.py", line 75, in _decompose_queue
+    decomposed_ops = op.decomposition(*op.params, wires=op.wires)
+  File "/storage/user/ctuysuz/.local/lib/python3.6/site-packages/pennylane/operation.py", line 502, in decomposition
+    raise NotImplementedError
+NotImplementedError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "train.py", line 70, in <module>
+    test_validation(config,block)
+  File "/storage/user/ctuysuz/HepTrkX-quantum/test.py", line 22, in test_validation
+    preds  = np.append(preds,network(graph_array))
+  File "/usr/local/lib64/python3.6/site-packages/tensorflow_core/python/keras/engine/base_layer.py", line 822, in __call__
+    outputs = self.call(cast_inputs, *args, **kwargs)
+  File "/storage/user/ctuysuz/HepTrkX-quantum/qnetworks/GNN1_general.py", line 179, in call
+    e = self.EdgeNet(H, Ri, Ro)         # execute EdgeNet
+  File "/usr/local/lib64/python3.6/site-packages/tensorflow_core/python/keras/engine/base_layer.py", line 822, in __call__
+    outputs = self.call(cast_inputs, *args, **kwargs)
+  File "/storage/user/ctuysuz/HepTrkX-quantum/qnetworks/GNN1_general.py", line 131, in call
+    return edge_forward(B,self.theta_learn)
+  File "/storage/user/ctuysuz/HepTrkX-quantum/qnetworks/GNN1_general.py", line 104, in edge_forward
+    out = tf.constant((1-TTN_edge_forward(edge_array[i,:],theta_learn))/2.,dtype=tf.float64)
+  File "/usr/local/lib64/python3.6/site-packages/tensorflow_core/python/ops/custom_gradient.py", line 256, in __call__
+    return self._d(self._f, a, k)
+  File "/usr/local/lib64/python3.6/site-packages/tensorflow_core/python/ops/custom_gradient.py", line 210, in decorated
+    return _eager_mode_decorator(wrapped, args, kwargs)
+  File "/usr/local/lib64/python3.6/site-packages/tensorflow_core/python/ops/custom_gradient.py", line 406, in _eager_mode_decorator
+    result, grad_fn = f(*args, **kwargs)
+  File "/storage/user/ctuysuz/.local/lib/python3.6/site-packages/pennylane/interfaces/tf.py", line 77, in _TFQNode
+    res = qnode(*args, **kwargs)
+  File "/storage/user/ctuysuz/.local/lib/python3.6/site-packages/pennylane/qnode.py", line 606, in __call__
+    return self.evaluate(args, **kwargs)  # args as one tuple
+  File "/storage/user/ctuysuz/.local/lib/python3.6/site-packages/autograd/tracer.py", line 48, in f_wrapped
+    return f_raw(*args, **kwargs)
+  File "/storage/user/ctuysuz/.local/lib/python3.6/site-packages/pennylane/qnode.py", line 641, in evaluate
+    self.construct(args, kwargs)
+  File "/storage/user/ctuysuz/.local/lib/python3.6/site-packages/pennylane/qnode.py", line 354, in construct
+    self.queue = decompose_queue(self.queue, self.device)
+  File "/storage/user/ctuysuz/.local/lib/python3.6/site-packages/pennylane/qnode.py", line 99, in decompose_queue
+    raise qml.DeviceError("Gate {} not supported on device {}".format(op.name, device.short_name))
+pennylane._device.DeviceError: Gate U3 not supported on device qulacs.simulator
+Singularity> clear
+[H[JSingularity> python3 train.py configs/comparisons/qgnn/dimension_comparison/dim2.yaml 
+/storage/user/ctuysuz/HepTrkX-quantum/tools/tools.py:99: YAMLLoadWarning: calling yaml.load() without Loader=... is deprecated, as the default Loader is unsafe. Please read https://msg.pyyaml.org/load for full details.
+  config = yaml.load(ymlfile)
+Printing configs: 
+train_dir: data/graph_data/train
+valid_dir: data/graph_data/valid
+param_dir: params/
+log_dir: logs/comparisons/qgnn/dimension_comparison/dim2/
+run_type: new_run
+gpu: 7
+n_files: 1600
+n_valid: 200
+n_train: 1400
+lr: 0.03
+n_iters: 2
+n_epoch: 1
+TEST_every: 50
+hid_dim: 2
+network: QGNN
+n_thread: 4
+log_verbosity: 1
+Log dir: logs/comparisons/qgnn/dimension_comparison/dim2/
+Training data input dir: data/graph_data/train
+Validation data input dir: data/graph_data/train
+2020-05-27 02:30:36.035365 Deleted old log: logs/comparisons/qgnn/dimension_comparison/dim2/summary.csv
+2020-05-27 02:30:36.035659 Deleted old log: logs/comparisons/qgnn/dimension_comparison/dim2/log_validation.csv
+2020-05-27 02:30:36.035922 Deleted old log: logs/comparisons/qgnn/dimension_comparison/dim2/log_loss.csv
+Starting testing the validation set with 200 subgraphs!
+2020-05-27 03:29:02.195336: Validation Test:  Loss: 0.7999,  Acc: 55.1192, AUC: 0.5560, Precision: 0.6118 -- Elapsed: 58m25s
+2020-05-27 03:29:02.195423: Training is starting!
+2020-05-27 03:47:48.544027: Epoch: 1, Batch: 1, Loss: 0.7930, Elapsed: 18m46s
+2020-05-27 04:00:43.369032: Epoch: 1, Batch: 2, Loss: 0.7830, Elapsed: 12m54s
+2020-05-27 04:25:42.464036: Epoch: 1, Batch: 3, Loss: 0.7501, Elapsed: 24m59s
+2020-05-27 04:40:57.708901: Epoch: 1, Batch: 4, Loss: 0.7887, Elapsed: 15m15s
+2020-05-27 05:05:02.117609: Epoch: 1, Batch: 5, Loss: 0.7278, Elapsed: 24m4s
+2020-05-27 05:21:36.075333: Epoch: 1, Batch: 6, Loss: 0.7495, Elapsed: 16m33s
+2020-05-27 05:34:53.109164: Epoch: 1, Batch: 7, Loss: 0.7223, Elapsed: 13m17s
+2020-05-27 05:46:55.289047: Epoch: 1, Batch: 8, Loss: 0.7515, Elapsed: 12m2s
+2020-05-27 06:01:54.767982: Epoch: 1, Batch: 9, Loss: 0.7247, Elapsed: 14m59s
+2020-05-27 06:18:22.552253: Epoch: 1, Batch: 10, Loss: 0.7489, Elapsed: 16m27s
+2020-05-27 06:37:35.279282: Epoch: 1, Batch: 11, Loss: 0.7068, Elapsed: 19m12s
+2020-05-27 06:56:41.126113: Epoch: 1, Batch: 12, Loss: 0.7272, Elapsed: 19m5s
+2020-05-27 07:08:17.499400: Epoch: 1, Batch: 13, Loss: 0.7343, Elapsed: 11m36s
+2020-05-27 07:27:05.635186: Epoch: 1, Batch: 14, Loss: 0.7062, Elapsed: 18m48s
+2020-05-27 07:52:06.948579: Epoch: 1, Batch: 15, Loss: 0.6923, Elapsed: 25m1s
+2020-05-27 08:09:27.007257: Epoch: 1, Batch: 16, Loss: 0.6996, Elapsed: 17m20s
+2020-05-27 08:25:15.621909: Epoch: 1, Batch: 17, Loss: 0.6910, Elapsed: 15m48s
+2020-05-27 08:39:56.081628: Epoch: 1, Batch: 18, Loss: 0.6995, Elapsed: 14m40s
+2020-05-27 08:56:50.778476: Epoch: 1, Batch: 19, Loss: 0.7013, Elapsed: 16m54s
+2020-05-27 09:13:59.372539: Epoch: 1, Batch: 20, Loss: 0.6605, Elapsed: 17m8s
+2020-05-27 09:26:18.887241: Epoch: 1, Batch: 21, Loss: 0.6892, Elapsed: 12m19s
+2020-05-27 09:32:29.184447: Epoch: 1, Batch: 22, Loss: 0.7116, Elapsed: 6m10s
+2020-05-27 09:47:07.862277: Epoch: 1, Batch: 23, Loss: 0.6779, Elapsed: 14m38s
+2020-05-27 10:08:15.447128: Epoch: 1, Batch: 24, Loss: 0.6994, Elapsed: 21m7s
+2020-05-27 10:25:44.226396: Epoch: 1, Batch: 25, Loss: 0.7086, Elapsed: 17m28s
+2020-05-27 10:39:56.884132: Epoch: 1, Batch: 26, Loss: 0.6766, Elapsed: 14m12s
+2020-05-27 11:01:36.598349: Epoch: 1, Batch: 27, Loss: 0.6740, Elapsed: 21m39s
+2020-05-27 11:21:54.615837: Epoch: 1, Batch: 28, Loss: 0.6786, Elapsed: 20m18s
+2020-05-27 11:40:04.485048: Epoch: 1, Batch: 29, Loss: 0.6839, Elapsed: 18m9s
+2020-05-27 11:52:54.635616: Epoch: 1, Batch: 30, Loss: 0.6949, Elapsed: 12m50s
+2020-05-27 12:05:25.190872: Epoch: 1, Batch: 31, Loss: 0.6941, Elapsed: 12m30s
+2020-05-27 12:17:59.954223: Epoch: 1, Batch: 32, Loss: 0.6734, Elapsed: 12m34s
+2020-05-27 12:35:14.070097: Epoch: 1, Batch: 33, Loss: 0.6710, Elapsed: 17m14s
+2020-05-27 12:52:37.948009: Epoch: 1, Batch: 34, Loss: 0.6889, Elapsed: 17m23s
+2020-05-27 13:05:36.969190: Epoch: 1, Batch: 35, Loss: 0.6814, Elapsed: 12m59s
+2020-05-27 13:26:07.682644: Epoch: 1, Batch: 36, Loss: 0.6780, Elapsed: 20m30s
+2020-05-27 13:47:03.262553: Epoch: 1, Batch: 37, Loss: 0.6734, Elapsed: 20m55s
+2020-05-27 14:08:28.235239: Epoch: 1, Batch: 38, Loss: 0.7084, Elapsed: 21m24s
+2020-05-27 14:20:48.708380: Epoch: 1, Batch: 39, Loss: 0.6831, Elapsed: 12m20s
+2020-05-27 14:40:44.371437: Epoch: 1, Batch: 40, Loss: 0.6786, Elapsed: 19m55s
+2020-05-27 14:57:43.680628: Epoch: 1, Batch: 41, Loss: 0.6702, Elapsed: 16m59s
+2020-05-27 15:15:46.966633: Epoch: 1, Batch: 42, Loss: 0.6797, Elapsed: 18m3s
+2020-05-27 15:34:47.542771: Epoch: 1, Batch: 43, Loss: 0.6837, Elapsed: 19m0s
+2020-05-27 15:52:02.773105: Epoch: 1, Batch: 44, Loss: 0.6765, Elapsed: 17m15s
+2020-05-27 16:08:25.055140: Epoch: 1, Batch: 45, Loss: 0.6623, Elapsed: 16m22s
+2020-05-27 16:24:14.176769: Epoch: 1, Batch: 46, Loss: 0.6812, Elapsed: 15m49s
+2020-05-27 16:42:40.554401: Epoch: 1, Batch: 47, Loss: 0.6589, Elapsed: 18m26s
+2020-05-27 16:55:07.595112: Epoch: 1, Batch: 48, Loss: 0.6494, Elapsed: 12m27s
+2020-05-27 17:10:29.578406: Epoch: 1, Batch: 49, Loss: 0.6574, Elapsed: 15m21s
+2020-05-27 17:25:38.011351: Epoch: 1, Batch: 50, Loss: 0.6746, Elapsed: 15m8s
+Starting testing the validation set with 200 subgraphs!
+2020-05-27 18:24:23.790383: Validation Test:  Loss: 0.6704,  Acc: 60.6275, AUC: 0.6327, Precision: 0.6648 -- Elapsed: 58m45s
+2020-05-27 18:41:11.833137: Epoch: 1, Batch: 51, Loss: 0.6589, Elapsed: 16m48s
+2020-05-27 18:51:11.637652: Epoch: 1, Batch: 52, Loss: 0.6694, Elapsed: 9m59s
+2020-05-27 19:19:13.536298: Epoch: 1, Batch: 53, Loss: 0.6787, Elapsed: 28m1s
+2020-05-27 19:37:15.937896: Epoch: 1, Batch: 54, Loss: 0.6817, Elapsed: 18m2s
+2020-05-27 19:50:04.620081: Epoch: 1, Batch: 55, Loss: 0.6694, Elapsed: 12m48s
+2020-05-27 20:02:46.775823: Epoch: 1, Batch: 56, Loss: 0.6512, Elapsed: 12m42s
+2020-05-27 20:25:19.607564: Epoch: 1, Batch: 57, Loss: 0.7036, Elapsed: 22m32s
+2020-05-27 20:33:41.638015: Epoch: 1, Batch: 58, Loss: 0.6716, Elapsed: 8m22s
+2020-05-27 20:45:50.086972: Epoch: 1, Batch: 59, Loss: 0.6688, Elapsed: 12m8s
+2020-05-27 21:01:42.327811: Epoch: 1, Batch: 60, Loss: 0.6599, Elapsed: 15m52s
+2020-05-27 21:19:23.498534: Epoch: 1, Batch: 61, Loss: 0.6641, Elapsed: 17m41s
+2020-05-27 22:01:18.631614: Epoch: 1, Batch: 62, Loss: 0.6664, Elapsed: 41m55s
+2020-05-27 22:18:12.724638: Epoch: 1, Batch: 63, Loss: 0.6655, Elapsed: 16m54s
+2020-05-27 22:33:03.568312: Epoch: 1, Batch: 64, Loss: 0.6645, Elapsed: 14m50s
+2020-05-27 22:44:18.526123: Epoch: 1, Batch: 65, Loss: 0.6542, Elapsed: 11m14s
+2020-05-27 22:59:26.130684: Epoch: 1, Batch: 66, Loss: 0.6490, Elapsed: 15m7s
+2020-05-27 23:21:40.478707: Epoch: 1, Batch: 67, Loss: 0.6931, Elapsed: 22m14s
+2020-05-27 23:35:36.921490: Epoch: 1, Batch: 68, Loss: 0.6591, Elapsed: 13m56s
+2020-05-27 23:48:03.383117: Epoch: 1, Batch: 69, Loss: 0.6965, Elapsed: 12m26s
+2020-05-28 00:08:43.460258: Epoch: 1, Batch: 70, Loss: 0.6606, Elapsed: 20m40s
+2020-05-28 00:21:50.360852: Epoch: 1, Batch: 71, Loss: 0.6803, Elapsed: 13m6s
+2020-05-28 00:38:31.688589: Epoch: 1, Batch: 72, Loss: 0.6721, Elapsed: 16m41s
+2020-05-28 00:49:23.727478: Epoch: 1, Batch: 73, Loss: 0.6533, Elapsed: 10m52s
+2020-05-28 01:08:11.348233: Epoch: 1, Batch: 74, Loss: 0.6795, Elapsed: 18m47s
+2020-05-28 01:18:30.942614: Epoch: 1, Batch: 75, Loss: 0.6953, Elapsed: 10m19s
+2020-05-28 01:35:53.377138: Epoch: 1, Batch: 76, Loss: 0.6635, Elapsed: 17m22s
+2020-05-28 01:49:04.221188: Epoch: 1, Batch: 77, Loss: 0.6768, Elapsed: 13m10s
+2020-05-28 02:13:47.625138: Epoch: 1, Batch: 78, Loss: 0.6833, Elapsed: 24m43s
+2020-05-28 02:33:26.827309: Epoch: 1, Batch: 79, Loss: 0.6552, Elapsed: 19m39s
+2020-05-28 02:44:36.987034: Epoch: 1, Batch: 80, Loss: 0.6747, Elapsed: 11m10s
+2020-05-28 02:56:40.864948: Epoch: 1, Batch: 81, Loss: 0.6841, Elapsed: 12m3s
+2020-05-28 03:17:11.275238: Epoch: 1, Batch: 82, Loss: 0.6846, Elapsed: 20m30s
+2020-05-28 03:25:07.116001: Epoch: 1, Batch: 83, Loss: 0.6364, Elapsed: 7m55s
+2020-05-28 03:38:15.292465: Epoch: 1, Batch: 84, Loss: 0.6562, Elapsed: 13m8s
+2020-05-28 03:45:44.478189: Epoch: 1, Batch: 85, Loss: 0.6697, Elapsed: 7m29s
+2020-05-28 03:50:42.645954: Epoch: 1, Batch: 86, Loss: 0.6658, Elapsed: 4m58s
+2020-05-28 03:58:42.952078: Epoch: 1, Batch: 87, Loss: 0.6587, Elapsed: 8m0s
+2020-05-28 04:06:07.131651: Epoch: 1, Batch: 88, Loss: 0.6556, Elapsed: 7m24s
+2020-05-28 04:11:22.260629: Epoch: 1, Batch: 89, Loss: 0.6496, Elapsed: 5m15s
+2020-05-28 04:17:44.726872: Epoch: 1, Batch: 90, Loss: 0.6657, Elapsed: 6m22s
+2020-05-28 04:25:19.659554: Epoch: 1, Batch: 91, Loss: 0.6636, Elapsed: 7m34s
+2020-05-28 04:29:10.119662: Epoch: 1, Batch: 92, Loss: 0.6788, Elapsed: 3m50s
+2020-05-28 04:42:28.653508: Epoch: 1, Batch: 93, Loss: 0.6566, Elapsed: 13m18s
+2020-05-28 04:52:08.710242: Epoch: 1, Batch: 94, Loss: 0.6512, Elapsed: 9m40s
+2020-05-28 05:00:33.366535: Epoch: 1, Batch: 95, Loss: 0.6701, Elapsed: 8m24s
+2020-05-28 05:10:55.524272: Epoch: 1, Batch: 96, Loss: 0.6524, Elapsed: 10m22s
+2020-05-28 05:19:52.248803: Epoch: 1, Batch: 97, Loss: 0.6609, Elapsed: 8m56s
+2020-05-28 05:26:13.372819: Epoch: 1, Batch: 98, Loss: 0.6599, Elapsed: 6m21s
+2020-05-28 05:31:11.665455: Epoch: 1, Batch: 99, Loss: 0.6276, Elapsed: 4m58s
+2020-05-28 05:39:32.290819: Epoch: 1, Batch: 100, Loss: 0.6570, Elapsed: 8m20s
+Starting testing the validation set with 200 subgraphs!
+2020-05-28 06:22:41.047521: Validation Test:  Loss: 0.6629,  Acc: 60.7655, AUC: 0.6408, Precision: 0.6662 -- Elapsed: 43m8s
+2020-05-28 06:31:52.037168: Epoch: 1, Batch: 101, Loss: 0.6474, Elapsed: 9m10s
+2020-05-28 06:41:34.396424: Epoch: 1, Batch: 102, Loss: 0.6707, Elapsed: 9m42s
+2020-05-28 06:49:00.061089: Epoch: 1, Batch: 103, Loss: 0.6688, Elapsed: 7m25s
+2020-05-28 06:56:41.425287: Epoch: 1, Batch: 104, Loss: 0.6494, Elapsed: 7m41s
+2020-05-28 07:04:07.655253: Epoch: 1, Batch: 105, Loss: 0.6452, Elapsed: 7m26s
+2020-05-28 07:15:56.713713: Epoch: 1, Batch: 106, Loss: 0.6610, Elapsed: 11m49s
+2020-05-28 07:26:28.780966: Epoch: 1, Batch: 107, Loss: 0.6646, Elapsed: 10m32s
+2020-05-28 07:37:22.632280: Epoch: 1, Batch: 108, Loss: 0.6701, Elapsed: 10m53s
+2020-05-28 07:48:26.276633: Epoch: 1, Batch: 109, Loss: 0.6602, Elapsed: 11m3s
+2020-05-28 07:53:28.618831: Epoch: 1, Batch: 110, Loss: 0.6352, Elapsed: 5m2s
+2020-05-28 07:57:10.501874: Epoch: 1, Batch: 111, Loss: 0.6697, Elapsed: 3m41s
+2020-05-28 08:06:21.670772: Epoch: 1, Batch: 112, Loss: 0.6478, Elapsed: 9m11s
+2020-05-28 08:12:27.275603: Epoch: 1, Batch: 113, Loss: 0.6567, Elapsed: 6m5s
+2020-05-28 08:17:34.144660: Epoch: 1, Batch: 114, Loss: 0.6685, Elapsed: 5m6s
+2020-05-28 08:32:12.784409: Epoch: 1, Batch: 115, Loss: 0.6752, Elapsed: 14m38s
+2020-05-28 08:41:38.325523: Epoch: 1, Batch: 116, Loss: 0.6562, Elapsed: 9m25s
+2020-05-28 08:49:07.182505: Epoch: 1, Batch: 117, Loss: 0.6398, Elapsed: 7m28s
+2020-05-28 08:59:43.243626: Epoch: 1, Batch: 118, Loss: 0.6588, Elapsed: 10m36s
+2020-05-28 09:06:34.257010: Epoch: 1, Batch: 119, Loss: 0.6568, Elapsed: 6m50s
+2020-05-28 09:17:45.732308: Epoch: 1, Batch: 120, Loss: 0.6622, Elapsed: 11m11s
+2020-05-28 09:27:05.164869: Epoch: 1, Batch: 121, Loss: 0.6562, Elapsed: 9m19s
+2020-05-28 09:38:03.590337: Epoch: 1, Batch: 122, Loss: 0.6472, Elapsed: 10m58s
+2020-05-28 09:46:24.433602: Epoch: 1, Batch: 123, Loss: 0.6523, Elapsed: 8m20s
+2020-05-28 09:54:21.370129: Epoch: 1, Batch: 124, Loss: 0.6529, Elapsed: 7m56s
+2020-05-28 10:01:22.921312: Epoch: 1, Batch: 125, Loss: 0.6396, Elapsed: 7m1s
+2020-05-28 10:06:51.257986: Epoch: 1, Batch: 126, Loss: 0.6612, Elapsed: 5m28s
+2020-05-28 10:12:37.063149: Epoch: 1, Batch: 127, Loss: 0.6400, Elapsed: 5m45s
+2020-05-28 10:23:22.347409: Epoch: 1, Batch: 128, Loss: 0.6630, Elapsed: 10m45s
+2020-05-28 10:33:11.099608: Epoch: 1, Batch: 129, Loss: 0.6701, Elapsed: 9m48s
+2020-05-28 10:39:46.936825: Epoch: 1, Batch: 130, Loss: 0.6388, Elapsed: 6m35s
+2020-05-28 10:47:54.820328: Epoch: 1, Batch: 131, Loss: 0.6633, Elapsed: 8m7s
+2020-05-28 10:54:43.655940: Epoch: 1, Batch: 132, Loss: 0.6499, Elapsed: 6m48s
+2020-05-28 11:03:31.415594: Epoch: 1, Batch: 133, Loss: 0.6457, Elapsed: 8m47s
+2020-05-28 11:12:46.936221: Epoch: 1, Batch: 134, Loss: 0.6394, Elapsed: 9m15s
+2020-05-28 11:21:24.983092: Epoch: 1, Batch: 135, Loss: 0.6451, Elapsed: 8m38s
+2020-05-28 11:32:55.395780: Epoch: 1, Batch: 136, Loss: 0.6521, Elapsed: 11m30s
+2020-05-28 11:40:03.261750: Epoch: 1, Batch: 137, Loss: 0.6615, Elapsed: 7m7s
+2020-05-28 11:45:27.331765: Epoch: 1, Batch: 138, Loss: 0.6336, Elapsed: 5m24s
+2020-05-28 11:55:11.657794: Epoch: 1, Batch: 139, Loss: 0.6386, Elapsed: 9m44s
+2020-05-28 12:06:03.874218: Epoch: 1, Batch: 140, Loss: 0.6628, Elapsed: 10m52s
+2020-05-28 12:20:28.480328: Epoch: 1, Batch: 141, Loss: 0.6656, Elapsed: 14m24s
+2020-05-28 12:27:32.693065: Epoch: 1, Batch: 142, Loss: 0.6486, Elapsed: 7m4s
+2020-05-28 12:34:54.942635: Epoch: 1, Batch: 143, Loss: 0.6156, Elapsed: 7m22s
+2020-05-28 12:41:52.086070: Epoch: 1, Batch: 144, Loss: 0.6170, Elapsed: 6m57s
+2020-05-28 12:52:51.667916: Epoch: 1, Batch: 145, Loss: 0.6338, Elapsed: 10m59s
+2020-05-28 13:01:51.031386: Epoch: 1, Batch: 146, Loss: 0.6278, Elapsed: 8m59s
+2020-05-28 13:09:28.324652: Epoch: 1, Batch: 147, Loss: 0.6176, Elapsed: 7m37s
+2020-05-28 13:16:38.182101: Epoch: 1, Batch: 148, Loss: 0.6197, Elapsed: 7m9s
+2020-05-28 13:25:33.201037: Epoch: 1, Batch: 149, Loss: 0.6476, Elapsed: 8m55s
+2020-05-28 13:38:32.792391: Epoch: 1, Batch: 150, Loss: 0.6405, Elapsed: 12m59s
+Starting testing the validation set with 200 subgraphs!
+2020-05-28 14:21:52.541742: Validation Test:  Loss: 0.6386,  Acc: 64.2723, AUC: 0.6911, Precision: 0.7263 -- Elapsed: 43m19s
+2020-05-28 14:33:49.290476: Epoch: 1, Batch: 151, Loss: 0.6360, Elapsed: 11m56s
+2020-05-28 14:43:53.484345: Epoch: 1, Batch: 152, Loss: 0.6294, Elapsed: 10m4s
+2020-05-28 14:51:14.318624: Epoch: 1, Batch: 153, Loss: 0.6020, Elapsed: 7m20s
+2020-05-28 14:59:10.597889: Epoch: 1, Batch: 154, Loss: 0.6207, Elapsed: 7m56s
+2020-05-28 15:07:00.612307: Epoch: 1, Batch: 155, Loss: 0.6175, Elapsed: 7m50s
+2020-05-28 15:14:38.191117: Epoch: 1, Batch: 156, Loss: 0.6268, Elapsed: 7m37s
+2020-05-28 15:20:52.115276: Epoch: 1, Batch: 157, Loss: 0.6107, Elapsed: 6m13s
+2020-05-28 15:28:00.172733: Epoch: 1, Batch: 158, Loss: 0.6373, Elapsed: 7m8s
+2020-05-28 15:35:25.656265: Epoch: 1, Batch: 159, Loss: 0.5930, Elapsed: 7m25s
+2020-05-28 15:46:37.012433: Epoch: 1, Batch: 160, Loss: 0.6226, Elapsed: 11m11s
+2020-05-28 15:55:35.062494: Epoch: 1, Batch: 161, Loss: 0.6159, Elapsed: 8m58s
+2020-05-28 16:09:43.921663: Epoch: 1, Batch: 162, Loss: 0.6690, Elapsed: 14m8s
+2020-05-28 16:22:15.460324: Epoch: 1, Batch: 163, Loss: 0.6599, Elapsed: 12m31s
+2020-05-28 16:33:59.299151: Epoch: 1, Batch: 164, Loss: 0.6307, Elapsed: 11m43s
+2020-05-28 16:39:04.211428: Epoch: 1, Batch: 165, Loss: 0.5568, Elapsed: 5m4s
+2020-05-28 16:46:10.603922: Epoch: 1, Batch: 166, Loss: 0.6128, Elapsed: 7m6s
+2020-05-28 16:56:30.055680: Epoch: 1, Batch: 167, Loss: 0.6381, Elapsed: 10m19s
+2020-05-28 17:02:34.551738: Epoch: 1, Batch: 168, Loss: 0.6016, Elapsed: 6m4s
+2020-05-28 17:09:03.418907: Epoch: 1, Batch: 169, Loss: 0.6292, Elapsed: 6m28s
+2020-05-28 17:17:24.926257: Epoch: 1, Batch: 170, Loss: 0.6513, Elapsed: 8m21s
+2020-05-28 17:23:31.143680: Epoch: 1, Batch: 171, Loss: 0.6144, Elapsed: 6m6s
+2020-05-28 17:36:58.438876: Epoch: 1, Batch: 172, Loss: 0.6593, Elapsed: 13m27s
+2020-05-28 17:44:26.716468: Epoch: 1, Batch: 173, Loss: 0.5995, Elapsed: 7m28s
+2020-05-28 17:55:59.351174: Epoch: 1, Batch: 174, Loss: 0.6067, Elapsed: 11m32s
+2020-05-28 18:08:03.221167: Epoch: 1, Batch: 175, Loss: 0.6370, Elapsed: 12m3s
+2020-05-28 18:16:44.973926: Epoch: 1, Batch: 176, Loss: 0.6346, Elapsed: 8m41s
+2020-05-28 18:23:30.991937: Epoch: 1, Batch: 177, Loss: 0.6112, Elapsed: 6m46s
+2020-05-28 18:31:53.946412: Epoch: 1, Batch: 178, Loss: 0.6309, Elapsed: 8m22s
+2020-05-28 18:40:46.078403: Epoch: 1, Batch: 179, Loss: 0.6147, Elapsed: 8m52s
+2020-05-28 18:47:45.065897: Epoch: 1, Batch: 180, Loss: 0.6086, Elapsed: 6m58s
+2020-05-28 18:56:00.513036: Epoch: 1, Batch: 181, Loss: 0.6121, Elapsed: 8m15s
+2020-05-28 19:03:40.185586: Epoch: 1, Batch: 182, Loss: 0.6008, Elapsed: 7m39s
+2020-05-28 19:11:07.303784: Epoch: 1, Batch: 183, Loss: 0.6086, Elapsed: 7m27s
+2020-05-28 19:21:47.552816: Epoch: 1, Batch: 184, Loss: 0.6149, Elapsed: 10m40s
+2020-05-28 19:29:43.241023: Epoch: 1, Batch: 185, Loss: 0.5787, Elapsed: 7m55s
+2020-05-28 19:34:10.574025: Epoch: 1, Batch: 186, Loss: 0.5476, Elapsed: 4m27s
+2020-05-28 19:41:42.041915: Epoch: 1, Batch: 187, Loss: 0.6163, Elapsed: 7m31s
+2020-05-28 19:49:17.067312: Epoch: 1, Batch: 188, Loss: 0.5965, Elapsed: 7m35s
+2020-05-28 19:54:03.798858: Epoch: 1, Batch: 189, Loss: 0.6175, Elapsed: 4m46s
+2020-05-28 20:01:57.397761: Epoch: 1, Batch: 190, Loss: 0.5914, Elapsed: 7m53s
+2020-05-28 20:07:47.539720: Epoch: 1, Batch: 191, Loss: 0.5791, Elapsed: 5m50s
+2020-05-28 20:20:22.511262: Epoch: 1, Batch: 192, Loss: 0.6323, Elapsed: 12m34s
+2020-05-28 20:27:58.470612: Epoch: 1, Batch: 193, Loss: 0.5649, Elapsed: 7m35s
+2020-05-28 20:41:15.186593: Epoch: 1, Batch: 194, Loss: 0.6346, Elapsed: 13m16s
+2020-05-28 20:50:54.028880: Epoch: 1, Batch: 195, Loss: 0.6186, Elapsed: 9m38s
+2020-05-28 20:57:19.208476: Epoch: 1, Batch: 196, Loss: 0.5727, Elapsed: 6m25s
+2020-05-28 21:06:38.870587: Epoch: 1, Batch: 197, Loss: 0.6379, Elapsed: 9m19s
+2020-05-28 21:10:30.068114: Epoch: 1, Batch: 198, Loss: 0.5442, Elapsed: 3m51s
+2020-05-28 21:14:13.460181: Epoch: 1, Batch: 199, Loss: 0.5062, Elapsed: 3m43s
+2020-05-28 21:24:55.883792: Epoch: 1, Batch: 200, Loss: 0.6382, Elapsed: 10m42s
+Starting testing the validation set with 200 subgraphs!
+2020-05-28 22:08:39.965684: Validation Test:  Loss: 0.6083,  Acc: 66.6491, AUC: 0.7255, Precision: 0.7818 -- Elapsed: 43m44s
+2020-05-28 22:14:38.925064: Epoch: 1, Batch: 201, Loss: 0.6095, Elapsed: 5m58s
+2020-05-28 22:23:27.045706: Epoch: 1, Batch: 202, Loss: 0.6182, Elapsed: 8m48s
+2020-05-28 22:32:24.082596: Epoch: 1, Batch: 203, Loss: 0.6003, Elapsed: 8m57s
+2020-05-28 22:39:35.442928: Epoch: 1, Batch: 204, Loss: 0.5792, Elapsed: 7m11s
+2020-05-28 22:48:40.373647: Epoch: 1, Batch: 205, Loss: 0.6160, Elapsed: 9m4s
+2020-05-28 22:55:28.309561: Epoch: 1, Batch: 206, Loss: 0.5648, Elapsed: 6m47s
+2020-05-28 23:09:21.108928: Epoch: 1, Batch: 207, Loss: 0.6666, Elapsed: 13m52s
+2020-05-28 23:18:23.486843: Epoch: 1, Batch: 208, Loss: 0.6345, Elapsed: 9m2s
+2020-05-28 23:26:36.872458: Epoch: 1, Batch: 209, Loss: 0.6076, Elapsed: 8m13s
+2020-05-28 23:33:43.300503: Epoch: 1, Batch: 210, Loss: 0.6053, Elapsed: 7m6s
+2020-05-28 23:43:30.140814: Epoch: 1, Batch: 211, Loss: 0.6257, Elapsed: 9m46s
+2020-05-28 23:49:19.466850: Epoch: 1, Batch: 212, Loss: 0.5762, Elapsed: 5m49s
+2020-05-28 23:58:13.114463: Epoch: 1, Batch: 213, Loss: 0.6094, Elapsed: 8m53s
+2020-05-29 00:06:48.655350: Epoch: 1, Batch: 214, Loss: 0.6294, Elapsed: 8m35s
+2020-05-29 00:11:38.648111: Epoch: 1, Batch: 215, Loss: 0.5770, Elapsed: 4m49s
+2020-05-29 00:24:17.178767: Epoch: 1, Batch: 216, Loss: 0.6490, Elapsed: 12m38s
+2020-05-29 00:37:57.808366: Epoch: 1, Batch: 217, Loss: 0.6554, Elapsed: 13m40s
+2020-05-29 00:44:53.482990: Epoch: 1, Batch: 218, Loss: 0.5750, Elapsed: 6m55s
+2020-05-29 00:50:40.772876: Epoch: 1, Batch: 219, Loss: 0.6091, Elapsed: 5m47s
+2020-05-29 01:00:39.913744: Epoch: 1, Batch: 220, Loss: 0.6381, Elapsed: 9m59s
+2020-05-29 01:13:19.884427: Epoch: 1, Batch: 221, Loss: 0.6230, Elapsed: 12m39s
+2020-05-29 01:21:03.062464: Epoch: 1, Batch: 222, Loss: 0.6054, Elapsed: 7m43s
+2020-05-29 01:33:01.465891: Epoch: 1, Batch: 223, Loss: 0.6223, Elapsed: 11m58s
+2020-05-29 01:42:48.920909: Epoch: 1, Batch: 224, Loss: 0.6265, Elapsed: 9m47s
+2020-05-29 01:52:22.683426: Epoch: 1, Batch: 225, Loss: 0.6138, Elapsed: 9m33s
+2020-05-29 01:57:39.897543: Epoch: 1, Batch: 226, Loss: 0.5545, Elapsed: 5m17s
+2020-05-29 02:05:40.857426: Epoch: 1, Batch: 227, Loss: 0.6074, Elapsed: 8m0s
+2020-05-29 02:12:08.347020: Epoch: 1, Batch: 228, Loss: 0.6019, Elapsed: 6m27s
+2020-05-29 02:19:34.811407: Epoch: 1, Batch: 229, Loss: 0.5862, Elapsed: 7m26s
+2020-05-29 02:30:10.112532: Epoch: 1, Batch: 230, Loss: 0.6560, Elapsed: 10m35s
+2020-05-29 02:44:37.745423: Epoch: 1, Batch: 231, Loss: 0.6504, Elapsed: 14m27s
+2020-05-29 02:54:49.114165: Epoch: 1, Batch: 232, Loss: 0.6415, Elapsed: 10m11s
+2020-05-29 03:03:08.923429: Epoch: 1, Batch: 233, Loss: 0.6098, Elapsed: 8m19s
+2020-05-29 03:17:07.786307: Epoch: 1, Batch: 234, Loss: 0.6415, Elapsed: 13m58s
+2020-05-29 03:27:58.018392: Epoch: 1, Batch: 235, Loss: 0.5633, Elapsed: 10m50s
+2020-05-29 03:38:53.641149: Epoch: 1, Batch: 236, Loss: 0.5755, Elapsed: 10m55s
+2020-05-29 03:46:16.339619: Epoch: 1, Batch: 237, Loss: 0.5748, Elapsed: 7m22s
+2020-05-29 03:55:54.449582: Epoch: 1, Batch: 238, Loss: 0.5913, Elapsed: 9m38s
+2020-05-29 04:10:17.739227: Epoch: 1, Batch: 239, Loss: 0.6333, Elapsed: 14m23s
+2020-05-29 04:16:33.851442: Epoch: 1, Batch: 240, Loss: 0.6017, Elapsed: 6m16s
+2020-05-29 04:22:36.345595: Epoch: 1, Batch: 241, Loss: 0.6039, Elapsed: 6m2s
+2020-05-29 04:28:04.894745: Epoch: 1, Batch: 242, Loss: 0.5857, Elapsed: 5m28s
+2020-05-29 04:42:00.116352: Epoch: 1, Batch: 243, Loss: 0.6332, Elapsed: 13m55s
+2020-05-29 04:49:32.729195: Epoch: 1, Batch: 244, Loss: 0.5788, Elapsed: 7m32s
+2020-05-29 04:57:24.334566: Epoch: 1, Batch: 245, Loss: 0.5992, Elapsed: 7m51s
+2020-05-29 05:07:12.133594: Epoch: 1, Batch: 246, Loss: 0.6143, Elapsed: 9m47s
+2020-05-29 05:15:20.758505: Epoch: 1, Batch: 247, Loss: 0.6227, Elapsed: 8m8s
+2020-05-29 05:25:32.051337: Epoch: 1, Batch: 248, Loss: 0.6131, Elapsed: 10m11s
+2020-05-29 05:31:58.557207: Epoch: 1, Batch: 249, Loss: 0.5668, Elapsed: 6m26s
+2020-05-29 05:43:02.629886: Epoch: 1, Batch: 250, Loss: 0.6519, Elapsed: 11m4s
+Starting testing the validation set with 200 subgraphs!
+2020-05-29 06:25:44.391285: Validation Test:  Loss: 0.6035,  Acc: 67.9191, AUC: 0.7460, Precision: 0.7971 -- Elapsed: 42m41s
+2020-05-29 06:32:48.637089: Epoch: 1, Batch: 251, Loss: 0.5691, Elapsed: 7m4s
+2020-05-29 06:38:45.900234: Epoch: 1, Batch: 252, Loss: 0.6177, Elapsed: 5m57s
+2020-05-29 06:43:10.743283: Epoch: 1, Batch: 253, Loss: 0.5811, Elapsed: 4m24s
+2020-05-29 06:52:27.776656: Epoch: 1, Batch: 254, Loss: 0.5731, Elapsed: 9m17s
+2020-05-29 07:02:42.363686: Epoch: 1, Batch: 255, Loss: 0.6346, Elapsed: 10m14s
+2020-05-29 07:12:01.135592: Epoch: 1, Batch: 256, Loss: 0.5817, Elapsed: 9m18s
+2020-05-29 07:22:36.848599: Epoch: 1, Batch: 257, Loss: 0.6128, Elapsed: 10m35s
+2020-05-29 07:30:00.270936: Epoch: 1, Batch: 258, Loss: 0.6368, Elapsed: 7m23s
+2020-05-29 07:41:51.414710: Epoch: 1, Batch: 259, Loss: 0.5987, Elapsed: 11m51s
+2020-05-29 07:50:11.394041: Epoch: 1, Batch: 260, Loss: 0.5851, Elapsed: 8m19s
+2020-05-29 07:57:36.671445: Epoch: 1, Batch: 261, Loss: 0.6081, Elapsed: 7m25s
+2020-05-29 08:08:20.435677: Epoch: 1, Batch: 262, Loss: 0.6174, Elapsed: 10m43s
+2020-05-29 08:17:00.124961: Epoch: 1, Batch: 263, Loss: 0.5945, Elapsed: 8m39s
+2020-05-29 08:27:11.670790: Epoch: 1, Batch: 264, Loss: 0.6245, Elapsed: 10m11s
+2020-05-29 08:35:07.394832: Epoch: 1, Batch: 265, Loss: 0.5934, Elapsed: 7m55s
+2020-05-29 08:43:33.023025: Epoch: 1, Batch: 266, Loss: 0.5669, Elapsed: 8m25s
+2020-05-29 08:51:40.123035: Epoch: 1, Batch: 267, Loss: 0.5883, Elapsed: 8m7s
+2020-05-29 09:00:43.629687: Epoch: 1, Batch: 268, Loss: 0.6196, Elapsed: 9m3s
+2020-05-29 09:12:22.709528: Epoch: 1, Batch: 269, Loss: 0.5899, Elapsed: 11m39s
+2020-05-29 09:23:36.394158: Epoch: 1, Batch: 270, Loss: 0.6017, Elapsed: 11m13s
+2020-05-29 09:34:18.712342: Epoch: 1, Batch: 271, Loss: 0.5895, Elapsed: 10m42s
+2020-05-29 09:43:52.403261: Epoch: 1, Batch: 272, Loss: 0.5986, Elapsed: 9m33s
+2020-05-29 09:57:03.913794: Epoch: 1, Batch: 273, Loss: 0.6070, Elapsed: 13m11s
+2020-05-29 10:03:52.839896: Epoch: 1, Batch: 274, Loss: 0.5455, Elapsed: 6m48s
+2020-05-29 10:17:11.839984: Epoch: 1, Batch: 275, Loss: 0.5969, Elapsed: 13m18s
+2020-05-29 10:25:49.613497: Epoch: 1, Batch: 276, Loss: 0.5826, Elapsed: 8m37s
+2020-05-29 10:38:46.827129: Epoch: 1, Batch: 277, Loss: 0.6317, Elapsed: 12m57s
+2020-05-29 10:58:45.194853: Epoch: 1, Batch: 278, Loss: 0.6327, Elapsed: 19m58s
+2020-05-29 11:05:39.178412: Epoch: 1, Batch: 279, Loss: 0.5694, Elapsed: 6m53s
+2020-05-29 11:13:37.060611: Epoch: 1, Batch: 280, Loss: 0.5744, Elapsed: 7m57s
+2020-05-29 11:25:43.043384: Epoch: 1, Batch: 281, Loss: 0.6122, Elapsed: 12m5s
+2020-05-29 11:32:24.690370: Epoch: 1, Batch: 282, Loss: 0.6061, Elapsed: 6m41s
+2020-05-29 11:45:29.897226: Epoch: 1, Batch: 283, Loss: 0.6049, Elapsed: 13m5s
+2020-05-29 11:52:17.767299: Epoch: 1, Batch: 284, Loss: 0.5674, Elapsed: 6m47s
+2020-05-29 11:58:59.100664: Epoch: 1, Batch: 285, Loss: 0.5296, Elapsed: 6m41s
+2020-05-29 12:04:26.807946: Epoch: 1, Batch: 286, Loss: 0.5608, Elapsed: 5m27s
+2020-05-29 12:16:11.314034: Epoch: 1, Batch: 287, Loss: 0.6246, Elapsed: 11m44s
+2020-05-29 12:20:06.185017: Epoch: 1, Batch: 288, Loss: 0.5267, Elapsed: 3m54s
+2020-05-29 12:26:31.105931: Epoch: 1, Batch: 289, Loss: 0.6171, Elapsed: 6m24s
+2020-05-29 12:35:16.078446: Epoch: 1, Batch: 290, Loss: 0.5908, Elapsed: 8m44s
+2020-05-29 12:42:13.459277: Epoch: 1, Batch: 291, Loss: 0.5570, Elapsed: 6m57s
+2020-05-29 12:47:58.386840: Epoch: 1, Batch: 292, Loss: 0.5472, Elapsed: 5m44s
+2020-05-29 12:53:26.215895: Epoch: 1, Batch: 293, Loss: 0.5594, Elapsed: 5m27s
+2020-05-29 12:59:58.858909: Epoch: 1, Batch: 294, Loss: 0.5819, Elapsed: 6m32s
+2020-05-29 13:10:35.785307: Epoch: 1, Batch: 295, Loss: 0.6025, Elapsed: 10m36s
+2020-05-29 13:20:14.383645: Epoch: 1, Batch: 296, Loss: 0.6339, Elapsed: 9m38s
+2020-05-29 13:31:40.716468: Epoch: 1, Batch: 297, Loss: 0.6268, Elapsed: 11m26s
+2020-05-29 13:42:03.354833: Epoch: 1, Batch: 298, Loss: 0.6103, Elapsed: 10m22s
+2020-05-29 13:53:42.804073: Epoch: 1, Batch: 299, Loss: 0.6103, Elapsed: 11m39s
+2020-05-29 14:00:44.874279: Epoch: 1, Batch: 300, Loss: 0.5759, Elapsed: 7m2s
+Starting testing the validation set with 200 subgraphs!
+2020-05-29 14:44:08.973245: Validation Test:  Loss: 0.5934,  Acc: 68.8128, AUC: 0.7568, Precision: 0.8094 -- Elapsed: 43m24s
+2020-05-29 14:50:52.905869: Epoch: 1, Batch: 301, Loss: 0.5658, Elapsed: 6m43s
+2020-05-29 14:58:25.988696: Epoch: 1, Batch: 302, Loss: 0.5782, Elapsed: 7m33s
+2020-05-29 15:08:18.142720: Epoch: 1, Batch: 303, Loss: 0.5843, Elapsed: 9m52s
+2020-05-29 15:18:39.760391: Epoch: 1, Batch: 304, Loss: 0.5902, Elapsed: 10m21s
+2020-05-29 15:31:45.771071: Epoch: 1, Batch: 305, Loss: 0.6382, Elapsed: 13m6s
+2020-05-29 15:39:26.360552: Epoch: 1, Batch: 306, Loss: 0.5937, Elapsed: 7m40s
+2020-05-29 15:48:46.019420: Epoch: 1, Batch: 307, Loss: 0.5946, Elapsed: 9m19s
+2020-05-29 15:58:18.201743: Epoch: 1, Batch: 308, Loss: 0.6025, Elapsed: 9m32s
+2020-05-29 16:03:37.061145: Epoch: 1, Batch: 309, Loss: 0.5757, Elapsed: 5m18s
+2020-05-29 16:13:44.351943: Epoch: 1, Batch: 310, Loss: 0.5912, Elapsed: 10m7s
+2020-05-29 16:19:50.646952: Epoch: 1, Batch: 311, Loss: 0.6017, Elapsed: 6m6s
+2020-05-29 16:28:15.118717: Epoch: 1, Batch: 312, Loss: 0.6311, Elapsed: 8m24s
+2020-05-29 16:34:39.055962: Epoch: 1, Batch: 313, Loss: 0.5858, Elapsed: 6m23s
+2020-05-29 16:45:34.296091: Epoch: 1, Batch: 314, Loss: 0.6148, Elapsed: 10m55s
+2020-05-29 16:57:35.085905: Epoch: 1, Batch: 315, Loss: 0.6024, Elapsed: 12m0s
+2020-05-29 17:09:54.577898: Epoch: 1, Batch: 316, Loss: 0.5857, Elapsed: 12m19s
+2020-05-29 17:17:05.121706: Epoch: 1, Batch: 317, Loss: 0.5761, Elapsed: 7m10s
+2020-05-29 17:29:15.400900: Epoch: 1, Batch: 318, Loss: 0.6048, Elapsed: 12m10s
+2020-05-29 17:39:52.910064: Epoch: 1, Batch: 319, Loss: 0.5869, Elapsed: 10m37s
+2020-05-29 17:47:45.304677: Epoch: 1, Batch: 320, Loss: 0.5774, Elapsed: 7m52s
+2020-05-29 17:54:18.474872: Epoch: 1, Batch: 321, Loss: 0.5936, Elapsed: 6m33s
+2020-05-29 18:04:05.349206: Epoch: 1, Batch: 322, Loss: 0.5974, Elapsed: 9m46s
+2020-05-29 18:09:56.253648: Epoch: 1, Batch: 323, Loss: 0.5459, Elapsed: 5m50s
+2020-05-29 18:17:55.645510: Epoch: 1, Batch: 324, Loss: 0.5924, Elapsed: 7m59s
+2020-05-29 18:28:58.636439: Epoch: 1, Batch: 325, Loss: 0.6154, Elapsed: 11m2s
+2020-05-29 18:39:31.571997: Epoch: 1, Batch: 326, Loss: 0.6180, Elapsed: 10m32s
+2020-05-29 18:51:22.871744: Epoch: 1, Batch: 327, Loss: 0.6104, Elapsed: 11m51s
+2020-05-29 18:57:24.150646: Epoch: 1, Batch: 328, Loss: 0.6162, Elapsed: 6m1s
+2020-05-29 19:06:08.168962: Epoch: 1, Batch: 329, Loss: 0.5845, Elapsed: 8m44s
+2020-05-29 19:14:00.214836: Epoch: 1, Batch: 330, Loss: 0.5897, Elapsed: 7m52s
+2020-05-29 19:23:35.591182: Epoch: 1, Batch: 331, Loss: 0.6019, Elapsed: 9m35s
+2020-05-29 19:34:14.227182: Epoch: 1, Batch: 332, Loss: 0.5887, Elapsed: 10m38s
+2020-05-29 19:41:34.355082: Epoch: 1, Batch: 333, Loss: 0.5961, Elapsed: 7m20s
+2020-05-29 19:49:59.132126: Epoch: 1, Batch: 334, Loss: 0.5873, Elapsed: 8m24s
+2020-05-29 19:57:48.583902: Epoch: 1, Batch: 335, Loss: 0.6058, Elapsed: 7m49s
+2020-05-29 20:08:21.359789: Epoch: 1, Batch: 336, Loss: 0.6300, Elapsed: 10m32s
+2020-05-29 20:17:35.111101: Epoch: 1, Batch: 337, Loss: 0.5888, Elapsed: 9m13s
+2020-05-29 20:23:59.080326: Epoch: 1, Batch: 338, Loss: 0.5331, Elapsed: 6m23s
+2020-05-29 20:31:00.720921: Epoch: 1, Batch: 339, Loss: 0.5540, Elapsed: 7m1s
+2020-05-29 20:40:04.026356: Epoch: 1, Batch: 340, Loss: 0.5861, Elapsed: 9m3s
+2020-05-29 20:49:34.439468: Epoch: 1, Batch: 341, Loss: 0.6164, Elapsed: 9m30s
+2020-05-29 21:02:28.177793: Epoch: 1, Batch: 342, Loss: 0.6117, Elapsed: 12m53s
+2020-05-29 21:10:46.939314: Epoch: 1, Batch: 343, Loss: 0.5776, Elapsed: 8m18s
+2020-05-29 21:21:37.262708: Epoch: 1, Batch: 344, Loss: 0.5896, Elapsed: 10m50s
+2020-05-29 21:34:44.935867: Epoch: 1, Batch: 345, Loss: 0.5779, Elapsed: 13m7s
+2020-05-29 21:41:05.008913: Epoch: 1, Batch: 346, Loss: 0.5757, Elapsed: 6m20s
+2020-05-29 21:48:33.239185: Epoch: 1, Batch: 347, Loss: 0.5596, Elapsed: 7m28s
+2020-05-29 22:04:48.079961: Epoch: 1, Batch: 348, Loss: 0.6188, Elapsed: 16m14s
+2020-05-29 22:13:09.287052: Epoch: 1, Batch: 349, Loss: 0.5633, Elapsed: 8m21s
+2020-05-29 22:25:20.566980: Epoch: 1, Batch: 350, Loss: 0.6102, Elapsed: 12m11s
+Starting testing the validation set with 200 subgraphs!
+2020-05-29 23:08:31.206645: Validation Test:  Loss: 0.5859,  Acc: 70.1711, AUC: 0.7683, Precision: 0.8025 -- Elapsed: 43m10s
+2020-05-29 23:23:33.632423: Epoch: 1, Batch: 351, Loss: 0.6078, Elapsed: 15m2s
+2020-05-29 23:29:49.786762: Epoch: 1, Batch: 352, Loss: 0.6197, Elapsed: 6m16s
+2020-05-29 23:37:18.711056: Epoch: 1, Batch: 353, Loss: 0.5648, Elapsed: 7m28s
+2020-05-29 23:46:48.017118: Epoch: 1, Batch: 354, Loss: 0.5621, Elapsed: 9m29s
+2020-05-29 23:57:34.921340: Epoch: 1, Batch: 355, Loss: 0.5796, Elapsed: 10m46s
+2020-05-30 00:13:14.712428: Epoch: 1, Batch: 356, Loss: 0.6310, Elapsed: 15m39s
+2020-05-30 00:20:02.450547: Epoch: 1, Batch: 357, Loss: 0.5478, Elapsed: 6m47s
+2020-05-30 00:24:13.987659: Epoch: 1, Batch: 358, Loss: 0.5350, Elapsed: 4m11s
+2020-05-30 00:40:03.124724: Epoch: 1, Batch: 359, Loss: 0.5989, Elapsed: 15m49s
+2020-05-30 00:47:48.366033: Epoch: 1, Batch: 360, Loss: 0.5742, Elapsed: 7m45s
+2020-05-30 00:57:11.351625: Epoch: 1, Batch: 361, Loss: 0.5710, Elapsed: 9m22s
+2020-05-30 01:01:50.271562: Epoch: 1, Batch: 362, Loss: 0.5846, Elapsed: 4m38s
+2020-05-30 01:08:34.043955: Epoch: 1, Batch: 363, Loss: 0.5414, Elapsed: 6m43s
+2020-05-30 01:11:59.381395: Epoch: 1, Batch: 364, Loss: 0.5011, Elapsed: 3m25s
+2020-05-30 01:21:38.153223: Epoch: 1, Batch: 365, Loss: 0.5926, Elapsed: 9m38s
+2020-05-30 01:37:58.092397: Epoch: 1, Batch: 366, Loss: 0.6133, Elapsed: 16m19s
+2020-05-30 01:45:05.776037: Epoch: 1, Batch: 367, Loss: 0.5520, Elapsed: 7m7s
+2020-05-30 01:50:15.433397: Epoch: 1, Batch: 368, Loss: 0.5431, Elapsed: 5m9s
+2020-05-30 01:58:35.421141: Epoch: 1, Batch: 369, Loss: 0.5674, Elapsed: 8m19s
+2020-05-30 02:04:27.456632: Epoch: 1, Batch: 370, Loss: 0.5709, Elapsed: 5m52s
+2020-05-30 02:13:58.339020: Epoch: 1, Batch: 371, Loss: 0.5703, Elapsed: 9m30s
+2020-05-30 02:18:07.453186: Epoch: 1, Batch: 372, Loss: 0.4603, Elapsed: 4m9s
+2020-05-30 02:26:20.265609: Epoch: 1, Batch: 373, Loss: 0.5511, Elapsed: 8m12s
+2020-05-30 02:35:56.042043: Epoch: 1, Batch: 374, Loss: 0.5770, Elapsed: 9m35s
+2020-05-30 02:46:47.440470: Epoch: 1, Batch: 375, Loss: 0.5713, Elapsed: 10m51s
+2020-05-30 02:55:11.151122: Epoch: 1, Batch: 376, Loss: 0.5704, Elapsed: 8m23s
+2020-05-30 03:06:11.770002: Epoch: 1, Batch: 377, Loss: 0.5971, Elapsed: 11m0s
+2020-05-30 03:16:16.498188: Epoch: 1, Batch: 378, Loss: 0.5927, Elapsed: 10m4s
+2020-05-30 03:23:35.740074: Epoch: 1, Batch: 379, Loss: 0.5599, Elapsed: 7m19s
+2020-05-30 03:31:47.647139: Epoch: 1, Batch: 380, Loss: 0.6075, Elapsed: 8m11s
+2020-05-30 03:42:39.760134: Epoch: 1, Batch: 381, Loss: 0.5804, Elapsed: 10m52s
+2020-05-30 03:49:02.073717: Epoch: 1, Batch: 382, Loss: 0.5026, Elapsed: 6m22s
+2020-05-30 03:56:53.072513: Epoch: 1, Batch: 383, Loss: 0.5477, Elapsed: 7m50s
+2020-05-30 04:04:03.273776: Epoch: 1, Batch: 384, Loss: 0.5697, Elapsed: 7m10s
+2020-05-30 04:12:10.018544: Epoch: 1, Batch: 385, Loss: 0.5633, Elapsed: 8m6s
+2020-05-30 04:20:21.770453: Epoch: 1, Batch: 386, Loss: 0.5558, Elapsed: 8m11s
+2020-05-30 04:27:49.263588: Epoch: 1, Batch: 387, Loss: 0.5662, Elapsed: 7m27s
+2020-05-30 04:32:31.438733: Epoch: 1, Batch: 388, Loss: 0.5084, Elapsed: 4m42s
+2020-05-30 04:41:51.411847: Epoch: 1, Batch: 389, Loss: 0.5904, Elapsed: 9m19s
+2020-05-30 04:48:22.252700: Epoch: 1, Batch: 390, Loss: 0.5672, Elapsed: 6m30s
+2020-05-30 04:55:28.269305: Epoch: 1, Batch: 391, Loss: 0.5473, Elapsed: 7m6s
+2020-05-30 05:03:10.136166: Epoch: 1, Batch: 392, Loss: 0.5451, Elapsed: 7m41s
+2020-05-30 05:15:34.805337: Epoch: 1, Batch: 393, Loss: 0.6184, Elapsed: 12m24s
+2020-05-30 05:24:31.741357: Epoch: 1, Batch: 394, Loss: 0.5846, Elapsed: 8m56s
+2020-05-30 05:30:41.877431: Epoch: 1, Batch: 395, Loss: 0.5366, Elapsed: 6m10s
+2020-05-30 05:47:05.709771: Epoch: 1, Batch: 396, Loss: 0.6095, Elapsed: 16m23s
+2020-05-30 05:59:10.494381: Epoch: 1, Batch: 397, Loss: 0.5891, Elapsed: 12m4s
+2020-05-30 06:07:55.375202: Epoch: 1, Batch: 398, Loss: 0.5459, Elapsed: 8m44s
+2020-05-30 06:17:47.606681: Epoch: 1, Batch: 399, Loss: 0.5476, Elapsed: 9m52s
+2020-05-30 06:26:30.760376: Epoch: 1, Batch: 400, Loss: 0.5873, Elapsed: 8m43s
+Starting testing the validation set with 200 subgraphs!
+2020-05-30 07:10:03.852476: Validation Test:  Loss: 0.5784,  Acc: 69.9916, AUC: 0.7655, Precision: 0.8017 -- Elapsed: 43m33s
+2020-05-30 07:15:47.137573: Epoch: 1, Batch: 401, Loss: 0.5250, Elapsed: 5m43s
+2020-05-30 07:27:19.199980: Epoch: 1, Batch: 402, Loss: 0.5907, Elapsed: 11m32s
+2020-05-30 07:38:11.309477: Epoch: 1, Batch: 403, Loss: 0.6422, Elapsed: 10m52s
+2020-05-30 07:50:21.229070: Epoch: 1, Batch: 404, Loss: 0.5834, Elapsed: 12m9s
+2020-05-30 08:02:07.573149: Epoch: 1, Batch: 405, Loss: 0.6394, Elapsed: 11m46s
+2020-05-30 08:09:57.967419: Epoch: 1, Batch: 406, Loss: 0.6353, Elapsed: 7m50s
+2020-05-30 08:21:33.073887: Epoch: 1, Batch: 407, Loss: 0.5692, Elapsed: 11m35s
+2020-05-30 08:30:53.202625: Epoch: 1, Batch: 408, Loss: 0.6065, Elapsed: 9m20s
+2020-05-30 08:36:58.391847: Epoch: 1, Batch: 409, Loss: 0.5564, Elapsed: 6m5s
+2020-05-30 08:47:39.694558: Epoch: 1, Batch: 410, Loss: 0.6115, Elapsed: 10m41s
+2020-05-30 08:55:32.346551: Epoch: 1, Batch: 411, Loss: 0.5914, Elapsed: 7m52s
+2020-05-30 09:09:03.055218: Epoch: 1, Batch: 412, Loss: 0.5734, Elapsed: 13m30s
+2020-05-30 09:18:01.404617: Epoch: 1, Batch: 413, Loss: 0.5663, Elapsed: 8m58s
+2020-05-30 09:27:11.773144: Epoch: 1, Batch: 414, Loss: 0.6055, Elapsed: 9m10s
+2020-05-30 09:37:57.810225: Epoch: 1, Batch: 415, Loss: 0.6054, Elapsed: 10m46s
+2020-05-30 09:49:59.702540: Epoch: 1, Batch: 416, Loss: 0.5279, Elapsed: 12m1s
+2020-05-30 10:03:17.065610: Epoch: 1, Batch: 417, Loss: 0.6209, Elapsed: 13m17s
+2020-05-30 10:10:19.734116: Epoch: 1, Batch: 418, Loss: 0.5621, Elapsed: 7m2s
+2020-05-30 10:16:30.696412: Epoch: 1, Batch: 419, Loss: 0.5800, Elapsed: 6m10s
+2020-05-30 10:26:04.571928: Epoch: 1, Batch: 420, Loss: 0.5895, Elapsed: 9m33s
+2020-05-30 10:33:14.571596: Epoch: 1, Batch: 421, Loss: 0.5631, Elapsed: 7m9s
+2020-05-30 10:42:59.822656: Epoch: 1, Batch: 422, Loss: 0.5836, Elapsed: 9m45s
+2020-05-30 10:59:01.801703: Epoch: 1, Batch: 423, Loss: 0.5919, Elapsed: 16m1s
+2020-05-30 11:06:56.022049: Epoch: 1, Batch: 424, Loss: 0.5741, Elapsed: 7m54s
+2020-05-30 11:15:55.835994: Epoch: 1, Batch: 425, Loss: 0.5710, Elapsed: 8m59s
+2020-05-30 11:21:26.350626: Epoch: 1, Batch: 426, Loss: 0.5362, Elapsed: 5m30s
+2020-05-30 11:29:47.185572: Epoch: 1, Batch: 427, Loss: 0.5893, Elapsed: 8m20s
+2020-05-30 11:37:46.494017: Epoch: 1, Batch: 428, Loss: 0.5473, Elapsed: 7m59s
+2020-05-30 11:48:22.013027: Epoch: 1, Batch: 429, Loss: 0.5862, Elapsed: 10m35s
+2020-05-30 11:54:40.075719: Epoch: 1, Batch: 430, Loss: 0.5375, Elapsed: 6m18s
+2020-05-30 12:00:13.990976: Epoch: 1, Batch: 431, Loss: 0.5324, Elapsed: 5m33s
+2020-05-30 12:08:43.859468: Epoch: 1, Batch: 432, Loss: 0.5921, Elapsed: 8m29s
+2020-05-30 12:19:07.789925: Epoch: 1, Batch: 433, Loss: 0.5701, Elapsed: 10m23s
+2020-05-30 12:29:36.382742: Epoch: 1, Batch: 434, Loss: 0.6089, Elapsed: 10m28s
+2020-05-30 12:39:31.634205: Epoch: 1, Batch: 435, Loss: 0.5834, Elapsed: 9m55s
+2020-05-30 12:46:33.059367: Epoch: 1, Batch: 436, Loss: 0.5619, Elapsed: 7m1s
+2020-05-30 12:55:20.536906: Epoch: 1, Batch: 437, Loss: 0.5764, Elapsed: 8m47s
+2020-05-30 13:04:31.731364: Epoch: 1, Batch: 438, Loss: 0.6085, Elapsed: 9m11s
+2020-05-30 13:16:57.239293: Epoch: 1, Batch: 439, Loss: 0.5856, Elapsed: 12m25s
+2020-05-30 13:30:24.635464: Epoch: 1, Batch: 440, Loss: 0.5714, Elapsed: 13m27s
+2020-05-30 13:38:56.473529: Epoch: 1, Batch: 441, Loss: 0.5759, Elapsed: 8m31s
+2020-05-30 13:48:15.596144: Epoch: 1, Batch: 442, Loss: 0.5604, Elapsed: 9m19s
+2020-05-30 13:53:59.725536: Epoch: 1, Batch: 443, Loss: 0.5699, Elapsed: 5m44s
+2020-05-30 14:01:23.419259: Epoch: 1, Batch: 444, Loss: 0.5294, Elapsed: 7m23s
+2020-05-30 14:10:55.607697: Epoch: 1, Batch: 445, Loss: 0.5671, Elapsed: 9m32s
+2020-05-30 14:16:56.252309: Epoch: 1, Batch: 446, Loss: 0.5226, Elapsed: 6m0s
+2020-05-30 14:23:16.743444: Epoch: 1, Batch: 447, Loss: 0.5127, Elapsed: 6m20s
+2020-05-30 14:35:33.477252: Epoch: 1, Batch: 448, Loss: 0.5847, Elapsed: 12m16s
+2020-05-30 14:46:16.796348: Epoch: 1, Batch: 449, Loss: 0.5902, Elapsed: 10m43s
+2020-05-30 14:59:50.304455: Epoch: 1, Batch: 450, Loss: 0.6051, Elapsed: 13m33s
+Starting testing the validation set with 200 subgraphs!
+2020-05-30 15:43:21.313981: Validation Test:  Loss: 0.5774,  Acc: 71.3945, AUC: 0.7753, Precision: 0.7990 -- Elapsed: 43m31s
+2020-05-30 15:53:28.801702: Epoch: 1, Batch: 451, Loss: 0.5721, Elapsed: 10m7s
+2020-05-30 16:00:44.351562: Epoch: 1, Batch: 452, Loss: 0.5245, Elapsed: 7m15s
+2020-05-30 16:08:19.097512: Epoch: 1, Batch: 453, Loss: 0.5427, Elapsed: 7m34s
+2020-05-30 16:16:26.736825: Epoch: 1, Batch: 454, Loss: 0.5940, Elapsed: 8m7s
+2020-05-30 16:25:03.206417: Epoch: 1, Batch: 455, Loss: 0.5569, Elapsed: 8m36s
+2020-05-30 16:30:39.072457: Epoch: 1, Batch: 456, Loss: 0.4876, Elapsed: 5m35s
+2020-05-30 16:42:47.082841: Epoch: 1, Batch: 457, Loss: 0.5772, Elapsed: 12m8s
+2020-05-30 16:52:34.532413: Epoch: 1, Batch: 458, Loss: 0.5647, Elapsed: 9m47s
+2020-05-30 17:07:28.995251: Epoch: 1, Batch: 459, Loss: 0.5796, Elapsed: 14m54s
+2020-05-30 17:15:08.354265: Epoch: 1, Batch: 460, Loss: 0.5604, Elapsed: 7m39s
+2020-05-30 17:31:25.045020: Epoch: 1, Batch: 461, Loss: 0.5569, Elapsed: 16m16s
+2020-05-30 17:41:10.295915: Epoch: 1, Batch: 462, Loss: 0.5809, Elapsed: 9m45s
+2020-05-30 17:50:22.863121: Epoch: 1, Batch: 463, Loss: 0.5627, Elapsed: 9m12s
+2020-05-30 17:58:41.221748: Epoch: 1, Batch: 464, Loss: 0.5495, Elapsed: 8m18s
+2020-05-30 18:05:20.252472: Epoch: 1, Batch: 465, Loss: 0.5592, Elapsed: 6m39s
+2020-05-30 18:11:31.262750: Epoch: 1, Batch: 466, Loss: 0.5185, Elapsed: 6m11s
+2020-05-30 18:22:18.395630: Epoch: 1, Batch: 467, Loss: 0.5685, Elapsed: 10m47s
+2020-05-30 18:29:36.362203: Epoch: 1, Batch: 468, Loss: 0.5412, Elapsed: 7m17s
+2020-05-30 18:35:38.021527: Epoch: 1, Batch: 469, Loss: 0.5699, Elapsed: 6m1s
+2020-05-30 18:42:00.561938: Epoch: 1, Batch: 470, Loss: 0.5611, Elapsed: 6m22s
+2020-05-30 18:51:07.279231: Epoch: 1, Batch: 471, Loss: 0.5923, Elapsed: 9m6s
+2020-05-30 19:00:12.500487: Epoch: 1, Batch: 472, Loss: 0.5671, Elapsed: 9m5s
+2020-05-30 19:10:33.597435: Epoch: 1, Batch: 473, Loss: 0.5522, Elapsed: 10m21s
+2020-05-30 19:25:06.557090: Epoch: 1, Batch: 474, Loss: 0.5970, Elapsed: 14m32s
+2020-05-30 19:33:27.893841: Epoch: 1, Batch: 475, Loss: 0.5286, Elapsed: 8m21s
+2020-05-30 19:43:32.695580: Epoch: 1, Batch: 476, Loss: 0.5528, Elapsed: 10m4s
+2020-05-30 19:50:06.678132: Epoch: 1, Batch: 477, Loss: 0.5351, Elapsed: 6m33s
+2020-05-30 19:59:55.328785: Epoch: 1, Batch: 478, Loss: 0.5594, Elapsed: 9m48s
+2020-05-30 20:12:38.060868: Epoch: 1, Batch: 479, Loss: 0.5566, Elapsed: 12m42s
+2020-05-30 20:18:57.457466: Epoch: 1, Batch: 480, Loss: 0.5372, Elapsed: 6m19s
+2020-05-30 20:25:03.228733: Epoch: 1, Batch: 481, Loss: 0.5412, Elapsed: 6m5s
+2020-05-30 20:31:29.628368: Epoch: 1, Batch: 482, Loss: 0.5039, Elapsed: 6m26s
+2020-05-30 20:39:28.588036: Epoch: 1, Batch: 483, Loss: 0.5650, Elapsed: 7m58s
+2020-05-30 20:47:05.795841: Epoch: 1, Batch: 484, Loss: 0.5568, Elapsed: 7m37s
+2020-05-30 20:55:23.134355: Epoch: 1, Batch: 485, Loss: 0.5629, Elapsed: 8m17s
+2020-05-30 21:03:35.276705: Epoch: 1, Batch: 486, Loss: 0.5523, Elapsed: 8m12s
+2020-05-30 21:16:27.671547: Epoch: 1, Batch: 487, Loss: 0.5637, Elapsed: 12m52s
+2020-05-30 21:28:40.394237: Epoch: 1, Batch: 488, Loss: 0.5683, Elapsed: 12m12s
+2020-05-30 21:34:27.605931: Epoch: 1, Batch: 489, Loss: 0.5148, Elapsed: 5m47s
+2020-05-30 21:43:46.700029: Epoch: 1, Batch: 490, Loss: 0.5911, Elapsed: 9m19s
+2020-05-30 21:51:58.237737: Epoch: 1, Batch: 491, Loss: 0.5228, Elapsed: 8m11s
+2020-05-30 22:00:06.678514: Epoch: 1, Batch: 492, Loss: 0.5139, Elapsed: 8m8s
+2020-05-30 22:09:33.166651: Epoch: 1, Batch: 493, Loss: 0.5926, Elapsed: 9m26s
+2020-05-30 22:16:09.135664: Epoch: 1, Batch: 494, Loss: 0.5502, Elapsed: 6m35s
+2020-05-30 22:21:52.094997: Epoch: 1, Batch: 495, Loss: 0.5455, Elapsed: 5m42s
+2020-05-30 22:30:37.704019: Epoch: 1, Batch: 496, Loss: 0.5452, Elapsed: 8m45s
+2020-05-30 22:37:03.045965: Epoch: 1, Batch: 497, Loss: 0.5320, Elapsed: 6m25s
+2020-05-30 22:45:15.717032: Epoch: 1, Batch: 498, Loss: 0.5342, Elapsed: 8m12s
+2020-05-30 22:53:29.669372: Epoch: 1, Batch: 499, Loss: 0.5714, Elapsed: 8m13s
+2020-05-30 23:07:09.638000: Epoch: 1, Batch: 500, Loss: 0.5849, Elapsed: 13m39s
+Starting testing the validation set with 200 subgraphs!
+2020-05-30 23:50:02.702573: Validation Test:  Loss: 0.5537,  Acc: 71.5944, AUC: 0.7867, Precision: 0.8309 -- Elapsed: 42m53s
+2020-05-31 00:01:04.528345: Epoch: 1, Batch: 501, Loss: 0.5485, Elapsed: 11m1s
+2020-05-31 00:18:45.269453: Epoch: 1, Batch: 502, Loss: 0.5974, Elapsed: 17m40s
+2020-05-31 00:25:13.025003: Epoch: 1, Batch: 503, Loss: 0.5117, Elapsed: 6m27s
+2020-05-31 00:37:05.556894: Epoch: 1, Batch: 504, Loss: 0.5801, Elapsed: 11m52s
+2020-05-31 00:49:11.281571: Epoch: 1, Batch: 505, Loss: 0.5855, Elapsed: 12m5s
+2020-05-31 00:55:44.812464: Epoch: 1, Batch: 506, Loss: 0.5244, Elapsed: 6m33s
+2020-05-31 01:05:29.921038: Epoch: 1, Batch: 507, Loss: 0.5987, Elapsed: 9m45s
+2020-05-31 01:19:07.203661: Epoch: 1, Batch: 508, Loss: 0.5867, Elapsed: 13m37s
+2020-05-31 01:31:12.743897: Epoch: 1, Batch: 509, Loss: 0.5462, Elapsed: 12m5s
+2020-05-31 01:36:03.318486: Epoch: 1, Batch: 510, Loss: 0.4669, Elapsed: 4m50s
+2020-05-31 01:42:45.427371: Epoch: 1, Batch: 511, Loss: 0.5467, Elapsed: 6m42s
+2020-05-31 01:51:30.734573: Epoch: 1, Batch: 512, Loss: 0.5792, Elapsed: 8m45s
+2020-05-31 02:02:05.541565: Epoch: 1, Batch: 513, Loss: 0.5832, Elapsed: 10m34s
+2020-05-31 02:16:57.799323: Epoch: 1, Batch: 514, Loss: 0.5773, Elapsed: 14m52s
+2020-05-31 02:23:47.805895: Epoch: 1, Batch: 515, Loss: 0.5434, Elapsed: 6m49s
+2020-05-31 02:39:07.917584: Epoch: 1, Batch: 516, Loss: 0.5971, Elapsed: 15m20s
+2020-05-31 02:43:45.827625: Epoch: 1, Batch: 517, Loss: 0.4513, Elapsed: 4m37s
+2020-05-31 02:50:16.913623: Epoch: 1, Batch: 518, Loss: 0.5623, Elapsed: 6m31s
+2020-05-31 02:55:58.194237: Epoch: 1, Batch: 519, Loss: 0.5336, Elapsed: 5m41s
+2020-05-31 03:06:36.932912: Epoch: 1, Batch: 520, Loss: 0.5763, Elapsed: 10m38s
+2020-05-31 03:12:44.488144: Epoch: 1, Batch: 521, Loss: 0.5392, Elapsed: 6m7s
+2020-05-31 03:20:42.005900: Epoch: 1, Batch: 522, Loss: 0.5015, Elapsed: 7m57s
+2020-05-31 03:29:05.883339: Epoch: 1, Batch: 523, Loss: 0.5717, Elapsed: 8m23s
+2020-05-31 03:38:46.634382: Epoch: 1, Batch: 524, Loss: 0.5530, Elapsed: 9m40s
+2020-05-31 03:56:08.535973: Epoch: 1, Batch: 525, Loss: 0.6108, Elapsed: 17m21s
+2020-05-31 04:08:16.328742: Epoch: 1, Batch: 526, Loss: 0.5611, Elapsed: 12m7s
+2020-05-31 04:13:52.599738: Epoch: 1, Batch: 527, Loss: 0.5537, Elapsed: 5m36s
+2020-05-31 04:23:56.912930: Epoch: 1, Batch: 528, Loss: 0.5390, Elapsed: 10m4s
+2020-05-31 04:28:41.702883: Epoch: 1, Batch: 529, Loss: 0.5107, Elapsed: 4m44s
+2020-05-31 04:36:41.232845: Epoch: 1, Batch: 530, Loss: 0.5586, Elapsed: 7m59s
+2020-05-31 04:43:42.251942: Epoch: 1, Batch: 531, Loss: 0.4850, Elapsed: 7m1s
+2020-05-31 04:54:53.100407: Epoch: 1, Batch: 532, Loss: 0.5691, Elapsed: 11m10s
+2020-05-31 05:05:06.354379: Epoch: 1, Batch: 533, Loss: 0.5793, Elapsed: 10m13s
+2020-05-31 05:23:40.614585: Epoch: 1, Batch: 534, Loss: 0.5847, Elapsed: 18m34s
+2020-05-31 05:36:06.885267: Epoch: 1, Batch: 535, Loss: 0.5391, Elapsed: 12m26s
+2020-05-31 05:47:18.205132: Epoch: 1, Batch: 536, Loss: 0.5672, Elapsed: 11m11s
+2020-05-31 05:54:27.613568: Epoch: 1, Batch: 537, Loss: 0.5126, Elapsed: 7m9s
+2020-05-31 06:01:28.566104: Epoch: 1, Batch: 538, Loss: 0.5013, Elapsed: 7m0s
+2020-05-31 06:08:43.115261: Epoch: 1, Batch: 539, Loss: 0.5283, Elapsed: 7m14s
+2020-05-31 06:23:26.476447: Epoch: 1, Batch: 540, Loss: 0.5629, Elapsed: 14m43s
+2020-05-31 06:29:44.217900: Epoch: 1, Batch: 541, Loss: 0.5003, Elapsed: 6m17s
+2020-05-31 06:39:27.677082: Epoch: 1, Batch: 542, Loss: 0.5918, Elapsed: 9m43s
+2020-05-31 06:44:36.125548: Epoch: 1, Batch: 543, Loss: 0.4885, Elapsed: 5m8s
+2020-05-31 06:54:18.671684: Epoch: 1, Batch: 544, Loss: 0.5556, Elapsed: 9m42s
+2020-05-31 07:01:29.219568: Epoch: 1, Batch: 545, Loss: 0.5512, Elapsed: 7m10s
+2020-05-31 07:09:06.310592: Epoch: 1, Batch: 546, Loss: 0.5590, Elapsed: 7m37s
+2020-05-31 07:19:29.291883: Epoch: 1, Batch: 547, Loss: 0.5546, Elapsed: 10m22s
+2020-05-31 07:28:22.974821: Epoch: 1, Batch: 548, Loss: 0.5063, Elapsed: 8m53s
+2020-05-31 07:35:08.412225: Epoch: 1, Batch: 549, Loss: 0.4520, Elapsed: 6m45s
+2020-05-31 07:42:15.563094: Epoch: 1, Batch: 550, Loss: 0.5078, Elapsed: 7m7s
+Starting testing the validation set with 200 subgraphs!
+2020-05-31 08:25:22.401828: Validation Test:  Loss: 0.5420,  Acc: 71.7861, AUC: 0.8007, Precision: 0.8506 -- Elapsed: 43m6s
+2020-05-31 08:34:32.135430: Epoch: 1, Batch: 551, Loss: 0.5471, Elapsed: 9m9s
+2020-05-31 08:42:19.343101: Epoch: 1, Batch: 552, Loss: 0.5190, Elapsed: 7m47s
+2020-05-31 08:56:05.332338: Epoch: 1, Batch: 553, Loss: 0.5444, Elapsed: 13m45s
+2020-05-31 09:03:03.752321: Epoch: 1, Batch: 554, Loss: 0.5236, Elapsed: 6m58s
+2020-05-31 09:11:16.429870: Epoch: 1, Batch: 555, Loss: 0.5333, Elapsed: 8m12s
+2020-05-31 09:22:14.825503: Epoch: 1, Batch: 556, Loss: 0.5485, Elapsed: 10m58s
+2020-05-31 09:30:09.528601: Epoch: 1, Batch: 557, Loss: 0.5275, Elapsed: 7m54s
+2020-05-31 09:36:22.549270: Epoch: 1, Batch: 558, Loss: 0.5166, Elapsed: 6m13s
+2020-05-31 09:41:13.209814: Epoch: 1, Batch: 559, Loss: 0.4913, Elapsed: 4m50s
+2020-05-31 09:46:58.256391: Epoch: 1, Batch: 560, Loss: 0.5230, Elapsed: 5m45s
+2020-05-31 09:57:48.506418: Epoch: 1, Batch: 561, Loss: 0.5743, Elapsed: 10m50s
+2020-05-31 10:03:11.612466: Epoch: 1, Batch: 562, Loss: 0.5186, Elapsed: 5m23s
+2020-05-31 10:12:46.919433: Epoch: 1, Batch: 563, Loss: 0.5343, Elapsed: 9m35s
+2020-05-31 10:20:14.808070: Epoch: 1, Batch: 564, Loss: 0.5279, Elapsed: 7m27s
+2020-05-31 10:25:50.340251: Epoch: 1, Batch: 565, Loss: 0.5056, Elapsed: 5m35s
+2020-05-31 10:35:54.245352: Epoch: 1, Batch: 566, Loss: 0.5493, Elapsed: 10m3s
+2020-05-31 10:42:58.752693: Epoch: 1, Batch: 567, Loss: 0.5579, Elapsed: 7m4s
+2020-05-31 10:55:45.638552: Epoch: 1, Batch: 568, Loss: 0.5910, Elapsed: 12m46s
+2020-05-31 11:04:47.639645: Epoch: 1, Batch: 569, Loss: 0.5488, Elapsed: 9m1s
+2020-05-31 11:16:35.078796: Epoch: 1, Batch: 570, Loss: 0.5476, Elapsed: 11m47s
+2020-05-31 11:26:29.038915: Epoch: 1, Batch: 571, Loss: 0.5291, Elapsed: 9m53s
+2020-05-31 11:31:29.822697: Epoch: 1, Batch: 572, Loss: 0.5026, Elapsed: 5m0s
+2020-05-31 11:42:51.233898: Epoch: 1, Batch: 573, Loss: 0.5479, Elapsed: 11m21s
+2020-05-31 11:50:32.768729: Epoch: 1, Batch: 574, Loss: 0.5459, Elapsed: 7m41s
+2020-05-31 11:59:03.013380: Epoch: 1, Batch: 575, Loss: 0.5402, Elapsed: 8m30s
+2020-05-31 12:08:40.991454: Epoch: 1, Batch: 576, Loss: 0.5469, Elapsed: 9m37s
+2020-05-31 12:18:37.334760: Epoch: 1, Batch: 577, Loss: 0.5404, Elapsed: 9m56s
+2020-05-31 12:31:14.565697: Epoch: 1, Batch: 578, Loss: 0.5508, Elapsed: 12m37s
+2020-05-31 12:39:19.206992: Epoch: 1, Batch: 579, Loss: 0.5225, Elapsed: 8m4s
+2020-05-31 12:47:26.110812: Epoch: 1, Batch: 580, Loss: 0.5207, Elapsed: 8m6s
+2020-05-31 12:52:55.090553: Epoch: 1, Batch: 581, Loss: 0.4784, Elapsed: 5m28s
+2020-05-31 12:59:46.604291: Epoch: 1, Batch: 582, Loss: 0.5290, Elapsed: 6m51s
+2020-05-31 13:08:56.578566: Epoch: 1, Batch: 583, Loss: 0.5503, Elapsed: 9m9s
+2020-05-31 13:20:59.715591: Epoch: 1, Batch: 584, Loss: 0.5755, Elapsed: 12m3s
+2020-05-31 13:34:28.174708: Epoch: 1, Batch: 585, Loss: 0.5621, Elapsed: 13m28s
+2020-05-31 13:44:36.713953: Epoch: 1, Batch: 586, Loss: 0.5684, Elapsed: 10m8s
+2020-05-31 13:51:36.650908: Epoch: 1, Batch: 587, Loss: 0.5074, Elapsed: 6m59s
+2020-05-31 14:04:53.154736: Epoch: 1, Batch: 588, Loss: 0.5516, Elapsed: 13m16s
+2020-05-31 14:12:25.458181: Epoch: 1, Batch: 589, Loss: 0.4738, Elapsed: 7m32s
+2020-05-31 14:21:09.196567: Epoch: 1, Batch: 590, Loss: 0.5278, Elapsed: 8m43s
+2020-05-31 14:41:19.753910: Epoch: 1, Batch: 591, Loss: 0.5549, Elapsed: 20m10s
+2020-05-31 14:49:42.730238: Epoch: 1, Batch: 592, Loss: 0.5134, Elapsed: 8m22s
+2020-05-31 14:57:29.886799: Epoch: 1, Batch: 593, Loss: 0.5020, Elapsed: 7m47s
+2020-05-31 15:04:47.831106: Epoch: 1, Batch: 594, Loss: 0.5390, Elapsed: 7m17s
+2020-05-31 15:14:36.111128: Epoch: 1, Batch: 595, Loss: 0.5474, Elapsed: 9m48s
+2020-05-31 15:23:04.442121: Epoch: 1, Batch: 596, Loss: 0.5255, Elapsed: 8m28s
+2020-05-31 15:28:10.726255: Epoch: 1, Batch: 597, Loss: 0.5508, Elapsed: 5m6s
+2020-05-31 15:35:11.154909: Epoch: 1, Batch: 598, Loss: 0.4954, Elapsed: 7m0s
+2020-05-31 15:43:13.755492: Epoch: 1, Batch: 599, Loss: 0.5453, Elapsed: 8m2s
+2020-05-31 15:49:41.078195: Epoch: 1, Batch: 600, Loss: 0.5330, Elapsed: 6m27s
+Starting testing the validation set with 200 subgraphs!
+2020-05-31 16:33:25.506330: Validation Test:  Loss: 0.5365,  Acc: 71.9555, AUC: 0.8060, Precision: 0.8581 -- Elapsed: 43m44s
+2020-05-31 16:41:48.746933: Epoch: 1, Batch: 601, Loss: 0.5696, Elapsed: 8m23s
+2020-05-31 16:45:30.293794: Epoch: 1, Batch: 602, Loss: 0.4677, Elapsed: 3m41s
+2020-05-31 16:54:43.021923: Epoch: 1, Batch: 603, Loss: 0.5191, Elapsed: 9m12s
+2020-05-31 17:03:16.621454: Epoch: 1, Batch: 604, Loss: 0.5108, Elapsed: 8m33s
+2020-05-31 17:14:08.538540: Epoch: 1, Batch: 605, Loss: 0.5362, Elapsed: 10m51s
+2020-05-31 17:22:20.699748: Epoch: 1, Batch: 606, Loss: 0.5367, Elapsed: 8m12s
+2020-05-31 17:30:39.318216: Epoch: 1, Batch: 607, Loss: 0.4977, Elapsed: 8m18s
+2020-05-31 17:39:22.219016: Epoch: 1, Batch: 608, Loss: 0.5452, Elapsed: 8m42s
+2020-05-31 17:48:20.622082: Epoch: 1, Batch: 609, Loss: 0.5121, Elapsed: 8m58s
+2020-05-31 17:58:16.013679: Epoch: 1, Batch: 610, Loss: 0.5236, Elapsed: 9m55s
+2020-05-31 18:04:47.573518: Epoch: 1, Batch: 611, Loss: 0.4740, Elapsed: 6m31s
+2020-05-31 18:14:54.716657: Epoch: 1, Batch: 612, Loss: 0.5208, Elapsed: 10m7s
+2020-05-31 18:22:11.705077: Epoch: 1, Batch: 613, Loss: 0.5188, Elapsed: 7m16s
+2020-05-31 18:28:22.021447: Epoch: 1, Batch: 614, Loss: 0.4481, Elapsed: 6m10s
+2020-05-31 18:37:24.161658: Epoch: 1, Batch: 615, Loss: 0.5453, Elapsed: 9m2s
+2020-05-31 18:52:14.318648: Epoch: 1, Batch: 616, Loss: 0.5625, Elapsed: 14m50s
+2020-05-31 18:58:37.461983: Epoch: 1, Batch: 617, Loss: 0.4493, Elapsed: 6m23s
+2020-05-31 19:15:04.635720: Epoch: 1, Batch: 618, Loss: 0.5635, Elapsed: 16m27s
+2020-05-31 19:26:28.983093: Epoch: 1, Batch: 619, Loss: 0.5445, Elapsed: 11m24s
+2020-05-31 19:31:15.763304: Epoch: 1, Batch: 620, Loss: 0.4881, Elapsed: 4m46s
+2020-05-31 19:45:13.281743: Epoch: 1, Batch: 621, Loss: 0.5299, Elapsed: 13m57s
+2020-05-31 19:53:32.218298: Epoch: 1, Batch: 622, Loss: 0.5114, Elapsed: 8m18s
+2020-05-31 20:02:26.714340: Epoch: 1, Batch: 623, Loss: 0.5060, Elapsed: 8m54s
+2020-05-31 20:13:35.983083: Epoch: 1, Batch: 624, Loss: 0.5396, Elapsed: 11m9s
+2020-05-31 20:20:40.660825: Epoch: 1, Batch: 625, Loss: 0.5139, Elapsed: 7m4s
+2020-05-31 20:27:16.021197: Epoch: 1, Batch: 626, Loss: 0.4559, Elapsed: 6m35s
+2020-05-31 20:38:02.681370: Epoch: 1, Batch: 627, Loss: 0.5610, Elapsed: 10m46s
+2020-05-31 20:55:28.098075: Epoch: 1, Batch: 628, Loss: 0.5547, Elapsed: 17m25s
+2020-05-31 21:01:12.129947: Epoch: 1, Batch: 629, Loss: 0.4852, Elapsed: 5m44s
+2020-05-31 21:08:42.924833: Epoch: 1, Batch: 630, Loss: 0.4825, Elapsed: 7m30s
+2020-05-31 21:17:38.343824: Epoch: 1, Batch: 631, Loss: 0.5228, Elapsed: 8m55s
+2020-05-31 21:26:04.701092: Epoch: 1, Batch: 632, Loss: 0.5489, Elapsed: 8m26s
+2020-05-31 21:30:39.275826: Epoch: 1, Batch: 633, Loss: 0.4489, Elapsed: 4m34s
+2020-05-31 21:35:45.229754: Epoch: 1, Batch: 634, Loss: 0.3929, Elapsed: 5m5s
+2020-05-31 21:46:29.722493: Epoch: 1, Batch: 635, Loss: 0.5407, Elapsed: 10m44s
+2020-05-31 21:58:25.966747: Epoch: 1, Batch: 636, Loss: 0.5637, Elapsed: 11m56s
+2020-05-31 22:07:26.927450: Epoch: 1, Batch: 637, Loss: 0.5293, Elapsed: 9m0s
+2020-05-31 22:19:34.918156: Epoch: 1, Batch: 638, Loss: 0.5411, Elapsed: 12m7s
+2020-05-31 22:28:49.541360: Epoch: 1, Batch: 639, Loss: 0.5261, Elapsed: 9m14s
+2020-05-31 22:35:15.154377: Epoch: 1, Batch: 640, Loss: 0.4794, Elapsed: 6m25s
+2020-05-31 22:45:24.887039: Epoch: 1, Batch: 641, Loss: 0.5572, Elapsed: 10m9s
+2020-05-31 22:54:00.736613: Epoch: 1, Batch: 642, Loss: 0.5141, Elapsed: 8m35s
+2020-05-31 23:01:25.616593: Epoch: 1, Batch: 643, Loss: 0.5278, Elapsed: 7m24s
+2020-05-31 23:12:05.248563: Epoch: 1, Batch: 644, Loss: 0.5055, Elapsed: 10m39s
+2020-05-31 23:20:55.516289: Epoch: 1, Batch: 645, Loss: 0.5012, Elapsed: 8m50s
+2020-05-31 23:27:18.405902: Epoch: 1, Batch: 646, Loss: 0.4864, Elapsed: 6m22s
+2020-05-31 23:35:11.372147: Epoch: 1, Batch: 647, Loss: 0.5285, Elapsed: 7m52s
+2020-05-31 23:42:17.691123: Epoch: 1, Batch: 648, Loss: 0.4875, Elapsed: 7m6s
+2020-05-31 23:53:04.270550: Epoch: 1, Batch: 649, Loss: 0.5341, Elapsed: 10m46s
+2020-06-01 00:02:44.121544: Epoch: 1, Batch: 650, Loss: 0.5403, Elapsed: 9m39s
+Starting testing the validation set with 200 subgraphs!
+2020-06-01 00:45:57.246059: Validation Test:  Loss: 0.5275,  Acc: 72.1219, AUC: 0.8133, Precision: 0.8668 -- Elapsed: 43m13s
+2020-06-01 00:54:07.293619: Epoch: 1, Batch: 651, Loss: 0.5123, Elapsed: 8m10s
+2020-06-01 01:00:46.993010: Epoch: 1, Batch: 652, Loss: 0.4900, Elapsed: 6m39s
+2020-06-01 01:08:15.806637: Epoch: 1, Batch: 653, Loss: 0.5020, Elapsed: 7m28s
+2020-06-01 01:17:23.560713: Epoch: 1, Batch: 654, Loss: 0.5342, Elapsed: 9m7s
+2020-06-01 01:25:36.383158: Epoch: 1, Batch: 655, Loss: 0.4587, Elapsed: 8m12s
+2020-06-01 01:31:46.111299: Epoch: 1, Batch: 656, Loss: 0.4909, Elapsed: 6m9s
+2020-06-01 01:41:04.903724: Epoch: 1, Batch: 657, Loss: 0.5203, Elapsed: 9m18s
+2020-06-01 01:49:33.782501: Epoch: 1, Batch: 658, Loss: 0.5398, Elapsed: 8m28s
+2020-06-01 01:59:31.534255: Epoch: 1, Batch: 659, Loss: 0.5472, Elapsed: 9m57s
+2020-06-01 02:08:01.530264: Epoch: 1, Batch: 660, Loss: 0.5141, Elapsed: 8m29s
+2020-06-01 02:15:23.633087: Epoch: 1, Batch: 661, Loss: 0.4878, Elapsed: 7m22s
+2020-06-01 02:26:23.359786: Epoch: 1, Batch: 662, Loss: 0.5429, Elapsed: 10m59s
+2020-06-01 02:32:49.289113: Epoch: 1, Batch: 663, Loss: 0.4851, Elapsed: 6m25s
+2020-06-01 02:38:48.719844: Epoch: 1, Batch: 664, Loss: 0.5140, Elapsed: 5m59s
+2020-06-01 02:48:55.011806: Epoch: 1, Batch: 665, Loss: 0.5179, Elapsed: 10m6s
+2020-06-01 02:55:14.511044: Epoch: 1, Batch: 666, Loss: 0.5102, Elapsed: 6m19s
+2020-06-01 03:08:21.047641: Epoch: 1, Batch: 667, Loss: 0.5542, Elapsed: 13m6s
+2020-06-01 03:13:31.647737: Epoch: 1, Batch: 668, Loss: 0.4176, Elapsed: 5m10s
+2020-06-01 03:28:02.697782: Epoch: 1, Batch: 669, Loss: 0.6312, Elapsed: 14m31s
+2020-06-01 03:37:30.860558: Epoch: 1, Batch: 670, Loss: 0.5429, Elapsed: 9m28s
+2020-06-01 03:48:47.715207: Epoch: 1, Batch: 671, Loss: 0.5368, Elapsed: 11m16s
+2020-06-01 03:58:30.446528: Epoch: 1, Batch: 672, Loss: 0.5828, Elapsed: 9m42s
+2020-06-01 04:04:17.520927: Epoch: 1, Batch: 673, Loss: 0.5204, Elapsed: 5m47s
+2020-06-01 04:18:25.460352: Epoch: 1, Batch: 674, Loss: 0.5516, Elapsed: 14m7s
+2020-06-01 04:24:59.807854: Epoch: 1, Batch: 675, Loss: 0.5119, Elapsed: 6m34s
+2020-06-01 04:35:52.569750: Epoch: 1, Batch: 676, Loss: 0.5511, Elapsed: 10m52s
+2020-06-01 04:47:03.412650: Epoch: 1, Batch: 677, Loss: 0.5272, Elapsed: 11m10s
+2020-06-01 04:58:21.386955: Epoch: 1, Batch: 678, Loss: 0.5562, Elapsed: 11m17s
+2020-06-01 05:04:37.810822: Epoch: 1, Batch: 679, Loss: 0.4753, Elapsed: 6m16s
+2020-06-01 05:16:38.738534: Epoch: 1, Batch: 680, Loss: 0.5496, Elapsed: 12m0s
+2020-06-01 05:22:03.746444: Epoch: 1, Batch: 681, Loss: 0.4966, Elapsed: 5m24s
+2020-06-01 05:31:13.062313: Epoch: 1, Batch: 682, Loss: 0.5315, Elapsed: 9m9s
+2020-06-01 05:38:15.492571: Epoch: 1, Batch: 683, Loss: 0.5418, Elapsed: 7m2s
+2020-06-01 05:46:19.694299: Epoch: 1, Batch: 684, Loss: 0.5400, Elapsed: 8m4s
+2020-06-01 05:55:24.332961: Epoch: 1, Batch: 685, Loss: 0.5509, Elapsed: 9m4s
+2020-06-01 06:09:29.195397: Epoch: 1, Batch: 686, Loss: 0.5650, Elapsed: 14m4s
+2020-06-01 06:14:52.968799: Epoch: 1, Batch: 687, Loss: 0.5523, Elapsed: 5m23s
+2020-06-01 06:25:05.399590: Epoch: 1, Batch: 688, Loss: 0.5165, Elapsed: 10m12s
+2020-06-01 06:34:03.388798: Epoch: 1, Batch: 689, Loss: 0.5434, Elapsed: 8m57s
+2020-06-01 06:47:06.055948: Epoch: 1, Batch: 690, Loss: 0.5793, Elapsed: 13m2s
+2020-06-01 06:56:20.132387: Epoch: 1, Batch: 691, Loss: 0.5545, Elapsed: 9m14s
+2020-06-01 07:04:44.211387: Epoch: 1, Batch: 692, Loss: 0.5280, Elapsed: 8m24s
+2020-06-01 07:14:28.677051: Epoch: 1, Batch: 693, Loss: 0.5280, Elapsed: 9m44s
+2020-06-01 07:22:47.238302: Epoch: 1, Batch: 694, Loss: 0.5362, Elapsed: 8m18s
+2020-06-01 07:33:44.754468: Epoch: 1, Batch: 695, Loss: 0.5505, Elapsed: 10m57s
+2020-06-01 07:44:52.196556: Epoch: 1, Batch: 696, Loss: 0.5312, Elapsed: 11m7s
+2020-06-01 07:55:38.731529: Epoch: 1, Batch: 697, Loss: 0.5385, Elapsed: 10m46s
+2020-06-01 08:07:08.124542: Epoch: 1, Batch: 698, Loss: 0.5639, Elapsed: 11m29s
+2020-06-01 08:15:16.494232: Epoch: 1, Batch: 699, Loss: 0.4974, Elapsed: 8m8s
+2020-06-01 08:34:27.771017: Epoch: 1, Batch: 700, Loss: 0.5511, Elapsed: 19m11s
+Starting testing the validation set with 200 subgraphs!
+2020-06-01 09:18:18.347121: Validation Test:  Loss: 0.5310,  Acc: 72.4779, AUC: 0.8147, Precision: 0.8677 -- Elapsed: 43m50s
+2020-06-01 09:26:58.338310: Epoch: 1, Batch: 701, Loss: 0.5445, Elapsed: 8m39s
+2020-06-01 09:36:12.489766: Epoch: 1, Batch: 702, Loss: 0.4898, Elapsed: 9m14s
+2020-06-01 09:45:07.154553: Epoch: 1, Batch: 703, Loss: 0.5004, Elapsed: 8m54s
+2020-06-01 09:53:26.934040: Epoch: 1, Batch: 704, Loss: 0.5376, Elapsed: 8m19s
+2020-06-01 09:59:18.963802: Epoch: 1, Batch: 705, Loss: 0.4917, Elapsed: 5m52s
+2020-06-01 10:03:42.447533: Epoch: 1, Batch: 706, Loss: 0.4968, Elapsed: 4m23s
+2020-06-01 10:12:10.912308: Epoch: 1, Batch: 707, Loss: 0.4935, Elapsed: 8m28s
+2020-06-01 10:23:19.801737: Epoch: 1, Batch: 708, Loss: 0.5548, Elapsed: 11m8s
+2020-06-01 10:28:38.899136: Epoch: 1, Batch: 709, Loss: 0.4958, Elapsed: 5m19s
+2020-06-01 10:36:16.442731: Epoch: 1, Batch: 710, Loss: 0.4269, Elapsed: 7m37s
+2020-06-01 10:43:34.465012: Epoch: 1, Batch: 711, Loss: 0.5488, Elapsed: 7m18s
+2020-06-01 10:56:27.914579: Epoch: 1, Batch: 712, Loss: 0.5608, Elapsed: 12m53s
+2020-06-01 11:08:49.010791: Epoch: 1, Batch: 713, Loss: 0.5449, Elapsed: 12m21s
+2020-06-01 11:16:02.459205: Epoch: 1, Batch: 714, Loss: 0.4245, Elapsed: 7m13s
+2020-06-01 11:25:46.035654: Epoch: 1, Batch: 715, Loss: 0.5218, Elapsed: 9m43s
+2020-06-01 11:31:08.203679: Epoch: 1, Batch: 716, Loss: 0.4793, Elapsed: 5m22s
+2020-06-01 11:40:18.286066: Epoch: 1, Batch: 717, Loss: 0.5335, Elapsed: 9m10s
+2020-06-01 11:48:24.085953: Epoch: 1, Batch: 718, Loss: 0.5437, Elapsed: 8m5s
+2020-06-01 11:56:51.234746: Epoch: 1, Batch: 719, Loss: 0.5123, Elapsed: 8m27s
+2020-06-01 12:07:27.343079: Epoch: 1, Batch: 720, Loss: 0.5430, Elapsed: 10m36s
+2020-06-01 12:19:51.449909: Epoch: 1, Batch: 721, Loss: 0.5436, Elapsed: 12m24s
+2020-06-01 12:36:09.292336: Epoch: 1, Batch: 722, Loss: 0.5635, Elapsed: 16m17s
+2020-06-01 12:41:25.828384: Epoch: 1, Batch: 723, Loss: 0.4652, Elapsed: 5m16s
+2020-06-01 12:50:36.932324: Epoch: 1, Batch: 724, Loss: 0.5431, Elapsed: 9m11s
+2020-06-01 13:02:53.625971: Epoch: 1, Batch: 725, Loss: 0.5367, Elapsed: 12m16s
+2020-06-01 13:10:23.933961: Epoch: 1, Batch: 726, Loss: 0.5120, Elapsed: 7m30s
+2020-06-01 13:23:10.633127: Epoch: 1, Batch: 727, Loss: 0.5385, Elapsed: 12m46s
+2020-06-01 13:29:49.852524: Epoch: 1, Batch: 728, Loss: 0.5099, Elapsed: 6m39s
+2020-06-01 13:34:13.542334: Epoch: 1, Batch: 729, Loss: 0.3832, Elapsed: 4m23s
+2020-06-01 13:45:14.815627: Epoch: 1, Batch: 730, Loss: 0.5591, Elapsed: 11m1s
+2020-06-01 13:54:46.419748: Epoch: 1, Batch: 731, Loss: 0.5248, Elapsed: 9m31s
+2020-06-01 14:02:58.869743: Epoch: 1, Batch: 732, Loss: 0.5589, Elapsed: 8m12s
+2020-06-01 14:11:31.551566: Epoch: 1, Batch: 733, Loss: 0.5063, Elapsed: 8m32s
+2020-06-01 14:16:53.637382: Epoch: 1, Batch: 734, Loss: 0.5177, Elapsed: 5m22s
+2020-06-01 14:26:41.606919: Epoch: 1, Batch: 735, Loss: 0.5444, Elapsed: 9m47s
+2020-06-01 14:38:16.079554: Epoch: 1, Batch: 736, Loss: 0.5279, Elapsed: 11m34s
+2020-06-01 14:46:25.275939: Epoch: 1, Batch: 737, Loss: 0.4861, Elapsed: 8m9s
+2020-06-01 14:56:38.505109: Epoch: 1, Batch: 738, Loss: 0.5637, Elapsed: 10m13s
+2020-06-01 15:10:38.888435: Epoch: 1, Batch: 739, Loss: 0.5857, Elapsed: 14m0s
+2020-06-01 15:18:33.068989: Epoch: 1, Batch: 740, Loss: 0.5145, Elapsed: 7m54s
+2020-06-01 15:27:49.172419: Epoch: 1, Batch: 741, Loss: 0.5285, Elapsed: 9m16s
+2020-06-01 15:37:58.822032: Epoch: 1, Batch: 742, Loss: 0.5617, Elapsed: 10m9s
+2020-06-01 15:47:27.987367: Epoch: 1, Batch: 743, Loss: 0.5066, Elapsed: 9m29s
+2020-06-01 15:55:50.638929: Epoch: 1, Batch: 744, Loss: 0.5261, Elapsed: 8m22s
+2020-06-01 16:02:53.059273: Epoch: 1, Batch: 745, Loss: 0.4945, Elapsed: 7m2s
+2020-06-01 16:10:08.036454: Epoch: 1, Batch: 746, Loss: 0.4719, Elapsed: 7m14s
+2020-06-01 16:17:38.929785: Epoch: 1, Batch: 747, Loss: 0.5304, Elapsed: 7m30s
+2020-06-01 16:27:17.738077: Epoch: 1, Batch: 748, Loss: 0.5213, Elapsed: 9m38s
+2020-06-01 16:34:44.031627: Epoch: 1, Batch: 749, Loss: 0.5162, Elapsed: 7m26s
+2020-06-01 16:45:40.439971: Epoch: 1, Batch: 750, Loss: 0.5215, Elapsed: 10m56s
+Starting testing the validation set with 200 subgraphs!
+2020-06-01 17:29:00.021345: Validation Test:  Loss: 0.5234,  Acc: 72.1219, AUC: 0.8142, Precision: 0.8689 -- Elapsed: 43m19s
+2020-06-01 17:37:26.254132: Epoch: 1, Batch: 751, Loss: 0.5081, Elapsed: 8m26s
+2020-06-01 17:47:21.057857: Epoch: 1, Batch: 752, Loss: 0.4998, Elapsed: 9m54s
+2020-06-01 17:56:57.662506: Epoch: 1, Batch: 753, Loss: 0.5187, Elapsed: 9m36s
+2020-06-01 18:10:50.783374: Epoch: 1, Batch: 754, Loss: 0.5961, Elapsed: 13m53s
+2020-06-01 18:21:30.638700: Epoch: 1, Batch: 755, Loss: 0.5129, Elapsed: 10m39s
+2020-06-01 18:28:45.343549: Epoch: 1, Batch: 756, Loss: 0.5299, Elapsed: 7m14s
+2020-06-01 18:38:45.418197: Epoch: 1, Batch: 757, Loss: 0.5195, Elapsed: 10m0s
+2020-06-01 18:45:19.399872: Epoch: 1, Batch: 758, Loss: 0.4638, Elapsed: 6m33s
+2020-06-01 18:51:28.184674: Epoch: 1, Batch: 759, Loss: 0.4467, Elapsed: 6m8s
+2020-06-01 18:57:07.022803: Epoch: 1, Batch: 760, Loss: 0.4685, Elapsed: 5m38s
+2020-06-01 19:12:03.733896: Epoch: 1, Batch: 761, Loss: 0.5889, Elapsed: 14m56s
+2020-06-01 19:22:38.634193: Epoch: 1, Batch: 762, Loss: 0.5364, Elapsed: 10m34s
+2020-06-01 19:30:17.929473: Epoch: 1, Batch: 763, Loss: 0.5303, Elapsed: 7m39s
+2020-06-01 19:38:15.656086: Epoch: 1, Batch: 764, Loss: 0.4844, Elapsed: 7m57s
+2020-06-01 19:48:29.417591: Epoch: 1, Batch: 765, Loss: 0.5374, Elapsed: 10m13s
+2020-06-01 19:59:33.181288: Epoch: 1, Batch: 766, Loss: 0.5320, Elapsed: 11m3s
+2020-06-01 20:08:20.923898: Epoch: 1, Batch: 767, Loss: 0.5650, Elapsed: 8m47s
+2020-06-01 20:14:59.479389: Epoch: 1, Batch: 768, Loss: 0.5009, Elapsed: 6m38s
+2020-06-01 20:25:47.487672: Epoch: 1, Batch: 769, Loss: 0.5631, Elapsed: 10m47s
+2020-06-01 20:33:56.109900: Epoch: 1, Batch: 770, Loss: 0.5513, Elapsed: 8m8s
+2020-06-01 20:42:11.894035: Epoch: 1, Batch: 771, Loss: 0.5306, Elapsed: 8m15s
+2020-06-01 20:50:18.903344: Epoch: 1, Batch: 772, Loss: 0.4656, Elapsed: 8m7s
+2020-06-01 21:00:51.726024: Epoch: 1, Batch: 773, Loss: 0.5588, Elapsed: 10m32s
+2020-06-01 21:06:49.782316: Epoch: 1, Batch: 774, Loss: 0.4330, Elapsed: 5m58s
+2020-06-01 21:13:02.938291: Epoch: 1, Batch: 775, Loss: 0.4953, Elapsed: 6m13s
+2020-06-01 21:20:48.726491: Epoch: 1, Batch: 776, Loss: 0.4602, Elapsed: 7m45s
+2020-06-01 21:31:07.718476: Epoch: 1, Batch: 777, Loss: 0.5158, Elapsed: 10m18s
+2020-06-01 21:40:36.459140: Epoch: 1, Batch: 778, Loss: 0.5279, Elapsed: 9m28s
+2020-06-01 21:51:50.394644: Epoch: 1, Batch: 779, Loss: 0.5436, Elapsed: 11m13s
+2020-06-01 21:57:59.644287: Epoch: 1, Batch: 780, Loss: 0.5369, Elapsed: 6m9s
+2020-06-01 22:05:45.011468: Epoch: 1, Batch: 781, Loss: 0.5239, Elapsed: 7m45s
+2020-06-01 22:41:03.900166: Epoch: 1, Batch: 782, Loss: 0.7522, Elapsed: 35m18s
+2020-06-01 22:49:17.335518: Epoch: 1, Batch: 783, Loss: 0.5628, Elapsed: 8m13s
+2020-06-01 22:56:43.598653: Epoch: 1, Batch: 784, Loss: 0.5370, Elapsed: 7m26s
+2020-06-01 23:06:54.781070: Epoch: 1, Batch: 785, Loss: 0.6060, Elapsed: 10m11s
+2020-06-01 23:16:23.058827: Epoch: 1, Batch: 786, Loss: 0.5991, Elapsed: 9m28s
+2020-06-01 23:24:12.279788: Epoch: 1, Batch: 787, Loss: 0.5398, Elapsed: 7m49s
+2020-06-01 23:33:04.182132: Epoch: 1, Batch: 788, Loss: 0.5705, Elapsed: 8m51s
+2020-06-01 23:41:32.506729: Epoch: 1, Batch: 789, Loss: 0.5571, Elapsed: 8m28s
+2020-06-01 23:48:53.654986: Epoch: 1, Batch: 790, Loss: 0.5683, Elapsed: 7m21s
+2020-06-01 23:57:57.211333: Epoch: 1, Batch: 791, Loss: 0.6132, Elapsed: 9m3s
+2020-06-02 00:09:39.684931: Epoch: 1, Batch: 792, Loss: 0.6685, Elapsed: 11m42s
+2020-06-02 00:18:52.632656: Epoch: 1, Batch: 793, Loss: 0.5235, Elapsed: 9m12s
+2020-06-02 00:25:03.153052: Epoch: 1, Batch: 794, Loss: 0.5528, Elapsed: 6m10s
+2020-06-02 00:34:37.656374: Epoch: 1, Batch: 795, Loss: 0.5738, Elapsed: 9m34s
+2020-06-02 00:42:44.972798: Epoch: 1, Batch: 796, Loss: 0.5655, Elapsed: 8m7s
+2020-06-02 00:55:39.920157: Epoch: 1, Batch: 797, Loss: 0.6233, Elapsed: 12m54s
+2020-06-02 01:04:36.082230: Epoch: 1, Batch: 798, Loss: 0.5981, Elapsed: 8m56s
+2020-06-02 01:18:08.504329: Epoch: 1, Batch: 799, Loss: 0.5915, Elapsed: 13m32s
+2020-06-02 01:27:17.956133: Epoch: 1, Batch: 800, Loss: 0.5489, Elapsed: 9m9s
+Starting testing the validation set with 200 subgraphs!
+2020-06-02 02:10:47.883757: Validation Test:  Loss: 0.5568,  Acc: 70.9664, AUC: 0.7887, Precision: 0.8441 -- Elapsed: 43m29s
+2020-06-02 02:23:47.724719: Epoch: 1, Batch: 801, Loss: 0.6002, Elapsed: 12m59s
+2020-06-02 02:32:02.909742: Epoch: 1, Batch: 802, Loss: 0.5427, Elapsed: 8m15s
+2020-06-02 02:44:17.092272: Epoch: 1, Batch: 803, Loss: 0.6044, Elapsed: 12m14s
+2020-06-02 02:53:11.997830: Epoch: 1, Batch: 804, Loss: 0.5749, Elapsed: 8m54s
+2020-06-02 03:02:51.211235: Epoch: 1, Batch: 805, Loss: 0.5796, Elapsed: 9m39s
+2020-06-02 03:09:56.935393: Epoch: 1, Batch: 806, Loss: 0.5785, Elapsed: 7m5s
+2020-06-02 03:21:00.080233: Epoch: 1, Batch: 807, Loss: 0.5836, Elapsed: 11m3s
+2020-06-02 03:28:19.175028: Epoch: 1, Batch: 808, Loss: 0.5359, Elapsed: 7m19s
+2020-06-02 03:39:50.948007: Epoch: 1, Batch: 809, Loss: 0.5967, Elapsed: 11m31s
+2020-06-02 03:51:33.290621: Epoch: 1, Batch: 810, Loss: 0.5851, Elapsed: 11m42s
+2020-06-02 04:01:23.391011: Epoch: 1, Batch: 811, Loss: 0.5768, Elapsed: 9m50s
+2020-06-02 04:11:07.806634: Epoch: 1, Batch: 812, Loss: 0.5401, Elapsed: 9m44s
+2020-06-02 04:23:56.122957: Epoch: 1, Batch: 813, Loss: 0.5798, Elapsed: 12m48s
+2020-06-02 04:36:53.262505: Epoch: 1, Batch: 814, Loss: 0.5644, Elapsed: 12m57s
+2020-06-02 04:49:15.334772: Epoch: 1, Batch: 815, Loss: 0.5609, Elapsed: 12m22s
+2020-06-02 04:56:29.265865: Epoch: 1, Batch: 816, Loss: 0.5592, Elapsed: 7m13s
+2020-06-02 05:04:21.235940: Epoch: 1, Batch: 817, Loss: 0.5581, Elapsed: 7m51s
+2020-06-02 05:14:52.345593: Epoch: 1, Batch: 818, Loss: 0.5486, Elapsed: 10m31s
+2020-06-02 05:27:13.806095: Epoch: 1, Batch: 819, Loss: 0.5669, Elapsed: 12m21s

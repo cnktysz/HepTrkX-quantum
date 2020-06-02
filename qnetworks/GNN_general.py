@@ -102,7 +102,7 @@ def edge_forward(edge_array,theta_learn):
 def node_forward(node_array,theta_learn):
 	outputs = []
 	for i in range(len(node_array[:,0])):
-		out = tf.constant((1-TTN_node_forward(node_array[i,:],theta_learn))/2.,dtype=tf.float64)
+		out = tf.constant(2*np.pi*(1-TTN_node_forward(node_array[i,:],theta_learn))/2.,dtype=tf.float64)
 		outputs.append(out)
 	return tf.stack(outputs)
 #################################################
