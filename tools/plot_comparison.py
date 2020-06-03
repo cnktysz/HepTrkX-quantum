@@ -64,7 +64,7 @@ label0 = r'$lr=1x10^{-2}$'
 label1 = r'$lr=2x10^{-2}$'
 label2 = r'$lr=3x10^{-2}$'
 """
-
+'''
 ## Dimension comparison
 log_location0 = log_loc2 + 'lr_3e-2/'
 log_location1 = log_loc3 + 'dim2/'
@@ -75,7 +75,7 @@ png_location = 'png/comparison/qgnn/dimension_comparison/'
 
 label0 = r'$N_{dim}=1$'
 label1 = r'$N_{dim}=2$'
-
+'''
 """
 ## Test comparison
 log_location0 = log_loc2 + 'lr_3e-2/'
@@ -89,7 +89,7 @@ label0 = 'base'
 label1 = 'test'
 """
 
-'''
+
 ## General vs. Real Rotations
 log_location0 = log_loc2 + 'lr_3e-2/'
 log_location1 = 'logs/gnn1_general/'
@@ -100,7 +100,7 @@ png_location = 'png/comparison/qgnn/general-real/'
 
 label0 = 'Real Rotations'
 label1 = 'General Rotations'
-'''
+
 
 print('Comparison plots will be saved to:')
 print('PDF: ' + pdf_location)
