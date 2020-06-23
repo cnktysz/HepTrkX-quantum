@@ -45,6 +45,8 @@ if __name__ == '__main__':
 		from qnetworks.GNN1 import GNN
 	elif config['network'] == 'QGNN' and config['hid_dim'] == 2:     # load q. networks with 2 Hid. Dim. 
 		from qnetworks.GNN2 import GNN
+	elif config['network'] == 'QGNN' and config['hid_dim'] == 5:     # load q. networks with 5 Hid. Dim. 
+		from qnetworks.GNN5 import GNN
 	elif config['network'] == 'CGNN':                                # load classical network
 		from qnetworks.CGNN import GNN
 		tf.config.threading.set_inter_op_parallelism_threads(config['n_thread'])
