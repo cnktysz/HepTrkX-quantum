@@ -38,8 +38,12 @@ if __name__ == '__main__':
 	train_list = [i for i in range(config['n_train'])]
 
 	# Select CPU or GPU
-	os.environ["CUDA_VISIBLE_DEVICES"] = config['gpu']
-
+	if config['gpu'] != -1:
+		os.environ["CUDA_VISIBLE_DEVICES"] = config['gpu']
+	else:
+		os.environ['OMP_NUM_THREADS'] = config['n_thread']
+		os.environ["CUDA_VISIBLE_DEVICES"] = -1
+		
 	# Load network
 	if config['network'] == 'QGNN' and  config['hid_dim'] == 1:	 # load q. networks with 1 Hid. Dim. 
 		from qnetworks.GNN1 import GNN
@@ -58,7 +62,6 @@ if __name__ == '__main__':
 	# Setup the network
 	block = GNN(config)
 	opt = tf.keras.optimizers.Adam(learning_rate=config['lr'])
-
 
 	'''
 	print(block.trainable_variables)

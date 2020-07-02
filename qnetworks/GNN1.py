@@ -7,11 +7,7 @@ import os
 ##################################################################################################
 # Use default.qubit for default pennylane simulation
 # use tf.interface for TF integration
-
-if os.environ["CUDA_VISIBLE_DEVICES"] != -1: 
-	USE_GPU = True
-else:
-	USE_GPU = False
+USE_GPU = (os.environ["CUDA_VISIBLE_DEVICES"] != '-1')
 
 dev1 = qml.device("qulacs.simulator", wires=8, gpu=USE_GPU)
 @qml.qnode(dev1,interface='tf')
