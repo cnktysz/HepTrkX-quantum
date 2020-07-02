@@ -7,7 +7,13 @@ import os
 ##################################################################################################
 # Use default.qubit for default pennylane simulation
 # use tf.interface for TF integration
-dev1 = qml.device("qulacs.simulator", wires=8, gpu=True)
+
+if os.environ["CUDA_VISIBLE_DEVICES"] != -1: 
+	USE_GPU = True
+else:
+	USE_GPU = False
+
+dev1 = qml.device("qulacs.simulator", wires=8, gpu=USE_GPU)
 @qml.qnode(dev1,interface='tf')
 def TTN_edge_forward(edge_array,theta_learn):
 	# Takes the input and learning variables and applies the
@@ -46,7 +52,7 @@ def TTN_edge_forward(edge_array,theta_learn):
 ##################################################################################################
 # Use default.qubit for default pennylane simulation
 # use tf.interface for TF integration
-dev2 = qml.device("qulacs.simulator", wires=12, gpu=True)
+dev2 = qml.device("qulacs.simulator", wires=12, gpu=USE_GPU)
 @qml.qnode(dev2,interface='tf')
 def TTN_node_forward(node_array,theta_learn):
 	# Takes the input and learning variables and applies the
