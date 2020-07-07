@@ -23,3 +23,5 @@ Epoch: 1, Batch: 22, Loss: 0.5843, Elapsed: 489m37s
 Epoch: 1, Batch: 23, Loss: 0.6375, Elapsed: 727m15s
 Epoch: 1, Batch: 24, Loss: 0.6418, Elapsed: 554m19s
 Epoch: 1, Batch: 25, Loss: 0.6338, Elapsed: 666m2s
+Epoch: 1, Batch: 26, Loss: 0.6507, Elapsed: 705m48s
+Epoch: 1, Batch: 27, Loss: 0.6159, Elapsed: 971m50s

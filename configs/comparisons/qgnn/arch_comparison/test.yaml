@@ -14,5 +14,5 @@ TEST_every   : 50
 hid_dim      : 1
 network      : 'TEST'
 n_thread     : 4
-log_verbosity: 2
+log_verbosity: 1
 
