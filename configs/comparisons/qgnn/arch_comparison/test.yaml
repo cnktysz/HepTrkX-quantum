@@ -7,12 +7,12 @@ gpu          : '5'
 n_files      : 1600
 n_valid      : 200
 n_train      : 1400
-lr           : 0.03
+lr           : 0.001
 n_iters      : 2
 n_epoch      : 1
 TEST_every   : 50
 hid_dim      : 1
 network      : 'TEST'
-n_thread     : 4
+n_thread     : 2
 log_verbosity: 1
 
