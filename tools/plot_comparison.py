@@ -8,8 +8,9 @@ log_loc0 = 'logs/comparisons/dnn/dim-comparison/'
 log_loc1 = 'logs/comparisons/qgnn/iteration_comparison/'
 log_loc2 = 'logs/comparisons/qgnn/learning_rate_comparison/'
 log_loc3 = 'logs/comparisons/qgnn/dimension_comparison/'
+log_loc4 = 'logs/comparisons/qgnn/arch_comparison/'
 
-run_type = 'dimension_comparison'
+run_type = 'test'
 
 # TO DO:
 # some run types are deprecated, need to update them
@@ -102,14 +103,13 @@ if run_type == 'arch_comparison':
 	## General vs. Real Rotations
 	n_runs = 2
 	log_location0 = log_loc2 + 'lr_3e-2/'
-	log_location1 = 'logs/gnn1_general/'
+	log_location1 = log_loc4 + 'embedding_learning/'
 
+	pdf_location = 'pdf/comparison/qgnn/arch_comparison/'
+	png_location = 'png/comparison/qgnn/arch_comparison/'
 
-	pdf_location = 'pdf/comparison/qgnn/general-real/'
-	png_location = 'png/comparison/qgnn/general-real/'
-
-	label0 = 'Real Rotations'
-	label1 = 'General Rotations'
+	label0 = 'Old Architecture'
+	label1 = 'New(test) Architecture'
 
 
 print('Comparison plots will be saved to:')

@@ -19,13 +19,13 @@ print('PNG: ' + png_location)
 print('Plotting %d runs................'%n_runs)
 
 interval = 50
-n_items  = 5
+n_items  = 14
 accuracy = np.empty(shape=(n_runs,n_items))
 auc = np.empty(shape=(n_runs,n_items))
 loss = np.empty(shape=(n_runs,n_items))
 precision = np.empty(shape=(n_runs,n_items))
 
-for i in range(n_items):
+for i in range(n_runs):
 	with open(log_list[i]+'log_validation.csv', 'r') as f:
 		reader = csv.reader(f, delimiter=',')
 		validation = np.array(list(reader)).astype(float)
@@ -75,7 +75,7 @@ plt.savefig(png_location+'validation_loss.png')
 
 
 loss = np.empty(shape=(n_runs,n_items*interval))
-for i in range(n_items):
+for i in range(n_runs):
 	with open(log_list[i]+'log_loss.csv', 'r') as f:
 		reader = csv.reader(f, delimiter=',')
 		training = np.array(list(reader)).astype(float)
