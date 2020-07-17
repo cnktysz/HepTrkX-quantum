@@ -42,3 +42,9 @@ Epoch: 1, Batch: 41, Loss: 0.5363, Elapsed: 355m26s
 Epoch: 1, Batch: 42, Loss: 0.6407, Elapsed: 457m17s
 Epoch: 1, Batch: 43, Loss: 0.6234, Elapsed: 595m47s
 Epoch: 1, Batch: 44, Loss: 0.5536, Elapsed: 379m10s
+Epoch: 1, Batch: 45, Loss: 0.5822, Elapsed: 535m55s
+Epoch: 1, Batch: 46, Loss: 0.6653, Elapsed: 937m4s
+Epoch: 1, Batch: 47, Loss: 0.6552, Elapsed: 794m39s
+Epoch: 1, Batch: 48, Loss: 0.6190, Elapsed: 642m51s
+Epoch: 1, Batch: 49, Loss: 0.6123, Elapsed: 740m45s
+Epoch: 1, Batch: 50, Loss: 0.5585, Elapsed: 519m18s
