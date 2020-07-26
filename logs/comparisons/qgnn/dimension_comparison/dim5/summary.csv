@@ -66,3 +66,6 @@ Epoch: 1, Batch: 65, Loss: 0.5253, Elapsed: 288m0s
 Epoch: 1, Batch: 66, Loss: 0.5801, Elapsed: 597m48s
 Epoch: 1, Batch: 67, Loss: 0.5748, Elapsed: 606m11s
 Epoch: 1, Batch: 68, Loss: 0.6037, Elapsed: 550m3s
+Epoch: 1, Batch: 69, Loss: 0.6024, Elapsed: 424m12s
+Epoch: 1, Batch: 70, Loss: 0.6061, Elapsed: 587m52s
+Epoch: 1, Batch: 71, Loss: 0.6219, Elapsed: 528m44s
