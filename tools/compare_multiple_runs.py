@@ -4,41 +4,66 @@ import csv
 from sklearn import metrics
 import sys
 
-log_loc = 'logs/TTN_hid1/'
+log_loc0 = 'logs/TTN_hid1/'
+#log_loc1 = 'logs/TTN_hid2/'
+log_loc1 = 'logs/TTN_hid1_it1/'
 
-n_runs = 5
+#pdf_location = 'pdf/comparison/qgnn/dimension_comparison/'
+#png_location = 'png/comparison/qgnn/dimension_comparison/'
 
-log_list = [log_loc + 'run' + str(i+1) + '/' for i in range(n_runs)]
+pdf_location = 'pdf/comparison/qgnn/iteration_comparison/'
+png_location = 'png/comparison/qgnn/iteration_comparison/'
 
-pdf_location = 'pdf/TTN_hid1/'
-png_location = 'png/TTN_hid1/'
+
+n_runs0 = 5
+n_runs1 = 3
+
+log_list0 = [log_loc0 + 'run' + str(i+1) + '/' for i in range(n_runs0)]
+log_list1 = [log_loc1 + 'run' + str(i+1) + '/' for i in range(n_runs1)]
 
 print('Plots will be saved to:')
 print('PDF: ' + pdf_location)
 print('PNG: ' + png_location)
-print('Plotting %d runs................'%n_runs)
 
 interval = 50
-n_items  = 14
-accuracy = np.empty(shape=(n_runs,n_items))
-auc = np.empty(shape=(n_runs,n_items))
-loss = np.empty(shape=(n_runs,n_items))
-precision = np.empty(shape=(n_runs,n_items))
+n_items0 = 29 
+n_items1 = 12
+# length of the arrays
+accuracy0 = np.empty(shape=(n_runs0,n_items0))
+auc0 = np.empty(shape=(n_runs0,n_items0))
+loss0 = np.empty(shape=(n_runs0,n_items0))
+precision0 = np.empty(shape=(n_runs0,n_items0))
 
-for i in range(n_runs):
-	with open(log_list[i]+'log_validation.csv', 'r') as f:
-		reader = csv.reader(f, delimiter=',')
+accuracy1 = np.empty(shape=(n_runs1,n_items1))
+auc1 = np.empty(shape=(n_runs1,n_items1))
+loss1 = np.empty(shape=(n_runs1,n_items1))
+precision1 = np.empty(shape=(n_runs1,n_items1))
+
+for i in range(n_runs0):
+	with open(log_list0[i]+'log_validation.csv', 'r') as f:
+		reader = csv.reader(f, delimiter=',')  
 		validation = np.array(list(reader)).astype(float)
-		accuracy[i,:] = validation[0:n_items,0]	
-		auc[i,:] = validation[0:n_items,1]
-		loss[i,:] = validation[0:n_items,2]		
-		precision[i,:] = validation[0:n_items,3]	
+		accuracy0[i,:] = validation[0:n_items0,0]	
+		auc0[i,:] = validation[0:n_items0,1]
+		loss0[i,:] = validation[0:n_items0,2]		
+		precision0[i,:] = validation[0:n_items0,3]	
+
+for i in range(n_runs1):
+	with open(log_list1[i]+'log_validation.csv', 'r') as f:
+		reader = csv.reader(f, delimiter=',')  
+		validation = np.array(list(reader)).astype(float)
+		accuracy1[i,:] = validation[0:n_items1,0]	
+		auc1[i,:] = validation[0:n_items1,1]
+		loss1[i,:] = validation[0:n_items1,2]		
+		precision1[i,:] = validation[0:n_items1,3]	
 
 
-x = [i*interval for i  in range(n_items)]
+x0 = [i*interval for i  in range(n_items0)]
+x1 = [i*interval for i  in range(n_items1)]
 # Plot Accuracy
 plt.clf()   
-plt.errorbar(x,np.mean(accuracy,axis=0),yerr=np.std(accuracy,axis=0),c='navy')
+plt.errorbar(x0,np.mean(accuracy0,axis=0),yerr=np.std(accuracy0,axis=0),c='navy')
+plt.errorbar(x1,np.mean(accuracy1,axis=0),yerr=np.std(accuracy1,axis=0),c='darkorange')
 plt.title('Validation Accuracy')
 plt.xlabel('Update')
 plt.ylabel('Accuracy')
@@ -47,7 +72,8 @@ plt.savefig(pdf_location+'validation_accuracy.pdf')
 plt.savefig(png_location+'validation_accuracy.png')
 # Plot AUC
 plt.clf()   
-plt.errorbar(x,np.mean(auc,axis=0),yerr=np.std(auc,axis=0),c='navy')
+plt.errorbar(x0,np.mean(auc0,axis=0),yerr=np.std(auc0,axis=0),c='navy')
+plt.errorbar(x1,np.mean(auc1,axis=0),yerr=np.std(auc1,axis=0),c='darkorange')
 plt.title('Validation AUC')
 plt.xlabel('Update')
 plt.ylabel('AUC')
@@ -56,7 +82,8 @@ plt.savefig(pdf_location+'validation_auc.pdf')
 plt.savefig(png_location+'validation_auc.png')
 #Plot Precision
 plt.clf()   
-plt.errorbar(x,np.mean(precision,axis=0),yerr=np.std(precision,axis=0),c='navy')
+plt.errorbar(x0,np.mean(precision0,axis=0),yerr=np.std(precision0,axis=0),c='navy')
+plt.errorbar(x1,np.mean(precision1,axis=0),yerr=np.std(precision1,axis=0),c='darkorange')
 plt.title('Validation Precision')
 plt.xlabel('Update')
 plt.ylabel('Precision')
@@ -65,7 +92,8 @@ plt.savefig(pdf_location+'validation_precision.pdf')
 plt.savefig(png_location+'validation_precision.png')
 # Plot Loss
 plt.clf()   
-plt.errorbar(x,np.mean(loss,axis=0),yerr=np.std(loss,axis=0),c='navy')
+plt.errorbar(x0,np.mean(loss0,axis=0),yerr=np.std(loss0,axis=0),c='navy')
+plt.errorbar(x1,np.mean(loss1,axis=0),yerr=np.std(loss1,axis=0),c='darkorange')
 plt.title('Validation Loss')
 plt.xlabel('Update')
 plt.ylabel('Loss')
@@ -74,18 +102,25 @@ plt.savefig(pdf_location+'validation_loss.pdf')
 plt.savefig(png_location+'validation_loss.png')
 
 
-loss = np.empty(shape=(n_runs,n_items*interval))
-for i in range(n_runs):
-	with open(log_list[i]+'log_loss.csv', 'r') as f:
+loss0 = np.empty(shape=(n_runs0,(n_items0-1)*interval))
+loss1 = np.empty(shape=(n_runs1,(n_items1-1)*interval))
+for i in range(n_runs0):
+	with open(log_list0[i]+'log_loss.csv', 'r') as f:
 		reader = csv.reader(f, delimiter=',')
 		training = np.array(list(reader)).astype(float)
-		loss[i,:] = training[0:(n_items*interval),0]	
+		loss0[i,:] = training[0:((n_items0-1)*interval),0]	
+for i in range(n_runs1):
+	with open(log_list1[i]+'log_loss.csv', 'r') as f:
+		reader = csv.reader(f, delimiter=',')
+		training = np.array(list(reader)).astype(float)
+		loss1[i,:] = training[0:((n_items1-1)*interval),0]	
 
-
-x = [i for i  in range(n_items*interval)]
+x0 = [i for i  in range((n_items0-1)*interval)]
+x1 = [i for i  in range((n_items1-1)*interval)]
 
 plt.clf()   
-plt.errorbar(x,np.mean(loss,axis=0),yerr=0,c='navy')
+plt.errorbar(x0,np.mean(loss0,axis=0),yerr=0,c='navy')
+plt.errorbar(x1,np.mean(loss1,axis=0),yerr=0,c='darkorange')
 plt.title('Mean of Training Loss')
 plt.xlabel('Update')
 plt.ylabel('Loss')
