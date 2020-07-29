@@ -27,7 +27,7 @@ print('PNG: ' + png_location)
 
 interval = 50
 n_items0 = 29 
-n_items1 = 12
+n_items1 = 13
 # length of the arrays
 accuracy0 = np.empty(shape=(n_runs0,n_items0))
 auc0 = np.empty(shape=(n_runs0,n_items0))
