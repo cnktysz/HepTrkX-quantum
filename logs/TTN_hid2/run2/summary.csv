@@ -808,3 +808,6 @@ Epoch: 1, Batch: 807, Loss: 0.5239, Elapsed: 7m50s
 Epoch: 1, Batch: 808, Loss: 0.6096, Elapsed: 10m37s
 Epoch: 1, Batch: 809, Loss: 0.6169, Elapsed: 20m36s
 Epoch: 1, Batch: 810, Loss: 0.6053, Elapsed: 18m35s
+Epoch: 1, Batch: 811, Loss: 0.6465, Elapsed: 29m50s
+Epoch: 1, Batch: 812, Loss: 0.6148, Elapsed: 15m14s
+Epoch: 1, Batch: 813, Loss: 0.5748, Elapsed: 12m52s
