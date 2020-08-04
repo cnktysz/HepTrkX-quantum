@@ -94,7 +94,7 @@ def TTN_node_forward(node_array,theta_learn):
 	qml.RY(theta_learn[21],wires=9)
 	qml.CNOT(wires=[5,9])
 	# Last Layer
-	qml.RY(theta_learn[22],wires=4)		
+	qml.RY(theta_learn[22],wires=9)		
 	# return expectation value of the circuit
 	return qml.expval(qml.PauliZ(wires=9))
 ##################################################################################################

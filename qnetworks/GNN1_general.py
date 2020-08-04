@@ -92,7 +92,7 @@ def TTN_node_forward(node_array,theta_learn):
 	qml.Rot(theta_learn[63],theta_learn[64],theta_learn[65],wires=9)
 	qml.CNOT(wires=[5,9])
 	# Last Layer
-	qml.Rot(theta_learn[66],theta_learn[67],theta_learn[68],wires=4)		
+	qml.Rot(theta_learn[66],theta_learn[67],theta_learn[68],wires=9)		
 	# return expectation value of the circuit
 	return qml.expval(qml.PauliZ(wires=9))
 ##################################################################################################
