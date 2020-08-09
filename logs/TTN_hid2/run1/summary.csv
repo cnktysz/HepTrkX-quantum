@@ -1393,3 +1393,8 @@ Epoch: 1, Batch: 1392, Loss: 0.5643, Elapsed: 7m51s
 Epoch: 1, Batch: 1393, Loss: 0.5561, Elapsed: 4m30s
 Epoch: 1, Batch: 1394, Loss: 0.6308, Elapsed: 12m6s
 Epoch: 1, Batch: 1395, Loss: 0.5971, Elapsed: 7m37s
+Epoch: 1, Batch: 1396, Loss: 0.5779, Elapsed: 7m1s
+Epoch: 1, Batch: 1397, Loss: 0.5975, Elapsed: 7m26s
+Epoch: 1, Batch: 1398, Loss: 0.6054, Elapsed: 8m36s
+Epoch: 1, Batch: 1399, Loss: 0.6728, Elapsed: 10m58s
+Epoch: 1, Batch: 1400, Loss: 0.6092, Elapsed: 7m30s
