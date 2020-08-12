@@ -3,7 +3,7 @@ import numpy as np
 import csv
 from sklearn import metrics
 import sys
-
+'''
 log_loc0 = 'logs/TTN_hid1_it1/'
 log_loc1 = 'logs/TTN_hid2/'
 log_loc2 = 'logs/MERA_hid1_it1/'
@@ -14,10 +14,17 @@ label2 = r'$MERA, N_{it} = 1, N_{Dim} = 1$'
 
 pdf_location = 'pdf/compare_multiple/'
 png_location = 'png/compare_multiple/'
+'''
+log_loc0 = 'logs/CGNN/CGNN_hid1_it2/'
+log_loc1 = 'logs/CGNN/CGNN_hid5_it2/'
+log_loc2 = 'logs/CGNN/CGNN_hid10_it2/'
 
-#pdf_location = 'pdf/comparison/qgnn/iteration_comparison/'
-#png_location = 'png/comparison/qgnn/iteration_comparison/'
+label0 = r'$N_{Dim}$' + ' = 1'
+label1 = r'$N_{Dim}$' + ' = 5'
+label2 = r'$N_{Dim}$' + ' = 10'
 
+pdf_location = 'pdf/compare_multiple/CGNN/'
+png_location = 'png/compare_multiple/CGNN/'
 
 n_runs0 = 3
 n_runs1 = 3
@@ -104,7 +111,7 @@ plt.errorbar(x2,np.mean(auc2,axis=0),yerr=np.std(auc2,axis=0),c='red', label=lab
 plt.title('Validation AUC')
 plt.xlabel('Update (1 epoch = 1400)')
 plt.ylabel('AUC')
-plt.ylim(0.4,0.8)
+#plt.ylim(0.4,0.8)
 plt.legend()
 plt.grid()
 plt.tight_layout()
