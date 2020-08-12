@@ -2,8 +2,8 @@ import numpy as np
 import tensorflow as tf
 #################################################
 class EdgeNet(tf.keras.layers.Layer):
-	def __init__(self,config,name):
-		super(EdgeNet, self).__init__(name=name)
+	def __init__(self,config):
+		super(EdgeNet, self).__init__()
 		hid_dim = config['hid_dim']
 		self.network = tf.keras.Sequential([
             		tf.keras.layers.Dense(hid_dim,input_shape=((hid_dim+3)*2,),activation='tanh'),
@@ -16,12 +16,12 @@ class EdgeNet(tf.keras.layers.Layer):
 		return self.network(B)
 #################################################
 class NodeNet(tf.keras.layers.Layer):
-	def __init__(self,config,name):
-		super(NodeNet, self).__init__(name=name)
+	def __init__(self,config):
+		super(NodeNet, self).__init__()
 		hid_dim = config['hid_dim']
 		self.network = tf.keras.Sequential([
-            		tf.keras.layers.Dense(hid_dim,input_shape=((hid_dim+3)*3,),activation='tanh'),
-            		tf.keras.layers.Dense(hid_dim,activation='sigmoid')
+            		tf.keras.layers.Dense(hid_dim, input_shape=((hid_dim+3)*3, ), activation='tanh'),
+            		tf.keras.layers.Dense(hid_dim, activation='sigmoid')
             		])
 	def call(self, X, e, Ri, Ro):
 		bo  = tf.matmul(Ro, X, transpose_a=True) 
@@ -34,22 +34,23 @@ class NodeNet(tf.keras.layers.Layer):
 		return self.network(M)
 #################################################
 class InputNet(tf.keras.layers.Layer):
-	def __init__(self, config,name):
-		super(InputNet, self).__init__(name=name)
-		self.layer = tf.keras.layers.Dense(config['hid_dim'],input_shape=(3,),activation='tanh')
+	def __init__(self, config):
+		super(InputNet, self).__init__()
+		self.layer = tf.keras.layers.Dense(config['hid_dim'],input_shape=(3,),activation='sigmoid')
 	
 	def call(self, arr):
 		return self.layer(arr)
 #################################################
 class GNN(tf.keras.Model):
 	def __init__(self, config):
-		super(GNN, self).__init__(name='GNN')
-		self.InputNet = InputNet(config=config, name='InputNet')
-		self.EdgeNet = EdgeNet(config=config, name='EdgeNet')
-		self.NodeNet = NodeNet(config=config, name='NodeNet')
+		super(GNN, self).__init__()
+		self.InputNet = InputNet(config=config)
+		self.EdgeNet = EdgeNet(config=config)
+		self.NodeNet = NodeNet(config=config)
 		self.n_iters = config['n_iters']
 
 	def call(self, graph_array):
+		import sys
 		X,Ri,Ro = graph_array
 		H = self.InputNet(X) 
 		H = tf.concat([H,X],axis=1)

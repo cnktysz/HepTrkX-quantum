@@ -3,7 +3,7 @@ import sys, os, time, datetime, csv, yaml, argparse
 sys.path.append(os.path.abspath(os.path.join('.')))
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # Turn off warnings and errors 
 # import internal
-from tools.tools import *
+from tools import *
 from test import *
 # import external
 import tensorflow as tf

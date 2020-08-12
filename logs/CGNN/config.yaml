@@ -1,0 +1,17 @@
+train_dir : data/graph_data/train 
+valid_dir : data/graph_data/valid 
+log_dir : logs/CGNN/ 
+run_type : new_run 
+gpu : 4 
+n_files : 1600 
+n_valid : 200 
+n_train : 1400 
+lr : 0.001 
+n_iters : 2 
+n_epoch : 5 
+TEST_every : 50 
+hid_dim : 100 
+network : CGNN 
+n_thread : 4 
+log_verbosity : 1 
+circuit_id : None 

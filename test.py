@@ -2,7 +2,7 @@ import sys,os,time
 sys.path.append(os.path.abspath(os.path.join('.')))
 import numpy as np
 from sklearn import metrics
-from tools.tools import *
+from tools import *
 
 def test_validation(config,network):
 	t_start = time.time()

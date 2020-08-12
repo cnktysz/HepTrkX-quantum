@@ -64,9 +64,9 @@ def map2angle(arr0):
 	phi_max   = 1.0
 	z_min     = 0
 	z_max     = 1.1
-	arr[:,0] =  (arr0[:,0]-r_min)/(r_max-r_min) * 2 * PI         # map to 2PI
-	arr[:,1] =  (arr0[:,1]-phi_min)/(phi_max-phi_min) * 2 * PI 
-	arr[:,2] =  (np.abs(arr0[:,2])-z_min)/(z_max-z_min) * 2 * PI # take abs of z due to symmetry of z
+	arr[:,0] =  (arr0[:,0]-r_min)/(r_max-r_min)          
+	arr[:,1] =  (arr0[:,1]-phi_min)/(phi_max-phi_min) 
+	arr[:,2] =  (np.abs(arr0[:,2])-z_min)/(z_max-z_min)  # take abs of z due to symmetry of z
 	mapping_check(arr)
 	return arr
 ############################################################################################
@@ -74,17 +74,17 @@ def mapping_check(arr):
 # check if every element of the input array is within limits [0,2*pi]
 	for row in arr:
 		for item in row:
-			if (item > (2 * PI)) or (item < 0):
+			if (item > (1)) or (item < 0):
 				raise ValueError('WARNING!: WRONG MAPPING!!!!!!')
 ############################################################################################
 def preprocess(data):
 	import tensorflow as tf
-	X,Ro,Ri,y  = data 									    # decompose the event graph
+	X,Ro,Ri,y  = data 		      						    # decompose the event graph
 	X 	       = tf.constant(map2angle(X),dtype=tf.float64) # map all coordinates to [0,2*pi]
 	Ri         = tf.constant(Ri,dtype=tf.float64)           # Ri is converted to tf.constant 
 	Ro         = tf.constant(Ro,dtype=tf.float64)	        # Ro is converted to tf. constant
 	graph_array = [X,Ri,Ro]                                 # construct the event graph again
-	return graph_array, tf.constant(y,dtype=tf.float64)     # return event graph and labels
+	return graph_array, tf.constant(y, dtype=tf.float64)    # return event graph and labels
 ############################################################################################
 def parse_args():
 	# generic parser, nothing fancy here
