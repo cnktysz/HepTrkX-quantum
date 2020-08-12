@@ -35,7 +35,7 @@ print('PNG: ' + png_location)
 interval = 50
 n_items0 = 29 
 n_items1 = 29
-n_items2 = 20
+n_items2 = 29
 # length of the arrays
 accuracy0 = np.empty(shape=(n_runs0,n_items0))
 auc0 = np.empty(shape=(n_runs0,n_items0))
@@ -74,10 +74,10 @@ for i in range(n_runs2):
 	with open(log_list2[i]+'log_validation.csv', 'r') as f:
 		reader = csv.reader(f, delimiter=',')  
 		validation = np.array(list(reader)).astype(float)
-		accuracy2[i,:] = validation[0:n_items1,0]	
-		auc2[i,:] = validation[0:n_items1,1]
-		loss2[i,:] = validation[0:n_items1,2]		
-		precision2[i,:] = validation[0:n_items1,3]	
+		accuracy2[i,:] = validation[0:n_items2,0]	
+		auc2[i,:] = validation[0:n_items2,1]
+		loss2[i,:] = validation[0:n_items2,2]		
+		precision2[i,:] = validation[0:n_items2,3]	
 
 x0 = [i*interval for i  in range(n_items0)]
 x1 = [i*interval for i  in range(n_items1)]
@@ -104,6 +104,7 @@ plt.errorbar(x2,np.mean(auc2,axis=0),yerr=np.std(auc2,axis=0),c='red', label=lab
 plt.title('Validation AUC')
 plt.xlabel('Update (1 epoch = 1400)')
 plt.ylabel('AUC')
+plt.ylim(0.4,0.8)
 plt.legend()
 plt.grid()
 plt.tight_layout()
