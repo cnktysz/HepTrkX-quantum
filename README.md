@@ -11,3 +11,11 @@ The scripts used to produce CHEP 2019 results is at trying_things/QuantumEdgeNet
 Notice that this is a project in progress. Latest results are produced using train.py and are different from the ones in the proceeding.
 
 *The repository has many scripts which are not complete! Work in Progress!*
+
+<p align="center">
+  <img src="gif/Cartesian3D.gif" />
+</p>
+
+<p align="center">
+  <img src="pdf/graphs/Cartesian.pdf" />
+</p>

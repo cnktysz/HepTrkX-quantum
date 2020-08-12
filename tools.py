@@ -2,7 +2,6 @@ import sys, os, time, datetime, csv, yaml, argparse
 import numpy as np
 from numpy import pi as PI
 from collections import namedtuple
-import tensorflow as tf
 
 ######################## FUNCTIONS & CLASSES FOR READING GRAPH DATA ########################
 
@@ -79,6 +78,7 @@ def mapping_check(arr):
 				raise ValueError('WARNING!: WRONG MAPPING!!!!!!')
 ############################################################################################
 def preprocess(data):
+	import tensorflow as tf
 	X,Ro,Ri,y  = data 									    # decompose the event graph
 	X 	       = tf.constant(map2angle(X),dtype=tf.float64) # map all coordinates to [0,2*pi]
 	Ri         = tf.constant(Ri,dtype=tf.float64)           # Ri is converted to tf.constant 
