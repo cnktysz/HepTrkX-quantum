@@ -28,7 +28,8 @@ Notice that this is a project in progress. Latest results are produced using tra
 ## Recent Results
 
 <p align="center">
-  <img src="png/graphs/Cylindrical_initial_graph_colored.png" />
+  <img src="png/compare_multiple/validation_loss.png" />
 </p>
-
-![](png/compare_multiple/validation_loss.png) ![](png/compare_multiple/validation_auc.png)
+<p align="center">
+  <img src="png/compare_multiple/validation_auc.png" />
+</p>
