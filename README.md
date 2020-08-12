@@ -12,6 +12,7 @@ Notice that this is a project in progress. Latest results are produced using tra
 
 *The repository has many scripts which are not complete! Work in Progress!*
 
+## A preprocessed event example
 <p align="center">
   <img src="gif/Cartesian3D.gif" />
 </p>
@@ -19,3 +20,15 @@ Notice that this is a project in progress. Latest results are produced using tra
 <p align="center">
   <img src="png/graphs/Cartesian.png" />
 </p>
+
+<p align="center">
+  <img src="png/graphs/Cylindrical_initial_graph_colored.png" />
+</p>
+
+## Recent Results
+
+<p align="center">
+  <img src="png/graphs/Cylindrical_initial_graph_colored.png" />
+</p>
+
+![](png/compare_multiple/validation_loss.png) ![](png/compare_multiple/validation_auc.png)
