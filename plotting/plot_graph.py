@@ -44,6 +44,7 @@ def plot_cylindrical(filenames,n_section):
         ax[1].set_xlabel('z [mm]')
         
         plt.savefig(pdf_dir+'Cylindrical_initial_graph.pdf')
+        plt.savefig(png_dir+'Cylindrical_initial_graph.png')
 
         print('Plotting: Ground Truth in Cylindrical coordinates!')
 
@@ -65,6 +66,7 @@ def plot_cylindrical(filenames,n_section):
         ax[1].set_xlabel('z [mm]')
 
         plt.savefig(pdf_dir+'Cylindrical_truth_graphs.pdf')
+        plt.savefig(png_dir+'Cylindrical_truth_graphs.png')
 
         print('Plotting: Initial Graph colored in Cylindrical coordinates!')
 
@@ -94,6 +96,7 @@ def plot_cylindrical(filenames,n_section):
         ax[1].legend(handles=legend_elements)
 
         plt.savefig(pdf_dir+'Cylindrical_initial_graph_colored.pdf')
+        plt.savefig(png_dir+'Cylindrical_initial_graph_colored.png')
 def plot_cartesian(filenames,n_section,n_files):
         fig, ax = plt.subplots(1,2, figsize=(12,5))
         cmap = plt.get_cmap('bwr_r')
@@ -146,6 +149,7 @@ def plot_cartesian(filenames,n_section,n_files):
         ax[0].set_title('All Edges (After Preprocessing)')
         ax[1].set_title('Only True Edges (After Preprocessing)')
         plt.savefig(pdf_dir+'Cartesian.pdf')
+        plt.savefig(png_dir+'Cartesian.png')
         plt.tight_layout()
 
         print('Plot saved to: ' + pdf_dir+'Cartesian.pdf')
@@ -193,7 +197,7 @@ def plot_3d(filenames,n_section,n_files, make_gif=False):
     change_view(45)
     ax.dist = 8 
     plt.savefig(pdf_dir+'Cartesian3D.pdf')
-
+    plt.savefig(png_dir+'Cartesian3D.png')
     if make_gif == True:
 	    # Make Gif
 	    rotation_angle = 360  # total rotation angle in degrees
@@ -257,6 +261,7 @@ def plot_combined(filenames,n_section):
         ax[2].set_ylabel('y [mm]')
 
         plt.savefig(pdf_dir+'Initial_graph_colored_combined.pdf')
+        plt.savefig(png_dir+'Initial_graph_colored_combined.png')
 def main():
     input_dir = 'data/example_event/'
     n_section = 8
@@ -267,12 +272,13 @@ def main():
                 if f.startswith('event') and f.endswith('.npz')])
     filenames[:n_files] if n_files is not None else filenames
 
-    plot_3d(filenames,n_section,n_files, make_gif=True)
-    #plot_cartesian([filenames[i*2] for i in range(n_files//2)],n_section,n_files//2)
-    #plot_cylindrical(filenames,n_section)
-    #plot_combined(filenames,n_section)
+    plot_3d(filenames,n_section,n_files, make_gif=False)
+    plot_cartesian([filenames[i*2] for i in range(n_files//2)],n_section,n_files//2)
+    plot_cylindrical(filenames,n_section)
+    plot_combined(filenames,n_section)
 
 if __name__ == '__main__':
     pdf_dir = 'pdf/graphs/'
+    png_dir = 'png/graphs/'
     gif_dir = 'gif/'
     main()

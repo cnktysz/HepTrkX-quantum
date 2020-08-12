@@ -17,5 +17,5 @@ Notice that this is a project in progress. Latest results are produced using tra
 </p>
 
 <p align="center">
-  <img src="pdf/graphs/Cartesian.pdf" />
+  <img src="png/graphs/Cartesian.png" />
 </p>
