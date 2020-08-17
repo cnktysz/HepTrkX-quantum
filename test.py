@@ -3,7 +3,7 @@ sys.path.append(os.path.abspath(os.path.join('.')))
 import numpy as np
 from sklearn import metrics
 from tools import *
-
+import tensorflow as tf
 def test_validation(config,network):
 	t_start = time.time()
 	

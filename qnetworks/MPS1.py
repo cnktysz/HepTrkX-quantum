@@ -1,7 +1,7 @@
 import pennylane as qml 
 from pennylane import numpy as np
 import tensorflow as tf
-from tools.tools import get_params
+from tools import get_params
 import pennylane_qulacs
 import os
 ##################################################################################################
