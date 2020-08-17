@@ -48,6 +48,8 @@ if __name__ == '__main__':
 		from qnetworks.GNN2 import GNN
 	elif config['network'] == 'MERA' and config['hid_dim'] == 1:     # load q. networks with 2 Hid. Dim. 
 		from qnetworks.MERA1 import GNN
+	elif config['network'] == 'MPS' and config['hid_dim'] == 1:     # load q. networks with 2 Hid. Dim. 
+		from qnetworks.MPS1 import GNN
 	elif config['network'] == 'QGNN' and config['hid_dim'] == 5:     # load q. networks with 5 Hid. Dim. 
 		from qnetworks.GNN5 import GNN
 	elif config['network'] == 'CGNN':                                # load classical network
