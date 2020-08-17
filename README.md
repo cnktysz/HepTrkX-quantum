@@ -7,8 +7,6 @@ Latest updates are presented at CERN openlab Technical Workshop 2020. Presentati
 
 CHEP 2019 proceeding submitted and available as a preprint [here](https://arxiv.org/abs/2003.08126).
 
-The scripts used to produce CHEP 2019 results is at trying_things/QuantumEdgeNetwork.py
-
 ## How to use?
 
 Use [```train.py```](./train.py) to train a model. Models are available in [```./qnetworks```](./qnetworks) folder. Choose the model and other hyperparameters using a configuration file (see [```./configs```](./configs) folder for examples).
