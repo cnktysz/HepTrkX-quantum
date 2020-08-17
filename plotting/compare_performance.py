@@ -6,16 +6,24 @@ import sys
 
 log_loc0 = 'logs/TTN_hid1_it1/'
 log_loc1 = 'logs/MERA_hid1_it1/'
+log_loc5 = 'logs/MPS_hid1_it1/'
+
 log_loc2 = 'logs/CGNN/CGNN_hid1_it1/'
 log_loc3 = 'logs/CGNN/CGNN_hid5_it1/'
 log_loc4 = 'logs/CGNN/CGNN_hid10_it1/'
 
-log_list0 = [log_loc0, log_loc1]
-log_list1 = [log_loc2, log_loc3, log_loc4]
+log_list0 =[
+	log_loc5,
+	log_loc0,
+	log_loc1,
+	]
 
-label0 = r'$TTN, N_{it} = 1, N_{Dim} = 1$'
-label1 = r'$TTN, N_{it} = 2, N_{Dim} = 2$'
-label2 = r'$MERA, N_{it} = 1, N_{Dim} = 1$'
+log_list1 =[
+	log_loc2,
+	log_loc3,
+	log_loc4,
+	]
+
 
 pdf_location = 'pdf/'
 png_location = 'png/'
@@ -66,17 +74,24 @@ for log_loc in log_list1:
 	c_loss_std  = np.append(c_loss_std, np.std(loss[:,-1],axis=0))
 
 c_n_params = [30, 266, 831]
-q_n_params = [42, 58] 
+q_n_params = [40, 42, 58] 
 
 # Plot AUC
 plt.clf()   
 plt.errorbar(c_n_params,c_auc_mean,yerr=c_auc_std,marker="o", c='navy', label='classical')
 plt.errorbar(q_n_params,q_auc_mean,yerr=q_auc_std,marker="o", c='darkorange', label='quantum')
+plt.text(q_n_params[0],q_auc_mean[0],s='MPS-hid1')
+plt.text(q_n_params[1],q_auc_mean[1],s='TTN-hid1')
+plt.text(q_n_params[2],q_auc_mean[2],s='MERA-hid1')
+plt.text(c_n_params[0],c_auc_mean[0]+0.02,s='HepTrkX-hid1')
+plt.text(c_n_params[1]-100,c_auc_mean[1]-0.03,s='HepTrkX-hid5')
+plt.text(c_n_params[2]-400,c_auc_mean[2]-0.03,s='HepTrkX-hid10')
+
 plt.title('AUC Comparison after 1 epoch')
 plt.xlabel('# Parameters')
 plt.ylabel('AUC')
 plt.xscale('log')
-plt.legend()
+plt.legend(loc='lower right')
 plt.grid()
 plt.tight_layout()
 plt.savefig(pdf_location+'validation_comparison.pdf')
