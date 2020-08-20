@@ -98,7 +98,7 @@ def plot_cylindrical(filenames,n_section):
         plt.savefig(pdf_dir+'Cylindrical_initial_graph_colored.pdf')
         plt.savefig(png_dir+'Cylindrical_initial_graph_colored.png')
 def plot_cartesian(filenames,n_section,n_files):
-        fig, ax = plt.subplots(1,2, figsize=(12,5))
+        fig, ax = plt.subplots(1,2,figsize = (10,5),sharey=True, tight_layout=True)
         cmap = plt.get_cmap('bwr_r')
         theta_counter = 0 # start 45 degree rotated
         for i in range(n_files):
@@ -150,7 +150,7 @@ def plot_cartesian(filenames,n_section,n_files):
         ax[1].set_title('Only True Edges (After Preprocessing)')
         plt.savefig(pdf_dir+'Cartesian.pdf')
         plt.savefig(png_dir+'Cartesian.png')
-        plt.tight_layout()
+        
 
         print('Plot saved to: ' + pdf_dir+'Cartesian.pdf')
         #plt.show()
@@ -203,8 +203,7 @@ def plot_3d(filenames,n_section,n_files, make_gif=False):
 	    rotation_angle = 360  # total rotation angle in degrees
 	    duration = 	5 # duration of gif in seconds
 	    anim = FuncAnimation(fig, change_view, frames=np.arange(0, rotation_angle), interval=duration*1000/rotation_angle)
-	    anim.save(gif_dir+'Cartesian3D.gif', dpi=80, writer='PillowWriter')
-	    
+	    anim.save(gif_dir+'Cartesian3D.gif', dpi=80, writer='PillowWriter')   
 def plot_combined(filenames,n_section):
 
         print('Plotting file: ' + filenames[1] + ' to: ' + pdf_dir)
@@ -272,10 +271,10 @@ def main():
                 if f.startswith('event') and f.endswith('.npz')])
     filenames[:n_files] if n_files is not None else filenames
 
-    plot_3d(filenames,n_section,n_files, make_gif=False)
+    #plot_3d(filenames,n_section,n_files, make_gif=False)
     plot_cartesian([filenames[i*2] for i in range(n_files//2)],n_section,n_files//2)
-    plot_cylindrical(filenames,n_section)
-    plot_combined(filenames,n_section)
+    #plot_cylindrical(filenames,n_section)
+    #plot_combined(filenames,n_section)
 
 if __name__ == '__main__':
     pdf_dir = 'pdf/graphs/'

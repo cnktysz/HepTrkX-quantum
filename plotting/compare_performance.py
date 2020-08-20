@@ -4,9 +4,9 @@ import csv
 from sklearn import metrics
 import sys
 
-log_loc0 = 'logs/TTN_hid1_it1/'
-log_loc1 = 'logs/MERA_hid1_it1/'
-log_loc5 = 'logs/MPS_hid1_it1/'
+log_loc0 = 'logs/TTN/TTN_hid1_it1/'
+log_loc1 = 'logs/MERA/MERA_hid1_it1/'
+log_loc5 = 'logs/MPS/MPS_hid1_it1/'
 
 log_loc2 = 'logs/CGNN/CGNN_hid1_it1/'
 log_loc3 = 'logs/CGNN/CGNN_hid5_it1/'
@@ -56,7 +56,10 @@ q_auc_mean = []
 q_loss_std  =  []
 q_loss_mean = []
 for log_loc in log_list0:
-	_, auc, loss, _ = read_multiple_files(log_loc, n_runs=3, n_items=29)
+	if log_loc == log_loc0: n_items=5
+	if log_loc == log_loc1: n_items=3
+	if log_loc == log_loc5: n_items=2
+	_, auc, loss, _ = read_multiple_files(log_loc, n_runs=3, n_items=n_items)
 	q_auc_mean = np.append(q_auc_mean, np.mean(auc[:,-1],axis=0))
 	q_auc_std  = np.append(q_auc_std, np.std(auc[:,-1],axis=0))
 	q_loss_mean = np.append(q_loss_mean, np.mean(loss[:,-1],axis=0))
@@ -79,13 +82,13 @@ q_n_params = [40, 42, 58]
 # Plot AUC
 plt.clf()   
 plt.errorbar(c_n_params,c_auc_mean,yerr=c_auc_std,marker="o", c='navy', label='classical')
-plt.errorbar(q_n_params,q_auc_mean,yerr=q_auc_std,marker="o", c='darkorange', label='quantum')
+plt.errorbar(q_n_params,q_auc_mean,yerr=q_auc_std,marker="o",linestyle="None", c='darkorange', label='quantum')
 plt.text(q_n_params[0],q_auc_mean[0],s='MPS-hid1')
 plt.text(q_n_params[1],q_auc_mean[1],s='TTN-hid1')
 plt.text(q_n_params[2],q_auc_mean[2],s='MERA-hid1')
-plt.text(c_n_params[0],c_auc_mean[0]+0.02,s='HepTrkX-hid1')
-plt.text(c_n_params[1]-100,c_auc_mean[1]-0.03,s='HepTrkX-hid5')
-plt.text(c_n_params[2]-400,c_auc_mean[2]-0.03,s='HepTrkX-hid10')
+plt.text(c_n_params[0],c_auc_mean[0]+0.01,s='HepTrkX-hid1')
+plt.text(c_n_params[1]-100,c_auc_mean[1]-0.015,s='HepTrkX-hid5')
+plt.text(c_n_params[2]-400,c_auc_mean[2]-0.01,s='HepTrkX-hid10')
 
 plt.title('AUC Comparison after 1 epoch')
 plt.xlabel('# Parameters')
