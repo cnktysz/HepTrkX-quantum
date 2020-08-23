@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.6.4)  20 AUG 2020 16:27
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.6.4)  23 AUG 2020 15:49
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -567,22 +567,11 @@ s/tikzexternalshared.code.tex))
 No auxiliary output files.
 
 \w@pgfexternal@auxout=\write4
-(/usr/local/texlive/2020/texmf-dist/tex/latex/physics/physics.sty
-Package: physics 
-(/usr/local/texlive/2020/texmf-dist/tex/latex/l3packages/xparse/xparse.sty (/us
-r/local/texlive/2020/texmf-dist/tex/latex/l3kernel/expl3.sty
-Package: expl3 2020-03-06 L3 programming layer (loader) 
 (/usr/local/texlive/2020/texmf-dist/tex/latex/l3backend/l3backend-pdfmode.def
 File: l3backend-pdfmode.def 2020-03-12 L3 backend support: PDF mode
 \l__kernel_color_stack_int=\count280
 \l__pdf_internal_box=\box81
-))
-Package: xparse 2020-03-06 L3 Experimental document command parser
-\l__xparse_current_arg_int=\count281
-\g__xparse_grabber_int=\count282
-\l__xparse_m_args_int=\count283
-\l__xparse_v_nesting_int=\count284
-))
+)
 No file tikz/main-figure6.aux.
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 16.
 LaTeX Font Info:    ... okay on input line 16.
@@ -601,16 +590,16 @@ LaTeX Font Info:    ... okay on input line 16.
 ABD: EveryShipout initializing macros (/usr/local/texlive/2020/texmf-dist/tex/c
 ontext/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count285
+\scratchcounter=\count281
 \scratchdimen=\dimen264
 \scratchbox=\box82
-\nofMPsegments=\count286
-\nofMParguments=\count287
+\nofMPsegments=\count282
+\nofMParguments=\count283
 \everyMPshowfont=\toks36
-\MPscratchCnt=\count288
+\MPscratchCnt=\count284
 \MPscratchDim=\dimen265
-\MPnumerator=\count289
-\makeMPintoPDFobject=\count290
+\MPnumerator=\count285
+\makeMPintoPDFobject=\count286
 \everyMPtoPDFconversion=\toks37
 ) (/usr/local/texlive/2020/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
@@ -649,24 +638,26 @@ A tikzpicture has been optimized away. Use '/tikz/external/optimize=false' to d
 isable this.
 A tikzpicture has been optimized away. Use '/tikz/external/optimize=false' to d
 isable this.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 370.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 370.
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 370.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 370.
+A tikzpicture has been optimized away. Use '/tikz/external/optimize=false' to d
+isable this.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 425.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 425.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 425.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 425.
  ) 
 Here is how much of TeX's memory you used:
- 18776 strings out of 480608
- 420402 string characters out of 5903631
- 696488 words of memory out of 5000000
- 34309 multiletter control sequences out of 15000+600000
+ 17808 strings out of 480608
+ 403442 string characters out of 5903631
+ 688289 words of memory out of 5000000
+ 33351 multiletter control sequences out of 15000+600000
  533093 words of font info for 27 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 69i,8n,75p,1656b,1235s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 69i,8n,75p,1656b,1234s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb
 ></usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb><
 /usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></u
 sr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb>
-Output written on tikz/main-figure6.pdf (1 page, 35708 bytes).
+Output written on tikz/main-figure6.pdf (1 page, 36481 bytes).
 PDF statistics:
  27 PDF objects out of 1000 (max. 8388607)
  19 compressed objects within 1 object stream

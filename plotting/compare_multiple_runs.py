@@ -1,32 +1,35 @@
 import matplotlib.pyplot as plt 
+import matplotlib
 import numpy as np
 import csv
 from sklearn import metrics
 import sys
 
-log_loc0 = 'logs/TTN_hid1_it1/'
-log_loc1 = 'logs/TTN_hid2_it2/'
-log_loc2 = 'logs/TTN_hid1_it2/'
+'''
+log_loc1 = 'logs/TTN/TTN_hid1_it1/'
+log_loc2 = 'logs/MERA/MERA_hid1_it1/'
+log_loc0 = 'logs/MPS/MPS_hid1_it1/'
 
-label0 = r'$TTN, N_{it} = 1, N_{Dim} = 1$'
-label1 = r'$TTN, N_{it} = 2, N_{Dim} = 2$'
-label2 = r'$TTN, N_{it} = 2, N_{Dim} = 1$'
+label1 = r'$TTN$'
+label2 = r'$MERA$'
+label0 = r'$MPS$'
 
-pdf_location = 'pdf/compare_multiple/TTN/'
-png_location = 'png/compare_multiple/TTN/'
+pdf_location = 'pdf/compare_multiple/new/'
+png_location = 'png/compare_multiple/new/'
 
 '''
-log_loc0 = 'logs/CGNN/CGNN_hid1_it2/'
-log_loc1 = 'logs/CGNN/CGNN_hid5_it2/'
-log_loc2 = 'logs/CGNN/CGNN_hid10_it2/'
 
-label0 = r'$N_{Dim}$' + ' = 1'
-label1 = r'$N_{Dim}$' + ' = 5'
-label2 = r'$N_{Dim}$' + ' = 10'
+log_loc0 = 'logs/TTN/old_mapping_0_2pi/TTN_hid1_it1/'
+log_loc1 = 'logs/TTN/old_mapping_0_2pi/TTN_hid1_it2/'
+log_loc2 = 'logs/TTN/old_mapping_0_2pi/TTN_hid2_it2/'
 
-pdf_location = 'pdf/compare_multiple/CGNN/'
-png_location = 'png/compare_multiple/CGNN/'
-'''
+label0 = r'$N_{Dim}$' + ' = 1, ' +r'$N_{it}$' + ' = 1'
+label1 = r'$N_{Dim}$' + ' = 1, ' +r'$N_{it}$' + ' = 2'
+label2 = r'$N_{Dim}$' + ' = 2, ' +r'$N_{it}$' + ' = 2'
+
+pdf_location = 'pdf/compare_multiple/TTN/old/'
+png_location = 'png/compare_multiple/TTN/old/'
+
 n_runs0 = 3
 n_runs1 = 3
 n_runs2 = 3
@@ -41,9 +44,17 @@ print('PDF: ' + pdf_location)
 print('PNG: ' + png_location)
 
 interval = 50
-n_items0 = 29 
-n_items1 = 29
-n_items2 = 29
+
+def file_length(fname):
+        with open(fname) as f:
+                for i, l in enumerate(f):
+                        pass
+        return i + 1
+
+
+n_items0 = file_length(log_list0[0]+'log_validation.csv')-1
+n_items1 = file_length(log_list1[0]+'log_validation.csv')-1
+n_items2 = file_length(log_list2[0]+'log_validation.csv')-1
 # length of the arrays
 accuracy0 = np.empty(shape=(n_runs0,n_items0))
 auc0 = np.empty(shape=(n_runs0,n_items0))
@@ -90,6 +101,18 @@ for i in range(n_runs2):
 x0 = [i*interval for i  in range(n_items0)]
 x1 = [i*interval for i  in range(n_items1)]
 x2 = [i*interval for i  in range(n_items2)]
+
+font = {
+		'size'   : 16,
+	}
+
+axes = {
+	    'titlesize' : 16,
+		'labelsize' : 16,
+	}
+
+matplotlib.rc('font', **font)
+matplotlib.rc('axes', **axes)
 
 # Plot Accuracy
 plt.clf()   

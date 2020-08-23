@@ -1,0 +1,35 @@
+%deneme.tikz
+\begin{tikzpicture}
+\begin{yquant}
+
+    qubit { } a[10];
+
+    %box {$R_Y(\theta_0)$} b[0];
+    %box {$R_Y(\theta_1)$} b[1];
+    %box {$R_Y(\theta_2)$} b[2];
+    %box {$R_Y(\theta_3)$} b[3];
+    %box {$R_Y(\theta_4)$} b[4];
+    %box {$R_Y(\theta_5)$} b[5];
+    %box {$R_Y(\theta_6)$} b[6];
+    %box {$R_Y(\theta_7)$} b[7];
+    %box {$R_Y(\theta_8)$} b[8];
+    %box {$R_y(\theta_9)$} b[9];
+    %box {$R_y(\theta_{10})$} b[10];
+    %box {$R_y(\theta_{11})$} b[11];
+
+    %cnot a[2]   |  a[3];
+    %cnot b[5]   |  b[4];
+    %cnot b[6]   |  b[7];
+    %cnot b[9]   |  b[8]; 
+    %cnot b[2] |  b[3];
+    measure a;
+
+    %discard a[0];
+    %discard a[4];
+    %discard a[7];
+    %discard a[8];
+    %discard a[11];
+    %align a;
+   
+\end{yquant}
+\end{tikzpicture}

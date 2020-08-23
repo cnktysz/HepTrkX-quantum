@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt 
+import matplotlib
 import numpy as np
 import csv
 from sklearn import metrics
@@ -33,7 +34,14 @@ print('Plots will be saved to:')
 print('PDF: ' + pdf_location)
 print('PNG: ' + png_location)
 
-def read_multiple_files(filename, n_runs, n_items):
+def file_length(fname):
+        with open(fname) as f:
+                for i, l in enumerate(f):
+                        pass
+        return i + 1
+
+def read_multiple_files(filename, n_runs):
+	n_items = file_length(filename+'run3/log_validation.csv')-1
 	accuracy  = np.empty(shape=(n_runs,n_items))
 	auc       = np.empty(shape=(n_runs,n_items))
 	loss      = np.empty(shape=(n_runs,n_items))
@@ -56,10 +64,10 @@ q_auc_mean = []
 q_loss_std  =  []
 q_loss_mean = []
 for log_loc in log_list0:
-	if log_loc == log_loc0: n_items=5
-	if log_loc == log_loc1: n_items=3
-	if log_loc == log_loc5: n_items=2
-	_, auc, loss, _ = read_multiple_files(log_loc, n_runs=3, n_items=n_items)
+	#if log_loc == log_loc0: n_items=15
+	#if log_loc == log_loc1: n_items=10
+	#if log_loc == log_loc5: n_items=19
+	_, auc, loss, _ = read_multiple_files(log_loc, n_runs=3)
 	q_auc_mean = np.append(q_auc_mean, np.mean(auc[:,-1],axis=0))
 	q_auc_std  = np.append(q_auc_std, np.std(auc[:,-1],axis=0))
 	q_loss_mean = np.append(q_loss_mean, np.mean(loss[:,-1],axis=0))
@@ -70,7 +78,7 @@ c_auc_mean = []
 c_loss_std  =  []
 c_loss_mean = []
 for log_loc in log_list1:
-	_, auc, loss, _ = read_multiple_files(log_loc, n_runs=3, n_items=29)
+	_, auc, loss, _ = read_multiple_files(log_loc, n_runs=3)
 	c_auc_mean = np.append(c_auc_mean, np.mean(auc[:,-1],axis=0))
 	c_auc_std  = np.append(c_auc_std, np.std(auc[:,-1],axis=0))
 	c_loss_mean = np.append(c_loss_mean, np.mean(loss[:,-1],axis=0))
@@ -78,6 +86,8 @@ for log_loc in log_list1:
 
 c_n_params = [30, 266, 831]
 q_n_params = [40, 42, 58] 
+
+
 
 # Plot AUC
 plt.clf()   
