@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.6.4)  23 AUG 2020 17:27
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.6.4)  27 AUG 2020 23:06
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -46,7 +46,7 @@ Package: iftex 2020/03/06 v1.0d TeX engine tests
 \Gm@layoutvoffset=\dimen142
 \Gm@dimlist=\toks18
 ) (./yquant.sty
-Package: yquant 2020/07/11 v0.3.1 Yet another quantum circuit library for LaTeX
+Package: yquant 2020/08/24 v0.3.2 Yet another quantum circuit library for LaTeX
 
 (/usr/local/texlive/2020/texmf-dist/tex/latex/etoolbox/etoolbox.sty
 Package: etoolbox 2019/09/21 v2.5h e-TeX tools for LaTeX (JAW)
@@ -600,20 +600,20 @@ File: l3backend-pdfmode.def 2020-03-12 L3 backend support: PDF mode
 \l__pdf_internal_box=\box83
 )
 No file tikz/main-figure5.aux.
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 17.
-LaTeX Font Info:    ... okay on input line 17.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 17.
-LaTeX Font Info:    ... okay on input line 17.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 17.
-LaTeX Font Info:    ... okay on input line 17.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 17.
-LaTeX Font Info:    ... okay on input line 17.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 17.
-LaTeX Font Info:    ... okay on input line 17.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 17.
-LaTeX Font Info:    ... okay on input line 17.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 17.
-LaTeX Font Info:    ... okay on input line 17.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 16.
+LaTeX Font Info:    ... okay on input line 16.
 *geometry* detected driver: <none>
 *geometry* verbose mode - [ preamble ] result:
 * driver: \Gm@driver 
@@ -681,28 +681,32 @@ A tikzpicture has been optimized away. Use '/tikz/external/optimize=false' to d
 isable this.
 \openout4 = `tikz/main-figure5.dpth'.
 
-Missing character: There is no 2 in font nullfont!
-Missing character: There is no 5 in font nullfont!
-Missing character: There is no . in font nullfont!
-Missing character: There is no 6 in font nullfont!
-Missing character: There is no 0 in font nullfont!
-Missing character: There is no 7 in font nullfont!
-Missing character: There is no 4 in font nullfont!
-Missing character: There is no 4 in font nullfont!
-Missing character: There is no p in font nullfont!
-Missing character: There is no t in font nullfont!
-! Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \relax 
-l.257 \end{yquant*}
-                    
+Missing character: There is no 1 in font nullfont!
+[4
+
+]
+A tikzpicture has been optimized away. Use '/tikz/external/optimize=false' to d
+isable this.
+A tikzpicture has been optimized away. Use '/tikz/external/optimize=false' to d
+isable this.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 383.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 383.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 383.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 383.
+ ) 
 Here is how much of TeX's memory you used:
- 18252 strings out of 480608
- 409094 string characters out of 5903631
- 659034 words of memory out of 5000000
- 33787 multiletter control sequences out of 15000+600000
+ 18340 strings out of 480608
+ 411323 string characters out of 5903631
+ 674415 words of memory out of 5000000
+ 33874 multiletter control sequences out of 15000+600000
  532639 words of font info for 25 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 69i,8n,75p,1656b,1063s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 69i,8n,75p,1656b,1217s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-!  ==> Fatal error occurred, no output PDF file produced!
+Output written on tikz/main-figure5.pdf (1 page, 3521 bytes).
+PDF statistics:
+ 11 PDF objects out of 1000 (max. 8388607)
+ 7 compressed objects within 1 object stream
+ 0 named destinations out of 1000 (max. 500000)
+ 13 words of extra memory for PDF output out of 10000 (max. 10000000)
+

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.6.4)  23 AUG 2020 17:46
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.6.4)  27 AUG 2020 23:06
 entering extended mode
  \write18 enabled.
  file:line:error style messages enabled.
@@ -56,7 +56,7 @@ Package: iftex 2020/03/06 v1.0d TeX engine tests
 \Gm@dimlist=\toks18
 )
 (./yquant.sty
-Package: yquant 2020/07/11 v0.3.1 Yet another quantum circuit library for LaTeX
+Package: yquant 2020/08/24 v0.3.2 Yet another quantum circuit library for LaTeX
 
 
 (/usr/local/texlive/2020/texmf-dist/tex/latex/etoolbox/etoolbox.sty
@@ -603,6 +603,30 @@ Package: ifthen 2014/09/29 v1.1c Standard LaTeX ifthen package (DPC)
 \rot@float@box=\box82
 \rot@mess@toks=\toks38
 )
+(/usr/local/texlive/2020/texmf-dist/tex/latex/pgf/frontendlayer/libraries/tikzl
+ibraryexternal.code.tex
+(/usr/local/texlive/2020/texmf-dist/tex/latex/pdftexcmds/pdftexcmds.sty
+Package: pdftexcmds 2019/11/24 v0.31 Utility functions of pdfTeX for LuaTeX (HO
+)
+
+(/usr/local/texlive/2020/texmf-dist/tex/generic/infwarerr/infwarerr.sty
+Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
+)
+(/usr/local/texlive/2020/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
+Package: ltxcmds 2019/12/15 v1.24 LaTeX kernel commands for general use (HO)
+)
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+)
+(/usr/local/texlive/2020/texmf-dist/tex/latex/atveryend/atveryend.sty
+Package: atveryend 2019-12-11 v1.11 Hooks at the very end of document (HO)
+)
+(/usr/local/texlive/2020/texmf-dist/tex/generic/pgf/frontendlayer/tikz/librarie
+s/tikzexternalshared.code.tex))
+\openout3 = `main.auxlock'.
+
+
 (/usr/local/texlive/2020/texmf-dist/tex/latex/l3backend/l3backend-pdfmode.def
 File: l3backend-pdfmode.def 2020-03-12 L3 backend support: PDF mode
 \l__kernel_color_stack_int=\count284
@@ -683,135 +707,85 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-Missing character: There is no 1 in font nullfont!
+\openout3 = `tikz/main-figure0.md5'.
+
+\openout3 = `main.auxlock'.
+
+
+===== 'mode=convert with system call': Invoking 'pdflatex -shell-escape -halt-o
+n-error -interaction=batchmode -jobname "tikz/main-figure0" "\def\tikzexternalr
+ealjob{main}\input{main}"' ========
+runsystem(pdflatex -shell-escape -halt-on-error -interaction=batchmode -jobname
+ "tikz/main-figure0" "\def\tikzexternalrealjob{main}\input{main}")...executed.
+
+\openout3 = `main.auxlock'.
+
+\openout3 = `tikz/main-figure1.md5'.
+
+\openout3 = `main.auxlock'.
+
+===== 'mode=convert with system call': Invoking 'pdflatex -shell-escape -halt-o
+n-error -interaction=batchmode -jobname "tikz/main-figure1" "\def\tikzexternalr
+ealjob{main}\input{main}"' ========
+runsystem(pdflatex -shell-escape -halt-on-error -interaction=batchmode -jobname
+ "tikz/main-figure1" "\def\tikzexternalrealjob{main}\input{main}")...executed.
+
+\openout3 = `main.auxlock'.
 
 [1
 
-{/usr/local/texlive/2020/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-Missing character: There is no 1 in font nullfont!
-Missing character: There is no 1 in font nullfont!
+{/usr/local/texlive/2020/texmf-var/fonts/map/pdftex/updmap/pdftex.map} <./tikz/
+main-figure0.pdf> <./tikz/main-figure1.pdf>]
+===== Image 'tikz/main-figure2' is up-to-date. ======
+===== Image 'tikz/main-figure3' is up-to-date. ======
+[2 <./tikz/main-figure2.pdf> <./tikz/main-figure3.pdf>]
+===== Image 'tikz/main-figure4' is up-to-date. ======
+[3 <./tikz/main-figure4.pdf>]
+\openout3 = `tikz/main-figure5.md5'.
 
-[2]
-Missing character: There is no 1 in font nullfont!
-Missing character: There is no 0 in font nullfont!
-Missing character: There is no 0 in font nullfont!
-Missing character: There is no 0 in font nullfont!
-Missing character: There is no 0 in font nullfont!
-Missing character: There is no 0 in font nullfont!
-Missing character: There is no 0 in font nullfont!
-Missing character: There is no 0 in font nullfont!
- [3]
-Missing character: There is no 2 in font nullfont!
-Missing character: There is no 5 in font nullfont!
-Missing character: There is no . in font nullfont!
-Missing character: There is no 6 in font nullfont!
-Missing character: There is no 0 in font nullfont!
-Missing character: There is no 7 in font nullfont!
-Missing character: There is no 4 in font nullfont!
-Missing character: There is no 4 in font nullfont!
-Missing character: There is no p in font nullfont!
-Missing character: There is no t in font nullfont!
-Missing character: There is no 2 in font nullfont!
-Missing character: There is no 5 in font nullfont!
-Missing character: There is no . in font nullfont!
-Missing character: There is no 6 in font nullfont!
-Missing character: There is no 0 in font nullfont!
-Missing character: There is no 7 in font nullfont!
-Missing character: There is no 4 in font nullfont!
-Missing character: There is no 4 in font nullfont!
-Missing character: There is no p in font nullfont!
-Missing character: There is no t in font nullfont!
-Missing character: There is no 2 in font nullfont!
-Missing character: There is no 5 in font nullfont!
-Missing character: There is no . in font nullfont!
-Missing character: There is no 6 in font nullfont!
-Missing character: There is no 0 in font nullfont!
-Missing character: There is no 7 in font nullfont!
-Missing character: There is no 4 in font nullfont!
-Missing character: There is no 4 in font nullfont!
-Missing character: There is no p in font nullfont!
-Missing character: There is no t in font nullfont!
-Missing character: There is no 2 in font nullfont!
-Missing character: There is no 5 in font nullfont!
-Missing character: There is no . in font nullfont!
-Missing character: There is no 6 in font nullfont!
-Missing character: There is no 0 in font nullfont!
-Missing character: There is no 7 in font nullfont!
-Missing character: There is no 4 in font nullfont!
-Missing character: There is no 4 in font nullfont!
-Missing character: There is no p in font nullfont!
-Missing character: There is no t in font nullfont!
-Missing character: There is no 2 in font nullfont!
-Missing character: There is no 5 in font nullfont!
-Missing character: There is no . in font nullfont!
-Missing character: There is no 6 in font nullfont!
-Missing character: There is no 0 in font nullfont!
-Missing character: There is no 7 in font nullfont!
-Missing character: There is no 4 in font nullfont!
-Missing character: There is no 4 in font nullfont!
-Missing character: There is no p in font nullfont!
-Missing character: There is no t in font nullfont!
-Missing character: There is no 2 in font nullfont!
-Missing character: There is no 5 in font nullfont!
-Missing character: There is no . in font nullfont!
-Missing character: There is no 6 in font nullfont!
-Missing character: There is no 0 in font nullfont!
-Missing character: There is no 7 in font nullfont!
-Missing character: There is no 4 in font nullfont!
-Missing character: There is no 4 in font nullfont!
-Missing character: There is no p in font nullfont!
-Missing character: There is no t in font nullfont!
-Missing character: There is no 2 in font nullfont!
-Missing character: There is no 5 in font nullfont!
-Missing character: There is no . in font nullfont!
-Missing character: There is no 6 in font nullfont!
-Missing character: There is no 0 in font nullfont!
-Missing character: There is no 7 in font nullfont!
-Missing character: There is no 4 in font nullfont!
-Missing character: There is no 4 in font nullfont!
-Missing character: There is no p in font nullfont!
-Missing character: There is no t in font nullfont!
-Missing character: There is no 2 in font nullfont!
-Missing character: There is no 5 in font nullfont!
-Missing character: There is no . in font nullfont!
-Missing character: There is no 6 in font nullfont!
-Missing character: There is no 0 in font nullfont!
-Missing character: There is no 7 in font nullfont!
-Missing character: There is no 4 in font nullfont!
-Missing character: There is no 4 in font nullfont!
-Missing character: There is no p in font nullfont!
-Missing character: There is no t in font nullfont!
-Missing character: There is no 2 in font nullfont!
-Missing character: There is no 5 in font nullfont!
-Missing character: There is no . in font nullfont!
-Missing character: There is no 6 in font nullfont!
-Missing character: There is no 0 in font nullfont!
-Missing character: There is no 7 in font nullfont!
-Missing character: There is no 4 in font nullfont!
-Missing character: There is no 4 in font nullfont!
-Missing character: There is no p in font nullfont!
-Missing character: There is no t in font nullfont!
+\openout3 = `main.auxlock'.
 
-./main.tex:266: Illegal unit of measure (pt inserted).
-<to be read again> 
-                   \relax 
-l.266 \end{yquant}
-                  
-? 
-./main.tex:266: Emergency stop.
-<to be read again> 
-                   \relax 
-l.266 \end{yquant}
-                  
-End of file on the terminal!
 
- 
+===== 'mode=convert with system call': Invoking 'pdflatex -shell-escape -halt-o
+n-error -interaction=batchmode -jobname "tikz/main-figure5" "\def\tikzexternalr
+ealjob{main}\input{main}"' ========
+runsystem(pdflatex -shell-escape -halt-on-error -interaction=batchmode -jobname
+ "tikz/main-figure5" "\def\tikzexternalrealjob{main}\input{main}")...executed.
+
+\openout3 = `main.auxlock'.
+
+
+Overfull \hbox (35.05417pt too wide) in paragraph at lines 231--268
+[][] 
+ []
+
+[4 <./tikz/main-figure5.pdf>]
+===== Image 'tikz/main-figure6' is up-to-date. ======
+===== Image 'tikz/main-figure7' is up-to-date. ======
+[5 <./tikz/main-figure6.pdf> <./tikz/main-figure7.pdf>]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 383.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 383.
+ (./main.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 383.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 383.
+ ) 
 Here is how much of TeX's memory you used:
- 17960 strings out of 480608
- 399222 string characters out of 5903631
- 674961 words of memory out of 5000000
- 33518 multiletter control sequences out of 15000+600000
- 532792 words of font info for 26 fonts, out of 8000000 for 9000
+ 18148 strings out of 480608
+ 406371 string characters out of 5903631
+ 667894 words of memory out of 5000000
+ 33670 multiletter control sequences out of 15000+600000
+ 532338 words of font info for 24 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 67i,6n,78p,1622b,1219s stack positions out of 5000i,500n,10000p,200000b,80000s
-./main.tex:266:  ==> Fatal error occurred, no output PDF file produced!
+ 67i,5n,71p,1622b,150s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb
+></usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb><
+/usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></u
+sr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/
+local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
+Output written on main.pdf (5 pages, 79598 bytes).
+PDF statistics:
+ 144 PDF objects out of 1000 (max. 8388607)
+ 122 compressed objects within 2 object streams
+ 0 named destinations out of 1000 (max. 500000)
+ 53 words of extra memory for PDF output out of 10000 (max. 10000000)
+

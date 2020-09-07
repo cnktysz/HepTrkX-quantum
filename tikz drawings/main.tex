@@ -10,8 +10,8 @@
 \usetikzlibrary{shapes,arrows,fit,calc,positioning,automata}
 \usepackage{braket}
 \usepackage{rotating}
-%\usetikzlibrary{external}
-%\tikzexternalize[prefix=tikz/,optimize command away=\includepdf]
+\usetikzlibrary{external}
+\tikzexternalize[prefix=tikz/,optimize command away=\includepdf]
 
 \begin{document}
 \tikzset{XOR/.style={draw,circle,append after command={
@@ -40,7 +40,7 @@ roundnode/.style={circle, draw=red!60, fill=red!5, very thick, minimum size=4mm}
     qubit {$\ket0$} q3[1];
 
  
-    box {$IQC(\hat{x}_{ij})$} (q0, q1, q2, q3);
+    box {$IQC(\hat{x}_{i})$} (q0, q1, q2, q3);
     box {$\mathcal PQC(\hat{\theta})$} (q0, q1, q2, q3);
 
     measure (q0, q1, q2, q3);
@@ -52,12 +52,12 @@ roundnode/.style={circle, draw=red!60, fill=red!5, very thick, minimum size=4mm}
 \draw [thick, -] ($(loc0)+(-1,-1)$) -- ($(loc0)+(-1,0.8)$);
 \draw [thick, -] ($(loc0)+(-1,0.8)$) -- ($(loc0)+(1.2,0.8)$);
 \draw [thick, ->] ($(loc0)+(1.2,0.8)$) -- ($(loc0)+(1.2,0.2)$);
-\node[] at ($(loc0)+(-2.6,-1)$) {$\{      \hat{x}_i, \hat{x}_j      \}$};
+\node[] at ($(loc0)+(-2.6,-1)$) {$\hat{x}_i$};
 
 
 % draw arrow
 \draw [thick, ->] ($(loc0)+(4.8,-1)$) -- ($(loc0)+(6.1,-1)$);
-\node[] at ($(loc0)+(6.5,-1)$) {$\left\langle  \hat{y_i} \right\rangle$};
+\node[] at ($(loc0)+(6.5,-1)$) {$\left\langle  \hat{s}_i \right\rangle$};
 
 \end{tikzpicture}
 \end{center}
@@ -82,7 +82,7 @@ node_bigger/.style={rectangle, draw=red!60, fill=red!5, very thick, minimum widt
 \node[] at ($(EdgeNet0.north)+(0,0.3)$) {Edge Network};
 
 \node[node_bigger]  at ($(EdgeNet0)+(4,0)$)    (NodeNet) {};
-\node[node_small] at ($(NodeNet)+(-1,0.25)$) (dot) {$s_{ij}h_j^l$};
+\node[node_small] at ($(NodeNet)+(-1,0.25)$) (dot) {$s_{jk}h_j^l$};
 \node (XOR-1)[XOR,scale=1.2] at ($(NodeNet)+(0,-0.25)$) {};
 \node[node_small] at ($(NodeNet)+(1.0,-0.25)$) (HNN1) {HNN};
 \node[] at ($(NodeNet.north)+(0,0.3)$) {Node Network};
@@ -93,13 +93,13 @@ node_bigger/.style={rectangle, draw=red!60, fill=red!5, very thick, minimum widt
 \node[] at ($(EdgeNet1.north)+(0,0.3)$) {Edge Network};
 
 
-\node[] at ($(MLP)+(-2.5,0)$)  {$\hat{x}_i$};
+\node[] at ($(MLP)+(-2.5,0)$)  {$\hat{x}^i$};
 \draw[thick, ->] ($(MLP)+(-2,0)$) -- (MLP.west);
 \draw[thick, ->] (MLP.east) -- (XOR-aa.west);
 
 % Input Lines
 
-\node[] at ($(MLP)+(-2.5,-1.5)$)  {$e_{ij}$};
+\node[] at ($(MLP)+(-2.5,-1.5)$)  {$e_{jk}$};
 \draw[thick, -] ($(MLP)+(-2,-1.5)$) -- ($(XOR-2)+(0,-0.875)$);
 
 %e_ij lines
@@ -121,7 +121,7 @@ node_bigger/.style={rectangle, draw=red!60, fill=red!5, very thick, minimum widt
 \draw[thick, -] (HNN0.east) -- ($(NodeNet.west)+(-0.5,-0.25)$);
 \draw[thick, -] ($(NodeNet.west)+(-0.5,-0.25)$) -- ($(dot.west)+(-0.75,-0.125)$);
 \draw[thick, ->] ($(dot.west)+(-0.75,-0.125)$) -- ($(dot.west)+(0,-0.125)$);
-\node[] at ($(NodeNet.west)+(-0.5,-0.6)$)  {$s_{ij} $};
+\node[] at ($(NodeNet.west)+(-0.5,-0.6)$)  {$s_{jk} $};
 \draw[thick, ->] (HNN1.east) -- (XOR-2.west);
 \node[] at ($(EdgeNet1.west)+(-0.5,-0.6)$)  {$\hat{h}_i^{l+1}$};
 
@@ -138,7 +138,7 @@ node_bigger/.style={rectangle, draw=red!60, fill=red!5, very thick, minimum widt
 
 % output line
 \draw[thick, ->] (HNN2.east) -- ($(HNN2.east)+(1.5,0)$) ;
-\node[] at ($(HNN2.east)+(1.8,0)$)  {$y_{ij}$};
+\node[] at ($(HNN2.east)+(1.8,0)$)  {$y_{jk}^i$};
 
 \end{tikzpicture}
 \end{center}
@@ -232,8 +232,8 @@ TTN  8-qubit Circuit
 \draw[help lines] (0,0) grid(20,-20);
 \begin{yquant}
 
-    qubit { } a[9];
-    qubit { } b[9];
+    qubit { } a[12];
+
 
     %box {$R_Y(\theta_0)$} b[0];
     %box {$R_Y(\theta_1)$} b[1];
@@ -254,7 +254,7 @@ TTN  8-qubit Circuit
     %cnot b[9]   |  b[8]; 
     %cnot b[2] |  b[3];
      %measure a;
-     measure b;
+     measure a;
 
     %discard a[0];
     %discard a[4];

@@ -88,7 +88,7 @@ def TTN_node_forward(node_array,theta_learn):
 	qml.CNOT(wires=[0,1])
 	qml.RY(theta_learn[12],wires=2)
 	qml.RY(theta_learn[13],wires=3)
-	qml.CNOT(wires=[2,3])
+	qml.CNOT(wires=[3,2])
 	qml.RY(theta_learn[14],wires=4)
 	qml.RY(theta_learn[15],wires=5)
 	qml.CNOT(wires=[4,5])	

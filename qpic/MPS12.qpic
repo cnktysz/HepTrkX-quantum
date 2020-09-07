@@ -1,0 +1,47 @@
+1 G $R_Y(\theta_{0})$ width=35
+2 G $R_Y(\theta_{1})$ width=35
+2 C 1 
+3 START
+2 G $R_Y(\theta_{2})$ width=35
+3 G $R_Y(\theta_{3})$ width=35
+3 C 2 
+4 START
+3 G $R_Y(\theta_{4})$ width=35
+4 G $R_Y(\theta_{5})$ width=35
+4 C 3
+5 START
+4 G $R_Y(\theta_{6})$ width=35
+5 G $R_Y(\theta_{7})$ width=35
+5 C 4 
+6 START
+5 G $R_Y(\theta_{8})$ width=35
+6 G $R_Y(\theta_{9})$ width=35
+6 C 5 
+7 START
+6 G $R_Y(\theta_{10})$ width=35
+7 G $R_Y(\theta_{11})$ width=35
+7 C 6 
+8 START
+7 G $R_Y(\theta_{12})$ width=35
+8 G $R_Y(\theta_{13})$ width=35
+8 C 7 
+9 START
+8 G $R_Y(\theta_{14})$ width=35
+9 G $R_Y(\theta_{15})$ width=35
+9 C 8 
+10 START
+9 G $R_Y(\theta_{16})$ width=35
+10 G $R_Y(\theta_{17})$ width=35
+10 C 9 
+11 START
+10 G $R_Y(\theta_{18})$ width=35
+11 G $R_Y(\theta_{19})$ width=35
+11 C 10
+12 START
+11 G $R_Y(\theta_{20})$ width=35
+12 G $R_Y(\theta_{21})$ width=35
+12 C 11
+
+12 M
+
+1 12 @ 0 22 color=black style=dotted,rounded_corners=1pt

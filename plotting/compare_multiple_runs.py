@@ -5,7 +5,7 @@ import csv
 from sklearn import metrics
 import sys
 
-'''
+
 log_loc1 = 'logs/TTN/TTN_hid1_it1/'
 log_loc2 = 'logs/MERA/MERA_hid1_it1/'
 log_loc0 = 'logs/MPS/MPS_hid1_it1/'
@@ -17,8 +17,8 @@ label0 = r'$MPS$'
 pdf_location = 'pdf/compare_multiple/new/'
 png_location = 'png/compare_multiple/new/'
 
-'''
 
+'''
 log_loc0 = 'logs/TTN/old_mapping_0_2pi/TTN_hid1_it1/'
 log_loc1 = 'logs/TTN/old_mapping_0_2pi/TTN_hid1_it2/'
 log_loc2 = 'logs/TTN/old_mapping_0_2pi/TTN_hid2_it2/'
@@ -29,6 +29,7 @@ label2 = r'$N_{Dim}$' + ' = 2, ' +r'$N_{it}$' + ' = 2'
 
 pdf_location = 'pdf/compare_multiple/TTN/old/'
 png_location = 'png/compare_multiple/TTN/old/'
+'''
 
 n_runs0 = 3
 n_runs1 = 3
@@ -52,9 +53,9 @@ def file_length(fname):
         return i + 1
 
 
-n_items0 = file_length(log_list0[0]+'log_validation.csv')-1
-n_items1 = file_length(log_list1[0]+'log_validation.csv')-1
-n_items2 = file_length(log_list2[0]+'log_validation.csv')-1
+n_items0 = file_length(log_list0[0]+'log_validation.csv')
+n_items1 = file_length(log_list1[0]+'log_validation.csv')
+n_items2 = file_length(log_list2[0]+'log_validation.csv')
 # length of the arrays
 accuracy0 = np.empty(shape=(n_runs0,n_items0))
 auc0 = np.empty(shape=(n_runs0,n_items0))
