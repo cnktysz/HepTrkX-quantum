@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.6.4)  27 AUG 2020 23:06
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.6.4)  10 SEP 2020 09:51
 entering extended mode
  \write18 enabled.
  file:line:error style messages enabled.
@@ -707,31 +707,8 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-\openout3 = `tikz/main-figure0.md5'.
-
-\openout3 = `main.auxlock'.
-
-
-===== 'mode=convert with system call': Invoking 'pdflatex -shell-escape -halt-o
-n-error -interaction=batchmode -jobname "tikz/main-figure0" "\def\tikzexternalr
-ealjob{main}\input{main}"' ========
-runsystem(pdflatex -shell-escape -halt-on-error -interaction=batchmode -jobname
- "tikz/main-figure0" "\def\tikzexternalrealjob{main}\input{main}")...executed.
-
-\openout3 = `main.auxlock'.
-
-\openout3 = `tikz/main-figure1.md5'.
-
-\openout3 = `main.auxlock'.
-
-===== 'mode=convert with system call': Invoking 'pdflatex -shell-escape -halt-o
-n-error -interaction=batchmode -jobname "tikz/main-figure1" "\def\tikzexternalr
-ealjob{main}\input{main}"' ========
-runsystem(pdflatex -shell-escape -halt-on-error -interaction=batchmode -jobname
- "tikz/main-figure1" "\def\tikzexternalrealjob{main}\input{main}")...executed.
-
-\openout3 = `main.auxlock'.
-
+===== Image 'tikz/main-figure0' is up-to-date. ======
+===== Image 'tikz/main-figure1' is up-to-date. ======
 [1
 
 {/usr/local/texlive/2020/texmf-var/fonts/map/pdftex/updmap/pdftex.map} <./tikz/
@@ -741,19 +718,7 @@ main-figure0.pdf> <./tikz/main-figure1.pdf>]
 [2 <./tikz/main-figure2.pdf> <./tikz/main-figure3.pdf>]
 ===== Image 'tikz/main-figure4' is up-to-date. ======
 [3 <./tikz/main-figure4.pdf>]
-\openout3 = `tikz/main-figure5.md5'.
-
-\openout3 = `main.auxlock'.
-
-
-===== 'mode=convert with system call': Invoking 'pdflatex -shell-escape -halt-o
-n-error -interaction=batchmode -jobname "tikz/main-figure5" "\def\tikzexternalr
-ealjob{main}\input{main}"' ========
-runsystem(pdflatex -shell-escape -halt-on-error -interaction=batchmode -jobname
- "tikz/main-figure5" "\def\tikzexternalrealjob{main}\input{main}")...executed.
-
-\openout3 = `main.auxlock'.
-
+===== Image 'tikz/main-figure5' is up-to-date. ======
 
 Overfull \hbox (35.05417pt too wide) in paragraph at lines 231--268
 [][] 
@@ -776,7 +741,7 @@ Here is how much of TeX's memory you used:
  33670 multiletter control sequences out of 15000+600000
  532338 words of font info for 24 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 67i,5n,71p,1622b,150s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 67i,5n,71p,1622b,148s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb
 ></usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb><
 /usr/local/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></u

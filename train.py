@@ -42,10 +42,12 @@ if __name__ == '__main__':
 	os.environ['OMP_NUM_THREADS'] = str(config['n_thread'])
 		
 	# Load network
-	if config['network'] == 'QGNN' and  config['hid_dim'] == 1:	 # load q. networks with 1 Hid. Dim. 
-		from qnetworks.GNN1 import GNN
-	elif config['network'] == 'QGNN' and config['hid_dim'] == 2:     # load q. networks with 2 Hid. Dim. 
-		from qnetworks.GNN2 import GNN
+	if config['network'] == 'TTN' and  config['hid_dim'] == 1:	 # load q. networks with 1 Hid. Dim. 
+		from qnetworks.TTN1 import GNN
+	elif config['network'] == 'TTN' and config['hid_dim'] == 2:     # load q. networks with 2 Hid. Dim. 
+		from qnetworks.TTN2 import GNN
+	elif config['network'] == 'TTN' and config['hid_dim'] == 0:     # load q. networks with 2 Hid. Dim. 
+		from qnetworks.TTN0 import GNN
 	elif config['network'] == 'MERA' and config['hid_dim'] == 1:     # load q. networks with 2 Hid. Dim. 
 		from qnetworks.MERA1 import GNN
 	elif config['network'] == 'MPS' and config['hid_dim'] == 1:     # load q. networks with 2 Hid. Dim. 
