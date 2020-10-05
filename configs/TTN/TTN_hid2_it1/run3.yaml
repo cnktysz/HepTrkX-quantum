@@ -3,7 +3,7 @@ valid_dir    : 'data/graph_data/valid'
 param_dir    : 'params/'
 log_dir      : 'logs/TTN/TTN_hid2_it1/run3/'
 run_type     : 'new_run'
-gpu          : '5'
+gpu          : '7'
 n_files      : 1600
 n_valid      : 200
 n_train      : 1400
