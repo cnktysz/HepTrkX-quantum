@@ -62,6 +62,8 @@ if __name__ == '__main__':
 	elif config['network'] == 'TEST' and config['hid_dim'] == 1:     # load q. networks with 2 Hid. Dim. 
 		from qnetworks.TEST import GNN
 		tf.config.threading.set_inter_op_parallelism_threads(config['n_thread'])
+	elif config['network'] == 'TTN_noisy' and config['hid_dim'] == 1:
+		from qnetworks.TTN1_noisy import GNN
 	else:
 		RaiseValueError('You chose wrong config settings or this setting is not implemented yet!')
 
