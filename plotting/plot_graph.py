@@ -101,6 +101,8 @@ def plot_cartesian(filenames,n_section,n_files):
         fig, ax = plt.subplots(1,2,figsize = (10,5),sharey=True, tight_layout=True)
         cmap = plt.get_cmap('bwr_r')
         theta_counter = 0 # start 45 degree rotated
+        total_false_edges = 0
+        total_true_edges = 0
         for i in range(n_files):
             print('Plotting file: ' + filenames[i])
             X, Ri, Ro, y = load_graph(filenames[i])
@@ -121,9 +123,9 @@ def plot_cartesian(filenames,n_section,n_files):
             y_o = 1000*feats_o[:,0]*np.sin(feats_o[:,1]+theta_counter)
             y_i = 1000*feats_i[:,0]*np.sin(feats_i[:,1]+theta_counter)
 
-            # print all edges
+            # print only false edges
             for j in range(y.shape[0]):
-                seg_args = dict(c='darkblue')
+                seg_args = dict(c='darkblue', alpha=1-y[j])
                 ax[0].plot([x_o[j],x_i[j]],[y_o[j],y_i[j]], '-', **seg_args)
             # print only true edges
             for j in range(y.shape[0]):
@@ -136,9 +138,13 @@ def plot_cartesian(filenames,n_section,n_files):
             ax[1].plot([0,1100*np.cos(theta_counter-np.pi/n_section)],[0,1100*np.sin(theta_counter-np.pi/n_section)],'-', c='darkorange')
             ax[1].plot([0,1100*np.cos(theta_counter+np.pi/n_section)],[0,1100*np.sin(theta_counter+np.pi/n_section)],'-', c='darkorange')
 
+            total_true_edges  += sum(y)
+            total_false_edges += y.shape[0] - sum(y)
 
             theta_counter += 2*np.pi/n_section
             theta_counter = theta_counter%(np.pi*2)
+
+        print('Plotting a graph with %d true, %d false, %d total edges'%(total_true_edges,total_false_edges,total_false_edges+total_true_edges))
 
         ax[0].set_xlabel('x [mm]')
         ax[0].set_ylabel('y [mm]')
@@ -146,7 +152,7 @@ def plot_cartesian(filenames,n_section,n_files):
         ax[1].set_ylabel('$y [mm]$')
         ax[0].set_aspect('equal')
         ax[1].set_aspect('equal')
-        ax[0].set_title('All Edges (After Preprocessing)')
+        ax[0].set_title('Only False Edges (After Preprocessing)')
         ax[1].set_title('Only True Edges (After Preprocessing)')
         plt.savefig(pdf_dir+'Cartesian.pdf')
         plt.savefig(png_dir+'Cartesian.png')
