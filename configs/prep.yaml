@@ -1,0 +1,13 @@
+# Input/output configuration
+input_dir: data/example_event/raw
+output_dir: data/example_event/graph-no-cut
+n_files: 1
+
+# Graph building configuration
+selection:
+    pt_min: 0. # GeV
+    phi_slope_max: 0.0006
+    z0_max: 200
+    n_phi_sections: 8
+    n_eta_sections: 2
+    eta_range: [-5, 5]

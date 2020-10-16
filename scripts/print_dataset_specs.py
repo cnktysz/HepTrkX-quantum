@@ -2,7 +2,21 @@ import sys, os, time, datetime, csv
 sys.path.append(os.path.abspath(os.path.join('.')))
 import numpy as np
 from tools import *
+import matplotlib
 import matplotlib.pyplot as plt
+plt.style.use('bmh')
+
+font = {
+        'size'   : 16,
+    }
+
+axes = {
+        'titlesize' : 16,
+        'labelsize' : 16,
+    }
+
+matplotlib.rc('font', **font)
+matplotlib.rc('axes', **axes)
 
 
 def count_edges(filenames):
@@ -23,7 +37,7 @@ def count_edges(filenames):
         print('Total: %d, Average: %4.1f +/- %3.1f'%(np.sum(total_true_edges+total_false_edges),np.mean(total_true_edges+total_false_edges),np.std(total_true_edges+total_false_edges) ))
         print('True Edges:')
         print('Total: %d, Average: %4.1f +/- %3.1f'%(np.sum(total_true_edges),np.mean(total_true_edges),np.std(total_true_edges) ))
-        print('False Edges:')
+        print('Fake Edges:')
         print('Total: %d, Average: %4.1f +/- %3.1f'%(np.sum(total_false_edges),np.mean(total_false_edges),np.std(total_false_edges) ))
 
 def count_nodes(filenames):
@@ -57,7 +71,7 @@ def find_edges(filenames):
     for i in range(9):
         print('Layers: %d - %d'%(i+1,i+2))
         print('(True)  Total: %d, Average: %4.1f +/- %3.1f'%(np.sum(total_true_edges, axis=1)[i], np.mean(total_true_edges, axis=1)[i], np.std(total_true_edges, axis=1)[i]))
-        print('(False) Total: %d, Average: %4.1f +/- %3.1f'%(np.sum(total_false_edges, axis=1)[i], np.mean(total_false_edges, axis=1)[i], np.std(total_false_edges, axis=1)[i]))
+        print('(Fake) Total: %d, Average: %4.1f +/- %3.1f'%(np.sum(total_false_edges, axis=1)[i], np.mean(total_false_edges, axis=1)[i], np.std(total_false_edges, axis=1)[i]))
 
 
     fig, ax = plt.subplots(1, 1, tight_layout=True)
@@ -65,7 +79,8 @@ def find_edges(filenames):
     n_true  = np.sum(total_true_edges, axis=1)
     n_false = np.sum(total_false_edges, axis=1)
     ax.bar(layers, n_true,  color='navy', label = 'True')
-    ax.bar(layers, n_false, bottom=n_true, color='darkorange', label = 'False')
+    ax.bar(layers, n_false, bottom=n_true, color='darkorange', label = 'Fake')
+    ax.ticklabel_format(axis="y", style="sci",scilimits=(0,0))
     plt.legend()
     ax.set_xlabel('Layer')
     ax.set_ylabel('Amount of edges')
@@ -93,6 +108,7 @@ def find_nodes(filenames):
     layers  = range(1,11)
     n_nodes  = np.sum(total_nodes, axis=1)
     ax.bar(layers, n_nodes,  color='navy')
+    ax.ticklabel_format(axis="y", style="sci",scilimits=(0,0))
     ax.set_xlabel('Layer')
     ax.set_ylabel('Amount of nodes')
     plt.savefig('pdf/graphs/node_distribution.pdf')
@@ -143,11 +159,12 @@ def main():
 
     filenames = train_names + valid_names
 
+
     print('The dataset contains:')
     print('%d subgraphs'%len(filenames))
 
-    #count_edges(filenames)
-    #count_nodes(filenames)
+    count_edges(filenames)
+    count_nodes(filenames)
     find_nodes(filenames)
     find_edges(filenames)
 

@@ -2,12 +2,25 @@ import sys, os, time, datetime, csv
 sys.path.append(os.path.abspath(os.path.join('.')))
 import numpy as np
 import math
+import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from mpl_toolkits.mplot3d import Axes3D
 from tools import *
 from tqdm import tqdm
 from matplotlib.lines import Line2D
+
+font = {
+        'size'   : 16,
+    }
+
+axes = {
+        'titlesize' : 16,
+        'labelsize' : 16,
+    }
+
+matplotlib.rc('font', **font)
+matplotlib.rc('axes', **axes)
 
 def plot_cylindrical(filenames,n_section):
 
@@ -89,7 +102,7 @@ def plot_cylindrical(filenames,n_section):
         ax[1].set_xlabel('z [mm]')
     
         # create custom legend
-        legend_elements = [Line2D([0], [0], color='red', label='false'),
+        legend_elements = [Line2D([0], [0], color='red', label='fake'),
             Line2D([0], [0], color='blue', label='true')]
 
         ax[0].legend(handles=legend_elements)
@@ -152,7 +165,7 @@ def plot_cartesian(filenames,n_section,n_files):
         ax[1].set_ylabel('$y [mm]$')
         ax[0].set_aspect('equal')
         ax[1].set_aspect('equal')
-        ax[0].set_title('Only False Edges (After Preprocessing)')
+        ax[0].set_title('Only Fake Edges (After Preprocessing)')
         ax[1].set_title('Only True Edges (After Preprocessing)')
         plt.savefig(pdf_dir+'Cartesian.pdf')
         plt.savefig(png_dir+'Cartesian.png')
@@ -267,8 +280,64 @@ def plot_combined(filenames,n_section):
 
         plt.savefig(pdf_dir+'Initial_graph_colored_combined.pdf')
         plt.savefig(png_dir+'Initial_graph_colored_combined.png')
+
+def plot_single_cartesian(filename,n_section):
+        fig, ax = plt.subplots(1,2,figsize = (10,5),sharey=True, tight_layout=True)
+        cmap = plt.get_cmap('bwr_r')
+        theta_counter = 0 # start 45 degree rotated
+        total_false_edges = 0
+        total_true_edges = 0
+
+        print('Plotting file: ' + filename)
+        X, Ri, Ro, y = load_graph(filename)
+        #print('Zmin: %.2f, Zmax: %.2f' %(min(X[:,2]),max(X[:,2]))   )
+        X[:,1] = X[:,1] * np.pi/n_section
+        theta = (X[:,1] + theta_counter)%(np.pi*2)
+        
+        ax[0].scatter(1000*X[:,0]*np.cos(theta), 1000*X[:,0]*np.sin(theta), c='k', s=3)
+        ax[1].scatter(1000*X[:,0]*np.cos(theta), 1000*X[:,0]*np.sin(theta), c='k', s=3)
+
+        #ax1.scatter(1000*X[:,0]*np.cos(theta), 1000*X[:,2], c='k')
+
+        feats_o = X[np.where(Ri.T)[1]]
+        feats_i = X[np.where(Ro.T)[1]]
+
+        x_o = 1000*feats_o[:,0]*np.cos(feats_o[:,1]+theta_counter)
+        x_i = 1000*feats_i[:,0]*np.cos(feats_i[:,1]+theta_counter)
+        y_o = 1000*feats_o[:,0]*np.sin(feats_o[:,1]+theta_counter)
+        y_i = 1000*feats_i[:,0]*np.sin(feats_i[:,1]+theta_counter)
+
+        # print only false edges
+        for j in range(y.shape[0]):
+            seg_args = dict(c='darkblue', alpha=1-y[j])
+            ax[0].plot([x_o[j],x_i[j]],[y_o[j],y_i[j]], '-', **seg_args)
+        # print only true edges
+        for j in range(y.shape[0]):
+            seg_args = dict(c='darkblue', alpha=y[j])
+            ax[1].plot([x_o[j],x_i[j]],[y_o[j],y_i[j]], '-', **seg_args)
+
+
+        total_true_edges  = sum(y)
+        total_false_edges = y.shape[0] - sum(y)
+
+        print('Plotting a graph with %d true, %d false, %d total edges'%(total_true_edges,total_false_edges,total_false_edges+total_true_edges))
+
+        ax[0].set_xlabel('x [mm]')
+        ax[0].set_ylabel('y [mm]')
+        ax[1].set_xlabel('$x [mm]$')
+        ax[1].set_ylabel('$y [mm]$')
+        ax[0].set_aspect('equal')
+        ax[1].set_aspect('equal')
+        ax[0].set_title('Only Fake Edges (After Preprocessing)')
+        ax[1].set_title('Only True Edges (After Preprocessing)')
+        plt.savefig(pdf_dir+'subgraph_cartesian.pdf')
+        plt.savefig(png_dir+'subgraph_cartesian.png')
+        
+
+        print('Plot saved to: ' + pdf_dir+'subgraph_cartesian.pdf')
+        print('Plot saved to: ' + png_dir+'subgraph_cartesian.png')
 def main():
-    input_dir = 'data/example_event/'
+    input_dir = 'data/example_event/graph-cut-1pt'
     n_section = 8
     n_files = 16
    
@@ -278,7 +347,8 @@ def main():
     filenames[:n_files] if n_files is not None else filenames
 
     #plot_3d(filenames,n_section,n_files, make_gif=False)
-    plot_cartesian([filenames[i*2] for i in range(n_files//2)],n_section,n_files//2)
+    #plot_cartesian([filenames[i*2] for i in range(n_files//2)],n_section,n_files//2)
+    plot_single_cartesian(filenames[0],n_section)
     #plot_cylindrical(filenames,n_section)
     #plot_combined(filenames,n_section)
 

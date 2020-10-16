@@ -128,7 +128,7 @@ class EdgeNet(tf.keras.layers.Layer):
 		bi = tf.matmul(Ri,X,transpose_a=True)
 		# Shape of B = N_edges x 6 (2x (3 coordinates))
 		# each row consists of two node that are possibly connected.
-		B  = tf.concat([bo, bi], axis=1)  
+		B  = tf.concat([bo, bi], axis=1) # n_edges x 6, 3-> r,phi,z 
 		return edge_forward(B,self.theta_learn)
 ##################################################################################################
 class NodeNet(tf.keras.layers.Layer):
