@@ -3,7 +3,7 @@ valid_dir : data/graph_data/valid
 param_dir : params/ 
 log_dir : logs/TTN/TTN_hid1_it2/run2/ 
 run_type : new_run 
-gpu : 6 
+gpu : 5 
 n_files : 1600 
 n_valid : 200 
 n_train : 1400 
@@ -12,6 +12,6 @@ n_iters : 2
 n_epoch : 1 
 TEST_every : 50 
 hid_dim : 1 
-network : QGNN 
+network : TTN 
 n_thread : 1 
 log_verbosity : 2 

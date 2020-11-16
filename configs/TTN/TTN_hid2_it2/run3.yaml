@@ -1,18 +1,17 @@
 train_dir    : 'data/graph_data/train'
 valid_dir    : 'data/graph_data/valid'
 param_dir    : 'params/'
-log_dir      : 'logs/TTN/TTN_hid1_it2/run2/'
+log_dir      : 'logs/TTN/TTN_hid2_it1/run3/'
 run_type     : 'new_run'
-gpu          : '5'
+gpu          : '7'
 n_files      : 1600
 n_valid      : 200
 n_train      : 1400
 lr           : 0.03
-n_iters      : 2
+n_iters      : 1
 n_epoch      : 1
 TEST_every   : 50
-hid_dim      : 1
+hid_dim      : 2
 network      : 'TTN'
 n_thread     : 1
-log_verbosity: 2
-
+log_verbosity: 1

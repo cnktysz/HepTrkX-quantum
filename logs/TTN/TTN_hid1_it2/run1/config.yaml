@@ -12,6 +12,6 @@ n_iters : 2
 n_epoch : 1 
 TEST_every : 50 
 hid_dim : 1 
-network : QGNN 
+network : TTN 
 n_thread : 1 
 log_verbosity : 2 
