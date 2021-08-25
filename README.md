@@ -1,6 +1,9 @@
 # Particle Track Reconstruction with Quantum Algorithms
 
 ## News:
+
+The final version of this project is released on a different repository. You can access it through this [link](https://github.com/QTrkX/qtrkx-gnn-tracking). 
+
 Presented  most recent results at Connecting The Dots 2020, talk is [here](https://indico.cern.ch/event/831165/contributions/3717116/). Proceeding is available as a preprint [here](https://arxiv.org/abs/2007.06868)
 
 Latest updates are presented at CERN openlab Technical Workshop 2020. Presentation is [here](https://indico.cern.ch/event/853334/contributions/3688457/).
